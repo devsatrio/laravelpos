@@ -59,9 +59,10 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Level</label>
                                 <select name="level" class="form-control">
-                                    <option value="admin" @if($data->level=="Admin") selected @endif>Admin</option>
-                                    <option value="super admin" @if($data->level=="Super Admin") selected @endif>Super
-                                        Admin</option>
+                                    @foreach($roles as $row_roles)
+                                    <option value="{{$row_roles->name}}" @if($data->level==$row_roles->name) selected
+                                        @endif>{{$row_roles->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <br>

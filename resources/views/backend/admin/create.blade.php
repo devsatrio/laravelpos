@@ -54,8 +54,9 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Level</label>
                                 <select name="level" class="form-control">
-                                    <option value="admin">Admin</option>
-                                    <option value="super admin">Super Admin</option>
+                                    @foreach($roles as $row_roles)
+                                    <option value="{{$row_roles->name}}">{{$row_roles->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="form-group">

@@ -24,7 +24,12 @@ class rolesController extends Controller
 
     //=================================================================
     public function listdata(){
-        return Datatables::of(Role::orderby('id','desc')->get())->make(true);
+        return Datatables::of(DB::table('roles')
+        ->select(DB::raw('roles.*,count(role_has_permissions.role_id) as total'))
+        ->leftjoin('role_has_permissions','role_has_permissions.role_id','=','roles.id')
+        ->groupby('roles.id')
+        ->orderby('roles.id','desc')
+        ->get())->make(true);
     }
 
     //=================================================================
@@ -67,14 +72,9 @@ class rolesController extends Controller
         return redirect('backend/roles')->with('status','Sukses memperbarui data');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    //=================================================================
     public function destroy($id)
     {
-        //
+        DB::table("roles")->where('id',$id)->delete();
     }
 }

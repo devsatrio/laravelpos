@@ -38,7 +38,8 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Nama Role</label>
-                                <input type="text" class="form-control" value="{{$role->name}}" name="nama" required autofocus>
+                                <input type="text" class="form-control" value="{{$role->name}}" name="nama" required
+                                    autofocus>
                             </div>
                             <hr>
                             <div class="row">
@@ -49,14 +50,14 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox"
-                                            @foreach($rolePermissions as $row_rolePermissions)
-                                            @if($row_permission->id==$row_rolePermissions->permission_id)
-                                             checked
+                                            <input class="custom-control-input" type="checkbox"
+                                                @foreach($rolePermissions as $row_rolePermissions)
+                                                @if($row_permission->id==$row_rolePermissions->permission_id)
+                                            checked
                                             @endif
                                             @endforeach
                                             id="customCheckbox{{$row_permission->id}}"
-                                                value="{{$row_permission->id}}" name="permission[]">
+                                            value="{{$row_permission->id}}" name="permission[]">
                                             <label for="customCheckbox{{$row_permission->id}}"
                                                 class="custom-control-label">{{$row_permission->name}}</label>
                                         </div>
@@ -64,6 +65,13 @@
                                 </div>
 
                                 @endforeach
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" @if(count($permission)==count($rolePermissions)) checked @endif id="checkall">
+                                    <label for="checkall" class="custom-control-label">Pilih Semua</label>
+                                </div>
                             </div>
                         </div>
 
@@ -83,5 +91,18 @@
 @endpush
 
 @push('customscripts')
-<script src="{{asset('customjs/backend/admin_input.js')}}"></script>
+<script>
+$('#checkall').on('click', function(event) {
+    if (this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;
+        });
+    } else {
+        $(':checkbox').each(function() {
+            this.checked = false;
+        });
+    }
+});
+</script>
 @endpush

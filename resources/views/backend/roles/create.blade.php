@@ -48,13 +48,24 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" name="permission[]" id="customCheckbox{{$row_data_permission->id}}"
+                                            <input class="custom-control-input" type="checkbox" name="permission[]"
+                                                id="customCheckbox{{$row_data_permission->id}}"
                                                 value="{{$row_data_permission->id}}">
-                                            <label for="customCheckbox{{$row_data_permission->id}}" class="custom-control-label">{{$row_data_permission->name}}</label>
+                                            <label for="customCheckbox{{$row_data_permission->id}}"
+                                                class="custom-control-label">{{$row_data_permission->name}}</label>
                                         </div>
                                     </div>
                                 </div>
                                 @endforeach
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox"
+                                        id="checkall">
+                                    <label for="checkall"
+                                        class="custom-control-label">Pilih Semua</label>
+                                </div>
                             </div>
                         </div>
 
@@ -74,5 +85,18 @@
 @endpush
 
 @push('customscripts')
-<script src="{{asset('customjs/backend/admin_input.js')}}"></script>
+<script>
+$('#checkall').on('click',function(event) {
+    if (this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;
+        });
+    } else {
+        $(':checkbox').each(function() {
+            this.checked = false;
+        });
+    }
+});
+</script>
 @endpush

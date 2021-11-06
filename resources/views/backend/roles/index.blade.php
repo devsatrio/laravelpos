@@ -48,6 +48,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Role Name</th>
+                                        <th>Permission</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -58,6 +59,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Role Name</th>
+                                        <th>Permission</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </tfoot>

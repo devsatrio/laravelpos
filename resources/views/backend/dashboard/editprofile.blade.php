@@ -23,7 +23,7 @@
                         <h3 class="card-title">Edit Profile Anda</h3>
                     </div>
                     <form method="POST" onsubmit="return validasiinput();" role="form" enctype="multipart/form-data"
-                        action="{{url('/edit-profile/'.$data->id)}}">
+                        action="{{url('/backend/edit-profile/'.$data->id)}}">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
@@ -43,14 +43,6 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">No. Telp</label>
                                 <input type="text" class="form-control" name="telp" value="{{$data->telp}}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputEmail1">Level</label>
-                                <select name="level" class="form-control">
-                                    <option value="Admin" @if($data->level=="Admin") selected @endif>Admin</option>
-                                    <option value="Super Admin" @if($data->level=="Super Admin") selected @endif>Super
-                                        Admin</option>
-                                </select>
                             </div>
                             <br>
                             <div class="form-group">

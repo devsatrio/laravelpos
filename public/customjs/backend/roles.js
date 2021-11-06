@@ -14,6 +14,14 @@ $(function () {
             { data: 'name', name: 'name' },
             {
                 render: function (data, type, row) {
+                    return row['total'] + ' Permission'
+                },
+                "className": 'text-center',
+                "orderable": false,
+                "data": 'total',
+            },
+            {
+                render: function (data, type, row) {
                     return '<a href="/backend/roles/' + row['id'] + '/edit" class="btn btn-success"><i class="fa fa-wrench"></i></a> <button class="btn btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
                 },
                 "className": 'text-center',

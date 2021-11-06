@@ -48,7 +48,6 @@ class HomeController extends Controller
                     'username'=>$request->username,
                     'email'=>$request->email,
                     'telp'=>$request->telp,
-                    'level'=>$request->level,
                     'gambar'=>$finalname,
                 ]);
             }else{
@@ -58,7 +57,6 @@ class HomeController extends Controller
                     'username'=>$request->username,
                     'email'=>$request->email,
                     'telp'=>$request->telp,
-                    'level'=>$request->level,
                     'gambar'=>$finalname,
                     'password'=>Hash::make($request->password),
                 ]);
@@ -71,7 +69,6 @@ class HomeController extends Controller
                     'username'=>$request->username,
                     'email'=>$request->email,
                     'telp'=>$request->telp,
-                    'level'=>$request->level,
                 ]);
             }else{
                 User::find($id)
@@ -80,12 +77,11 @@ class HomeController extends Controller
                     'username'=>$request->username,
                     'email'=>$request->email,
                     'telp'=>$request->telp,
-                    'level'=>$request->level,
                     'password'=>Hash::make($request->password),
                 ]);
             }
         }
 
-        return redirect('/home')->with('status','Sukses memperbarui profile');
+        return redirect('/backend/home')->with('status','Sukses memperbarui profile');
     }
 }

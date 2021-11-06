@@ -10,9 +10,13 @@ use DB;
 
 class AdminController extends Controller
 {
-    public function __construct()
+    function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:view-users', ['only' => ['index','show','listdata']]);
+        $this->middleware('permission:create-users', ['only' => ['create']]);
+        $this->middleware('permission:edit-users', ['only' => ['edit']]);
+        $this->middleware('permission:delete-users', ['only' => ['destroy']]);
     }
 
     //=================================================================
@@ -30,7 +34,8 @@ class AdminController extends Controller
     //=================================================================
     public function create()
     {
-        return view('backend.admin.create');
+        $roles = DB::table('roles')->orderby('id','desc')->get();
+        return view('backend.admin.create',compact('roles'));
     }
 
     //=================================================================
@@ -58,7 +63,7 @@ class AdminController extends Controller
         ]);
         $usr->assignRole($request->level);
         
-        return redirect('/admin')->with('status','Sukses menyimpan data');
+        return redirect('/backend/admin')->with('status','Sukses menyimpan data');
     }
 
     //=================================================================
@@ -70,8 +75,9 @@ class AdminController extends Controller
     //=================================================================
     public function edit($id)
     {
+        $roles = DB::table('roles')->orderby('id','desc')->get();
         $data = User::find($id);
-        return view('backend.admin.edit',['data'=>$data]);
+        return view('backend.admin.edit',compact('data','roles'));
     }
 
     //=================================================================
@@ -155,7 +161,7 @@ class AdminController extends Controller
             }
         }
 
-        return redirect('/admin')->with('status','Sukses memperbarui data');
+        return redirect('/backend/admin')->with('status','Sukses memperbarui data');
     }
 
     //=================================================================
@@ -166,6 +172,6 @@ class AdminController extends Controller
             File::delete('img/admin/'.$data->gambar);
         }
         User::destroy($id);
-        //return redirect('/admin')->with('status','Sukses menghapus data');
+        //return redirect('/backend/admin')->with('status','Sukses menghapus data');
     }
 }

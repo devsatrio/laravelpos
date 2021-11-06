@@ -38,6 +38,6 @@ class testcontroller extends Controller
     
     public function destroy($id)
     {
-        echo "'delete";
+        echo "delete";
     }
 }
