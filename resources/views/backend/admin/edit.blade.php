@@ -32,7 +32,7 @@
                         <h3 class="card-title">Edit Data</h3>
                     </div>
                     <form method="POST" onsubmit="return validasiinput();" role="form" enctype="multipart/form-data"
-                        action="{{url('/admin/'.$data->id)}}">
+                        action="{{url('/backend/admin/'.$data->id)}}">
                         @csrf
                         <input type="hidden" name="_method" value="PUT">
                         <div class="card-body">
@@ -59,10 +59,8 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Level</label>
                                 <select name="level" class="form-control">
-                                    <option value="Suplier" @if($data->level=="Suplier") selected @endif>Suplier
-                                    </option>
-                                    <option value="Admin" @if($data->level=="Admin") selected @endif>Admin</option>
-                                    <option value="Super Admin" @if($data->level=="Super Admin") selected @endif>Super
+                                    <option value="admin" @if($data->level=="Admin") selected @endif>Admin</option>
+                                    <option value="super admin" @if($data->level=="Super Admin") selected @endif>Super
                                         Admin</option>
                                 </select>
                             </div>

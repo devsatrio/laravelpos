@@ -32,7 +32,7 @@
                         <h3 class="card-title">Tambah Data</h3>
                     </div>
                     <form method="POST" onsubmit="return validasiinput();" role="form" enctype="multipart/form-data"
-                        action="{{url('/admin')}}">
+                        action="{{url('/backend/admin')}}">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
@@ -54,9 +54,8 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Level</label>
                                 <select name="level" class="form-control">
-                                    <option value="Suplier">Suplier</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Super Admin">Super Admin</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="super admin">Super Admin</option>
                                 </select>
                             </div>
                             <div class="form-group">

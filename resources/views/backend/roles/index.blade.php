@@ -14,7 +14,7 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12">
-                <h1 class="m-0 text-dark"> Admin</h1>
+                <h1 class="m-0 text-dark"> Roles</h1>
             </div>
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -32,9 +32,9 @@
             <div class="col-12">
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Data Admin</h3>
+                        <h3 class="card-title">Data Roles</h3>
                         <div class="card-tools">
-                            <a href="{{url('/backend/admin/create')}}">
+                            <a href="{{url('/backend/roles/create')}}">
                                 <button type="button" class="btn btn-default btn-sm"><i class="fas fa-plus"></i> Tambah
                                     Data
                                 </button>
@@ -47,10 +47,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Level</th>
+                                        <th>Role Name</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -60,10 +57,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Level</th>
+                                        <th>Role Name</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </tfoot>
@@ -84,5 +78,5 @@
 @endpush
 
 @push('customscripts')
-<script src="{{asset('customjs/backend/admin.js')}}"></script>
+<script src="{{asset('customjs/backend/roles.js')}}"></script>
 @endpush

@@ -47,7 +47,7 @@ class AdminController extends Controller
         $destination=public_path('img/admin');
         $request->file('gambar')->move($destination,$finalname);
         
-        User::insert([
+        $usr = User::create([
             'name'=>$request->nama,
             'username'=>$request->username,
             'email'=>$request->email,
@@ -56,6 +56,7 @@ class AdminController extends Controller
             'gambar'=>$finalname,
             'password'=>Hash::make($request->password),
         ]);
+        $usr->assignRole($request->level);
         
         return redirect('/admin')->with('status','Sukses menyimpan data');
     }
@@ -108,6 +109,10 @@ class AdminController extends Controller
                     'level'=>$request->level,
                     'gambar'=>$finalname,
                 ]);
+
+                $usr = User::find($id);
+                $usr->assignRole($request->level);
+
             }else{
                 User::find($id)
                 ->update([
@@ -119,6 +124,9 @@ class AdminController extends Controller
                     'gambar'=>$finalname,
                     'password'=>Hash::make($request->password),
                 ]);
+
+                $usr = User::find($id);
+                $usr->assignRole($request->level);
             }
         }else{
             if($request->password==''){
@@ -130,6 +138,8 @@ class AdminController extends Controller
                     'telp'=>$request->telp,
                     'level'=>$request->level,
                 ]);
+                $usr = User::find($id);
+                $usr->assignRole($request->level);
             }else{
                 User::find($id)
                 ->update([
@@ -140,6 +150,8 @@ class AdminController extends Controller
                     'level'=>$request->level,
                     'password'=>Hash::make($request->password),
                 ]);
+                $usr = User::find($id);
+                $usr->assignRole($request->level);
             }
         }
 
@@ -154,6 +166,6 @@ class AdminController extends Controller
             File::delete('img/admin/'.$data->gambar);
         }
         User::destroy($id);
-        return redirect('/admin')->with('status','Sukses menghapus data');
+        //return redirect('/admin')->with('status','Sukses menghapus data');
     }
 }
