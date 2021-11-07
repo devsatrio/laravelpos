@@ -1,7 +1,7 @@
 <!-- Left navbar links -->
 <ul class="navbar-nav">
     <li class="nav-item">
-        <a href="{{url('backend/home')}}" class="nav-link">Home</a>
+        <a href="{{url('/backend/home')}}" class="nav-link">Home</a>
     </li>
     @if(auth()->user()->can('view-roles')
     || auth()->user()->can('create-roles')

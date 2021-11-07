@@ -17,7 +17,7 @@
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand-md navbar-dark navbar-dark">
             <div class="container">
-                <a href="{{url('/home')}}" class="navbar-brand">
+                <a href="{{url('/backend/home')}}" class="navbar-brand">
                     <!-- <img src=".{{asset('assets/dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo"
                         class="brand-image img-circle elevation-3" style="opacity: .8"> -->
                     <span class="brand-text font-weight-light">BL6</span>

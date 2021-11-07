@@ -81,8 +81,9 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Base Laravel 6
+                    D-Boiler Laravel 7
                 </div> 
+                <p>Free Boiler For Everyone</p>
                 <span>By Deifa Satrio</span>
             </div>  
         </div>
