@@ -27,7 +27,7 @@
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
                     <label for="username" class="col-form-label text-md-right">{{ __('Username') }}</label>
-                    <div class="input-group mb-3">
+                    <div class="mb-3">
                         <input id="username" type="text" class="form-control @error('username') is-invalid @enderror"
                             name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
                         @error('username')
@@ -37,14 +37,18 @@
                         @enderror
                     </div>
                     <label for="level" class="col-form-label text-md-right">{{ __('Level') }}</label>
-                    <div class="input-group mb-3">
+                    <div class="mb-3">
+                        @php
+                        $data = DB::table('roles')->orderby('id','desc')->get();
+                        @endphp
                         <select name="level" class="form-control">
-                            <option value="Admin">Admin</option>
-                            <option value="Super Admin">Super Admin</option>
+                            @foreach($data as $row)
+                            <option value="{{$row->name}}">{{$row->name}}</option>
+                            @endforeach
                         </select>
                     </div>
                     <label for="name" class="col-form-label text-md-right">{{ __('Name') }}</label>
-                    <div class="input-group mb-3">
+                    <div class="mb-3">
                         <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
                             name="name" value="{{ old('name') }}" required autocomplete="name">
                         @error('name')
@@ -54,7 +58,7 @@
                         @enderror
                     </div>
                     <label for="email" class="col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
-                    <div class="input-group mb-3">
+                    <div class="mb-3">
                         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
                             name="email" value="{{ old('email') }}" required autocomplete="email">
 
@@ -65,7 +69,7 @@
                         @enderror
                     </div>
                     <label for="password" class="col-form-label text-md-right">{{ __('Password') }}</label>
-                    <div class="input-group mb-3">
+                    <div class="mb-3">
                         <input id="password" type="password"
                             class="form-control @error('password') is-invalid @enderror" name="password" required
                             autocomplete="new-password">
@@ -78,7 +82,7 @@
                     <label for="password-confirm"
                         class="col-form-label text-md-right">{{ __('Confirm Password') }}</label>
 
-                    <div class="input-group mb-3">
+                    <div class="mb-3">
                         <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
                             required autocomplete="new-password">
                     </div>

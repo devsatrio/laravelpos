@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use File;
+use DB;
 use Auth;
 use Hash;
 
@@ -83,5 +84,25 @@ class HomeController extends Controller
         }
 
         return redirect('/backend/home')->with('status','Sukses memperbarui profile');
+    }
+
+    //==================================================================
+    public function websetting()
+    {
+        $data = DB::table('settings')->orderby('id','desc')->get();
+        return view('backend.dashboard.websetting',compact('data'));
+    }
+
+    //==================================================================
+    public function updatewebsetting(Request $request)
+    {
+        DB::table('settings')->where('id',$request->kode)
+        ->update([
+            'singkatan_nama_program'=>$request->singkatan_nama_program,
+            'nama_program'=>$request->nama_program,
+            'instansi'=>$request->instansi,
+            'deskripsi_program'=>$request->deskripsi,
+        ]);
+        return redirect('/backend/home')->with('status','Sukses memperbarui setting web');
     }
 }

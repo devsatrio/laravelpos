@@ -17,6 +17,6 @@ Route::prefix('backend')->group(function () {
     
     Route::get('/data-admin','backend\AdminController@listdata');
     Route::resource('/admin','backend\AdminController');
-    
-    Route::resource('/test','backend\testcontroller');
+    Route::get('/web-setting', 'backend\HomeController@websetting');
+    Route::post('/web-setting', 'backend\HomeController@updatewebsetting');
 });

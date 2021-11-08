@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     @yield('token')
-    <title>AdminLTE 3</title>
+    @php
+    $websetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
+    @endphp
+    @foreach($websetting as $row_websetting)
+    <title>{{$row_websetting->singkatan_nama_program}}</title>
+    @endforeach
     <link rel="stylesheet" href="{{asset('assets/plugins/fontawesome-free/css/all.min.css')}}">
     @yield('customcss')
     <link rel="stylesheet" href="{{asset('assets/dist/css/adminlte.min.css')}}">
@@ -18,9 +23,9 @@
         <nav class="main-header navbar navbar-expand-md navbar-dark navbar-dark">
             <div class="container">
                 <a href="{{url('/backend/home')}}" class="navbar-brand">
-                    <!-- <img src=".{{asset('assets/dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo"
-                        class="brand-image img-circle elevation-3" style="opacity: .8"> -->
-                    <span class="brand-text font-weight-light">BL6</span>
+                @foreach($websetting as $row_websetting)
+                    <span class="brand-text font-weight-light">{{$row_websetting->singkatan_nama_program}}</span>
+    @endforeach
                 </a>
 
                 <button class="navbar-toggler order-1" type="button" data-toggle="collapse"
@@ -53,6 +58,10 @@
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
+                            <div class="dropdown-divider"></div>
+                            <a href="{{url('backend/web-setting')}}" class="dropdown-item">
+                                Web Setting
+                            </a>
                         </div>
                     </li>
                 </ul>
