@@ -22,5 +22,8 @@
 ### Issues
 If you come across any issues please  [report them here](https://github.com/devsatrio/dboilerlaravel/issues)
 
+### License
+MIT : [https://devasatriodamara.mit-license.org](https://devasatriodamara.mit-license.org)
+
 ### Support
 [buy me a coffe](https://saweria.co/devasatrio)
