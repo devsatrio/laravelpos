@@ -14,6 +14,7 @@
 4. Migrate and seeding database Or you can use .sql file in project
 5. Some time, if the role & permission not working you can clear the cache of laravel by typing 
 	>php artisan cache:clear
+	
 	>php artisan config:cache
 
 
