@@ -23,9 +23,9 @@
         <nav class="main-header navbar navbar-expand-md navbar-dark navbar-dark">
             <div class="container">
                 <a href="{{url('/backend/home')}}" class="navbar-brand">
-                @foreach($websetting as $row_websetting)
+                    @foreach($websetting as $row_websetting)
                     <span class="brand-text font-weight-light">{{$row_websetting->singkatan_nama_program}}</span>
-    @endforeach
+                    @endforeach
                 </a>
 
                 <button class="navbar-toggler order-1" type="button" data-toggle="collapse"
@@ -59,9 +59,11 @@
                                 @csrf
                             </form>
                             <div class="dropdown-divider"></div>
+                            @if(auth()->user()->can('setting-web'))
                             <a href="{{url('backend/web-setting')}}" class="dropdown-item">
                                 Web Setting
                             </a>
+                            @endif
                         </div>
                     </li>
                 </ul>
