@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12">
-                <h1 class="m-0 text-dark"> Admin</h1>
+                <h1 class="m-0 text-dark"> Customer</h1>
             </div>
         </div>
     </div>
@@ -31,8 +31,8 @@
                     <div class="card-header">
                         <h3 class="card-title">Tambah Data</h3>
                     </div>
-                    <form method="POST" onsubmit="return validasiinput();" role="form" enctype="multipart/form-data"
-                        action="{{url('/backend/admin')}}">
+                    <form method="POST" role="form" enctype="multipart/form-data"
+                        action="{{url('/backend/customer')}}">
                         @csrf
                         <div class="card-body">
                             <div class="row">
@@ -44,50 +44,20 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Username</label>
-                                        <input type="text" class="form-control" name="username"
-                                            autocomplete="new-username" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Email</label>
-                                        <input type="email" class="form-control" name="email" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">No. Telp</label>
+                                        <label for="exampleInputEmail1">Telp</label>
                                         <input type="text" class="form-control" name="telp" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Level</label>
-                                        <select name="level" class="form-control">
-                                            @foreach($roles as $row_roles)
-                                            <option value="{{$row_roles->name}}">{{$row_roles->name}}</option>
-                                            @endforeach
-                                        </select>
+                                        <label for="exampleInputEmail1">Alamat</label>
+                                        <textarea name="alamat" id="alamat" class="form-control" rows="3"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputFile">Gambar</label>
-                                        <input type="file" class="form-control" name="gambar" accept="image/*" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Password</label>
-                                        <input type="password" class="form-control" id="password" name="password"
-                                           autocomplete="new-password" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Konfirmasi Password</label>
-                                        <input type="password" class="form-control" id="kpassword" required>
+                                        <label for="exampleInputEmail1">Keterangan</label>
+                                        <textarea name="keterangan" id="keterangan" class="form-control" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>

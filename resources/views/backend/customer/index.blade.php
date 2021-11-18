@@ -14,7 +14,7 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12">
-                <h1 class="m-0 text-dark"> Admin</h1>
+                <h1 class="m-0 text-dark"> Customer</h1>
             </div>
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -34,7 +34,7 @@
                     <div class="card-header">
                         <h3 class="card-title">List Data</h3>
                         <div class="card-tools">
-                            <a href="{{url('/backend/admin/create')}}">
+                            <a href="{{url('/backend/customer/create')}}">
                                 <button type="button" class="btn btn-default btn-sm"><i class="fas fa-plus"></i> Tambah
                                     Data
                                 </button>
@@ -48,9 +48,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Level</th>
+                                        <th>Telp</th>
+                                        <th>Alamat</th>
+                                        <th>Keterangan</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -61,9 +61,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Level</th>
+                                        <th>Telp</th>
+                                        <th>Alamat</th>
+                                        <th>Keterangan</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </tfoot>
@@ -73,7 +73,7 @@
                 </div>
             </div>
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </div>
 @endsection
 
@@ -84,5 +84,5 @@
 @endpush
 
 @push('customscripts')
-<script src="{{asset('customjs/backend/admin.js')}}"></script>
+<script src="{{asset('customjs/backend/customer.js')}}"></script>
 @endpush
