@@ -47,6 +47,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
+                                        <th>Kode</th>
                                         <th>Nama</th>
                                         <th>Telp</th>
                                         <th>Alamat</th>
@@ -60,6 +61,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>No</th>
+                                        <th>Kode</th>
                                         <th>Nama</th>
                                         <th>Telp</th>
                                         <th>Alamat</th>

@@ -32,4 +32,13 @@ Route::prefix('backend')->group(function () {
     //-------------------------------------------------------------------------------------------
     Route::get('/data-kategori-barang','backend\kategoriBarangController@listdata');
     Route::resource('/kategori-barang','backend\kategoriBarangController');
+    
+    //-------------------------------------------------------------------------------------------
+    Route::get('/data-supplier','backend\supplierController@listdata');
+    Route::resource('/supplier','backend\supplierController');
+
+    //-------------------------------------------------------------------------------------------
+    Route::get('/data-barang','backend\barangController@listdata');
+    Route::resource('/barang','backend\barangController');
+
 });

@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 18, 2021 at 10:00 AM
--- Server version: 10.4.16-MariaDB
--- PHP Version: 7.4.12
+-- Generation Time: Nov 20, 2021 at 01:59 AM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.3.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -20,6 +21,35 @@ SET time_zone = "+00:00";
 --
 -- Database: `db_laravel_pos`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `barang`
+--
+
+CREATE TABLE `barang` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(250) DEFAULT NULL,
+  `nama` varchar(300) DEFAULT NULL,
+  `kategori` int(11) DEFAULT NULL,
+  `harga_beli` int(11) DEFAULT NULL,
+  `harga_jual` int(11) DEFAULT NULL,
+  `harga_jual_customer` int(11) DEFAULT NULL,
+  `diskon` int(11) DEFAULT NULL,
+  `diskon_customer` int(11) DEFAULT NULL,
+  `stok` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `barang`
+--
+
+INSERT INTO `barang` (`id`, `kode`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
+(2, 'BRG-0002', 'test edit', 5, 10, 20, 30, 40, 50, 0, '-'),
+(3, 'BRG-0003', 'sdaf', 5, 1, 2, 3, 4, 5, 0, '-'),
+(4, 'BRG-0004', 'test', 5, 1000, 0, 3000, 2, 2, 0, 'sf');
 
 -- --------------------------------------------------------
 
@@ -53,8 +83,27 @@ CREATE TABLE `kategori_barang` (
 --
 
 INSERT INTO `kategori_barang` (`id`, `nama`, `slug`) VALUES
-(2, 'edit kategori', 'edit-kategori'),
-(3, 'test', 'test');
+(2, 'Kategori B', 'kategori-b'),
+(3, 'Kategori A', 'kategori-a'),
+(5, 'Kategori C', 'kategori-c');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `log_stok_barang`
+--
+
+CREATE TABLE `log_stok_barang` (
+  `id` bigint(20) NOT NULL,
+  `kode_barang` varchar(300) DEFAULT NULL,
+  `tipe` enum('Stok Masuk','Stok Keluar') DEFAULT 'Stok Masuk',
+  `keterangan` text DEFAULT NULL,
+  `stok_tertakhir` int(11) DEFAULT NULL,
+  `jumlah` int(11) DEFAULT NULL,
+  `hasil_akhir` int(11) DEFAULT NULL,
+  `users` int(11) DEFAULT NULL,
+  `tgl_buat` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -76,7 +125,9 @@ CREATE TABLE `master_customer` (
 --
 
 INSERT INTO `master_customer` (`id`, `kode`, `nama`, `telp`, `alamat`, `keterangan`) VALUES
-(3, 'CUS-001', 'dono', '02348902', 'gurah', 'test');
+(3, 'CUS-001', 'dono', '02348902', 'gurah', 'test'),
+(4, 'CUS-002', 'dani', '567474', '-', '-'),
+(5, 'CUS-003', 'Joko', '293048290', '-', '-');
 
 -- --------------------------------------------------------
 
@@ -92,6 +143,15 @@ CREATE TABLE `master_supplier` (
   `alamat` text DEFAULT NULL,
   `keterangan` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `master_supplier`
+--
+
+INSERT INTO `master_supplier` (`id`, `kode`, `nama`, `telp`, `alamat`, `keterangan`) VALUES
+(3, 'SUP-001', '-', '-', '-', '-'),
+(4, 'SUP-002', 'PT. Jhon', '023948290', 'test', 'test'),
+(5, 'SUP-003', 'PT. Dhoe', '234234', '-', '-');
 
 -- --------------------------------------------------------
 
@@ -145,6 +205,7 @@ CREATE TABLE `model_has_roles` (
 --
 
 INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
+(1, 'App\\User', 2),
 (2, 'App\\User', 1);
 
 -- --------------------------------------------------------
@@ -198,7 +259,12 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (18, 'view-supplier', 'web', NULL, NULL),
 (19, 'create-supplier', 'web', NULL, NULL),
 (20, 'edit-supplier', 'web', NULL, NULL),
-(21, 'delete-supplier', 'web', NULL, NULL);
+(21, 'delete-supplier', 'web', NULL, NULL),
+(22, 'view-barang', 'web', NULL, NULL),
+(23, 'create-barang', 'web', NULL, NULL),
+(24, 'edit-barang', 'web', NULL, NULL),
+(25, 'delete-barang', 'web', NULL, NULL),
+(26, 'view-harga-beli-barang', 'web', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -254,7 +320,16 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (14, 2),
 (15, 2),
 (16, 2),
-(17, 2);
+(17, 2),
+(18, 2),
+(19, 2),
+(20, 2),
+(21, 2),
+(22, 2),
+(23, 2),
+(24, 2),
+(25, 2),
+(26, 2);
 
 -- --------------------------------------------------------
 
@@ -303,11 +378,18 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `name`, `email`, `telp`, `level`, `gambar`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', NULL, 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', NULL, '2021-11-17 18:12:54', '2021-11-17 18:12:54');
+(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', NULL, 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'nByiRVCuw2JsApO6fp9F6bsAH5t0TRVcMttlWhUvWJfuM0ibqQt1sMXZbRsa', '2021-11-17 18:12:54', '2021-11-17 18:12:54'),
+(2, 'admin', 'admin', 'admin@gmail.com', '234902', 'admin', '1637324169-user.png', NULL, '$2y$10$PF1uei/mGbbYXqFLjzL/Tu.R2cEvX8wubESr/rT43Ol01KVMbaAzm', 'Wzi6SaQaalhj1cjxrzegKDvoR3LsUmWJTFGSSI6YIk8klg5vDmFiKI79Gq3f', '2021-11-19 05:16:10', '2021-11-19 05:16:10');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `barang`
+--
+ALTER TABLE `barang`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `failed_jobs`
@@ -319,6 +401,12 @@ ALTER TABLE `failed_jobs`
 -- Indexes for table `kategori_barang`
 --
 ALTER TABLE `kategori_barang`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `log_stok_barang`
+--
+ALTER TABLE `log_stok_barang`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -398,6 +486,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `barang`
+--
+ALTER TABLE `barang`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -407,19 +501,25 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `kategori_barang`
 --
 ALTER TABLE `kategori_barang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `log_stok_barang`
+--
+ALTER TABLE `log_stok_barang`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `master_customer`
 --
 ALTER TABLE `master_customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_supplier`
 --
 ALTER TABLE `master_supplier`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -431,7 +531,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -449,7 +549,7 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

@@ -4,7 +4,7 @@ $(function () {
         processing: true,
         serverSide: true,
         order: [[0, "desc"]],
-        ajax: '/backend/data-customer',
+        ajax: '/backend/data-barang',
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
@@ -13,12 +13,31 @@ $(function () {
             },
             { data: 'kode', name: 'kode' },
             { data: 'nama', name: 'nama' },
-            { data: 'telp', name: 'telp' },
-            { data: 'alamat', name: 'alamat' },
-            { data: 'keterangan', name: 'keterangan' },
+            { data: 'namakategori', name: 'namakategori' },
             {
                 render: function (data, type, row) {
-                    return '<a href="/backend/customer/' + row['id'] + '/edit" class="btn btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
+                    return 'Rp. '+rupiah(row['harga_jual']);
+                },
+                "className": 'text-right',
+                "data": 'harga_jual',
+            },
+            {
+                render: function (data, type, row) {
+                    return 'Rp. '+rupiah(row['harga_jual_customer']);
+                },
+                "className": 'text-right',
+                "data": 'harga_jual_customer',
+            },
+            {
+                render: function (data, type, row) {
+                    return row['stok']+' Pcs';
+                },
+                "className": 'text-center',
+                "data": 'stok',
+            },
+            {
+                render: function (data, type, row) {
+                    return '<a href="/backend/barang/' + row['id'] + '" class="btn btn-warning m-1"><i class="fa fa-eye"></i></a><a href="/backend/barang/' + row['id'] + '/edit" class="btn btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn btn-danger m-1" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
                 },
                 "className": 'text-center',
                 "orderable": false,
@@ -31,6 +50,21 @@ $(function () {
 
 });
 
+//===============================================================================================
+function rupiah(bilangan) {
+    var number_string = bilangan.toString(),
+        sisa = number_string.length % 3,
+        rupiah = number_string.substr(0, sisa),
+        ribuan = number_string.substr(sisa).match(/\d{3}/gi);
+
+    if (ribuan) {
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+    }
+    return rupiah;
+}
+
+//===============================================================================================
 function hapusdata(kode) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -56,7 +90,7 @@ function hapusdata(kode) {
             });
             $.ajax({
                 type: 'DELETE',
-                url: '/backend/customer/' + kode,
+                url: '/backend/barang/' + kode,
                 data: {
                     '_token': $('input[name=_token]').val(),
                 },

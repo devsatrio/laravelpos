@@ -14,7 +14,7 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12">
-                <h1 class="m-0 text-dark"> Supplier</h1>
+                <h1 class="m-0 text-dark"> Barang</h1>
             </div>
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -34,7 +34,7 @@
                     <div class="card-header">
                         <h3 class="card-title">List Data</h3>
                         <div class="card-tools">
-                            <a href="{{url('/backend/supplier/create')}}">
+                            <a href="{{url('/backend/barang/create')}}">
                                 <button type="button" class="btn btn-default btn-sm"><i class="fas fa-plus"></i> Tambah
                                     Data
                                 </button>
@@ -47,11 +47,12 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Kode</th>
+                                        <th>kode</th>
                                         <th>Nama</th>
-                                        <th>Telp</th>
-                                        <th>Alamat</th>
-                                        <th>Keterangan</th>
+                                        <th>Kategori</th>
+                                        <th>Harga Jual</th>
+                                        <th>Harga Grosir</th>
+                                        <th>Stok</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -61,11 +62,12 @@
                                 <tfoot>
                                     <tr>
                                         <th>No</th>
-                                        <th>Kode</th>
+                                        <th>kode</th>
                                         <th>Nama</th>
-                                        <th>Telp</th>
-                                        <th>Alamat</th>
-                                        <th>Keterangan</th>
+                                        <th>Kategori</th>
+                                        <th>Harga Jual</th>
+                                        <th>Harga Grosir</th>
+                                        <th>Stok</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </tfoot>
@@ -75,7 +77,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div><!-- /.container-fluid -->
 </div>
 @endsection
 
@@ -86,5 +88,5 @@
 @endpush
 
 @push('customscripts')
-<script src="{{asset('customjs/backend/supplier.js')}}"></script>
+<script src="{{asset('customjs/backend/barang.js')}}"></script>
 @endpush

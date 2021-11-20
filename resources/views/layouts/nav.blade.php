@@ -3,6 +3,7 @@
     <li class="nav-item">
         <a href="{{url('/backend/home')}}" class="nav-link">Home</a>
     </li>
+
     @if(auth()->user()->can('view-roles')
     || auth()->user()->can('create-roles')
     || auth()->user()->can('edit-roles')
@@ -30,27 +31,57 @@
         </ul>
     </li>
     @endif
+
+    @if(auth()->user()->can('view-supplier')
+    || auth()->user()->can('create-supplier')
+    || auth()->user()->can('edit-supplier')
+    || auth()->user()->can('delete-supplier')
+    || auth()->user()->can('view-customer')
+    || auth()->user()->can('create-customer')
+    || auth()->user()->can('edit-customer')
+    || auth()->user()->can('delete-customer')
+    || auth()->user()->can('view-kategori-barang')
+    || auth()->user()->can('create-kategori-barang')
+    || auth()->user()->can('edit-kategori-barang')
+    || auth()->user()->can('delete-kategori-barang')
+    || auth()->user()->can('view-barang')
+    || auth()->user()->can('create-barang')
+    || auth()->user()->can('edit-barang')
+    || auth()->user()->can('delete-barang'))
     <li class="nav-item dropdown">
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Master Data</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
-            <li><a href="#" class="dropdown-item">Data Supplier</a></li>
+            @if(auth()->user()->can('view-supplier')
+            || auth()->user()->can('create-supplier')
+            || auth()->user()->can('edit-supplier')
+            || auth()->user()->can('delete-supplier'))
+            <li><a href="{{url('backend/supplier')}}" class="dropdown-item">Data Supplier</a></li>
+            @endif
+
             @if(auth()->user()->can('view-customer')
             || auth()->user()->can('create-customer')
             || auth()->user()->can('edit-customer')
             || auth()->user()->can('delete-customer'))
             <li><a href="{{url('backend/customer')}}" class="dropdown-item">Data Customer</a></li>
             @endif
-            
+
             @if(auth()->user()->can('view-kategori-barang')
             || auth()->user()->can('create-kategori-barang')
             || auth()->user()->can('edit-kategori-barang')
             || auth()->user()->can('delete-kategori-barang'))
             <li><a href="{{url('backend/kategori-barang')}}" class="dropdown-item">Data Kategori Barang </a></li>
             @endif
-            <li><a href="#" class="dropdown-item">Data Barang</a></li>
+            @if(auth()->user()->can('view-barang')
+            || auth()->user()->can('create-barang')
+            || auth()->user()->can('edit-barang')
+            || auth()->user()->can('delete-barang'))
+            <li><a href="{{url('backend/barang')}}" class="dropdown-item">Data Barang</a></li>
+            @endif
         </ul>
     </li>
+    @endif
+
     <li class="nav-item dropdown">
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Transaksi</a>

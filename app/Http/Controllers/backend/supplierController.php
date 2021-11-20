@@ -47,7 +47,7 @@ class supplierController extends Controller
              'alamat'=>$request->alamat,
              'keterangan'=>$request->keterangan,
          ]);
-         return redirect('/backend/customer')->with('status','Sukses menyimpan data');
+         return redirect('/backend/supplier')->with('status','Sukses menyimpan data');
      }
  
      //=================================================================
@@ -58,7 +58,7 @@ class supplierController extends Controller
              $finalkode = 'SUP-001';
          }else{
              $newkode    = explode("-", $carikode);
-             $nomer      = sprintf("%03s",$newkode[2]+1);
+             $nomer      = sprintf("%03s",$newkode[1]+1);
              $finalkode = 'SUP-'.$nomer;
          }
          return $finalkode;
@@ -90,7 +90,7 @@ class supplierController extends Controller
              'alamat'=>$request->alamat,
              'keterangan'=>$request->keterangan,
          ]);
-         return redirect('/backend/customer')->with('status','Sukses memperbarui data');
+         return redirect('/backend/supplier')->with('status','Sukses memperbarui data');
      }
  
      //=================================================================

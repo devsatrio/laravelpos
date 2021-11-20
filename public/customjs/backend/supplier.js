@@ -4,7 +4,7 @@ $(function () {
         processing: true,
         serverSide: true,
         order: [[0, "desc"]],
-        ajax: '/backend/data-customer',
+        ajax: '/backend/data-supplier',
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
@@ -18,7 +18,7 @@ $(function () {
             { data: 'keterangan', name: 'keterangan' },
             {
                 render: function (data, type, row) {
-                    return '<a href="/backend/customer/' + row['id'] + '/edit" class="btn btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
+                    return '<a href="/backend/supplier/' + row['id'] + '/edit" class="btn btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
                 },
                 "className": 'text-center',
                 "orderable": false,
@@ -56,7 +56,7 @@ function hapusdata(kode) {
             });
             $.ajax({
                 type: 'DELETE',
-                url: '/backend/customer/' + kode,
+                url: '/backend/supplier/' + kode,
                 data: {
                     '_token': $('input[name=_token]').val(),
                 },

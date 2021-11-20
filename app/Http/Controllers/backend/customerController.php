@@ -58,7 +58,7 @@ class customerController extends Controller
             $finalkode = 'CUS-001';
         }else{
             $newkode    = explode("-", $carikode);
-            $nomer      = sprintf("%03s",$newkode[2]+1);
+            $nomer      = sprintf("%03s",$newkode[1]+1);
             $finalkode = 'CUS-'.$nomer;
         }
         return $finalkode;
