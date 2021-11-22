@@ -32,7 +32,7 @@ function editdata(kode) {
     $('#panel').loading('toggle');
     $.ajax({
         type: 'GET',
-        url: '/backend/kategori-barang/' + kode,
+        url: '/laravelpos/backend/kategori-barang/' + kode,
         success: function (data) {
             $.each(data, function (key, value) {
                 $('#nama').val(value.nama);
@@ -71,7 +71,7 @@ function hapusdata(kode) {
             });
             $.ajax({
                 type: 'DELETE',
-                url: '/backend/kategori-barang/' + kode,
+                url: '/laravelpos/backend/kategori-barang/' + kode,
                 data: {
                     '_token': $('input[name=_token]').val(),
                 },
