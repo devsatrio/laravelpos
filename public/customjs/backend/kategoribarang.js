@@ -4,7 +4,8 @@ $(function () {
         processing: true,
         serverSide: true,
         order: [[0, "desc"]],
-        ajax: '/backend/data-kategori-barang',
+        //ajax: '/backend/data-kategori-barang',
+        ajax: '/laravelpos/backend/data-kategori-barang',
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {

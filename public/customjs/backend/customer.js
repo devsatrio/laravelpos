@@ -4,7 +4,8 @@ $(function () {
         processing: true,
         serverSide: true,
         order: [[0, "desc"]],
-        ajax: '/backend/data-customer',
+        //ajax: '/backend/data-customer',
+        ajax: '/laravelpos/backend/data-customer',
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
