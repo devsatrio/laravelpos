@@ -235,6 +235,57 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="editdetailmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Jumlah Barang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Kode Barang</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="edit_kode_barang" id="edit_kode_barang" readonly
+                            required>
+                            <input type="hidden" name="edit_id" id="edit_id">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Nama Barang</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="edit_nama_barang" id="edit_nama_barang" readonly
+                            required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Harga Barang</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="edit_harga_barang" id="edit_harga_barang" readonly
+                            required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Jumlah Barang</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="edit_jumlah_barang" id="edit_jumlah_barang"
+                            required>
+                        <div class="input-group-append">
+                            <span class="input-group-text">Pcs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="editjumlahdetail" class="btn btn-primary">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('customjs')
@@ -245,7 +296,7 @@
 @endpush
 
 @push('customscripts')
-<script src="{{asset('customjs/backend/pembelian_input.js')}}"></script>
+<script src="{{asset('customjs/backend/pembelian_edit.js')}}"></script>
 <!-- <script src="{{asset('customjs/backend/
     ')}}"></script> -->
 @endpush

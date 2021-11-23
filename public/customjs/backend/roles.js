@@ -68,8 +68,15 @@ function hapusdata(kode) {
                 success: function () {
                     swalWithBootstrapButtons.fire(
                         'Deleted!',
-                        'Your file has been deleted.',
+                        'Data berhasil dihapus',
                         'success'
+                    )
+                    $('#list-data').DataTable().ajax.reload();
+                },error: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Oops!',
+                        'Data gagal dihapus',
+                        'error'
                     )
                     $('#list-data').DataTable().ajax.reload();
                 }

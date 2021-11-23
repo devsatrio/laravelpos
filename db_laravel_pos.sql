@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2021 at 02:03 AM
--- Server version: 10.4.16-MariaDB
--- PHP Version: 7.4.12
+-- Generation Time: Nov 24, 2021 at 12:10 AM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.3.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -47,7 +48,7 @@ CREATE TABLE `barang` (
 
 INSERT INTO `barang` (`id`, `kode`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
 (2, 'BRG-0002', 'test edit', 5, 10, 20, 30, 40, 50, 0, '-'),
-(3, 'BRG-0003', 'sdaf', 5, 1, 2, 3, 4, 5, 0, '-'),
+(3, 'BRG-0003', 'Barang C', 5, 1, 20000, 30000, 40, 0, 0, '-'),
 (4, 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 0, 'ket Barang B'),
 (5, 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 0, 'ket barang A');
 
@@ -239,8 +240,22 @@ CREATE TABLE `pembelian` (
   `pembuat` int(11) DEFAULT NULL,
   `tgl_buat` date DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `status` enum('Lunas','Belum Lunas') DEFAULT 'Lunas'
+  `status` varchar(200) DEFAULT 'Lunas',
+  `status_pembelian` varchar(200) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `pembelian`
+--
+
+INSERT INTO `pembelian` (`id`, `kode`, `supplier`, `subtotal`, `potongan`, `biaya_tambahan`, `total`, `terbayar`, `kekurangan`, `pembuat`, `tgl_buat`, `keterangan`, `status`, `status_pembelian`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(6, 'PMB-112021-0003', 'SUP-003', 2000000, 0, 0, 2000000, 500000, 1500000, 1, '2021-11-23', NULL, 'Belum Lunas', 'Approve', NULL, NULL, NULL, NULL),
+(7, 'PMB-112021-0004', 'SUP-003', 40075000, 200000, 500000, 40775000, 40375000, 0, 1, '2021-11-23', 'Lunas', 'Telah Lunas', 'Draft', NULL, '2021-11-23 23:06:39', NULL, 1),
+(11, 'PMB-112021-0006', 'SUP-003', 6045000, 0, 0, 6045000, 3000000, 3045000, 1, '2021-11-24', NULL, 'Belum Lunas', 'Draft', '2021-11-23 22:25:30', NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -256,6 +271,17 @@ CREATE TABLE `pembelian_detail` (
   `harga` int(11) DEFAULT NULL,
   `total` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `pembelian_detail`
+--
+
+INSERT INTO `pembelian_detail` (`id`, `kode_pembelian`, `kode_barang`, `jumlah`, `harga`, `total`) VALUES
+(8, 'PMB-112021-0003', 'BRG-0005', 1, 2000000, 2000000),
+(18, 'PMB-112021-0006', 'BRG-0004', 3, 15000, 45000),
+(19, 'PMB-112021-0006', 'BRG-0005', 3, 2000000, 6000000),
+(20, 'PMB-112021-0004', 'BRG-0004', 5, 15000, 75000),
+(21, 'PMB-112021-0004', 'BRG-0005', 20, 2000000, 40000000);
 
 -- --------------------------------------------------------
 
@@ -378,8 +404,11 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (19, 2),
 (20, 2),
 (21, 2),
+(22, 1),
 (22, 2),
+(23, 1),
 (23, 2),
+(24, 1),
 (24, 2),
 (25, 2),
 (26, 2);
@@ -431,8 +460,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `name`, `email`, `telp`, `level`, `gambar`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', NULL, 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'nByiRVCuw2JsApO6fp9F6bsAH5t0TRVcMttlWhUvWJfuM0ibqQt1sMXZbRsa', '2021-11-17 18:12:54', '2021-11-17 18:12:54'),
-(2, 'admin', 'admin', 'admin@gmail.com', '234902', 'admin', '1637324169-user.png', NULL, '$2y$10$PF1uei/mGbbYXqFLjzL/Tu.R2cEvX8wubESr/rT43Ol01KVMbaAzm', 'Wzi6SaQaalhj1cjxrzegKDvoR3LsUmWJTFGSSI6YIk8klg5vDmFiKI79Gq3f', '2021-11-19 05:16:10', '2021-11-19 05:16:10');
+(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', NULL, 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'cppmUqduqYvxrt1RvxYZNsUEDHMMnPa83QJ2segeR5ZxL88ZPNSdE4wM7e8m', '2021-11-17 18:12:54', '2021-11-17 18:12:54'),
+(2, 'admin', 'admin', 'admin@gmail.com', '234902', 'admin', '1637324169-user.png', NULL, '$2y$10$PF1uei/mGbbYXqFLjzL/Tu.R2cEvX8wubESr/rT43Ol01KVMbaAzm', 'J4DyK5hisB9oro56CqUgP5rSRjtHKj5FO7JEoE20JCcZsRDLIgNCyDR1kEzl', '2021-11-19 05:16:10', '2021-11-19 05:16:10');
 
 --
 -- Indexes for dumped tables
@@ -602,19 +631,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pembelian_detail`
 --
 ALTER TABLE `pembelian_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `pembelian_thumb_detail`
 --
 ALTER TABLE `pembelian_thumb_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `permissions`

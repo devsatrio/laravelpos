@@ -13,35 +13,54 @@ $(function () {
                 }
             },
             { data: 'kode', name: 'kode' },
-            { data: 'name', name: 'name' },
             { data: 'namasupplier', name: 'namasupplier' },
             { data: 'tgl_buat', name: 'tgl_buat' },
             {
                 render: function (data, type, row) {
-                    return 'Rp.'+rupiah(row['total'])
+                    return 'Rp.' + rupiah(row['total'])
                 },
                 "className": 'text-right',
                 "data": 'total',
             },
             {
                 render: function (data, type, row) {
-                    return 'Rp.'+rupiah(row['terbayar'])
+                    return 'Rp.' + rupiah(row['terbayar'])
                 },
                 "className": 'text-right',
                 "data": 'terbayar',
             },
             {
                 render: function (data, type, row) {
-                    return 'Rp.'+rupiah(row['kekurangan'])
+                    return 'Rp.' + rupiah(row['kekurangan'])
                 },
                 "className": 'text-right',
                 "data": 'kekurangan',
             },
-            { data: 'status', name: 'status',
-            "className": 'text-center', },
             {
                 render: function (data, type, row) {
-                    return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm btn-success"><i class="fa fa-wrench"></i></a><button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
+                    if (row['status'] == 'Belum Lunas') {
+                        return '<span class="badge bg-danger">' + row['status'] + '</span>';
+                    } else {
+                        return '<span class="badge bg-success">' + row['status'] + '</span>';
+                    }
+                }, data: 'status', name: 'status', className: 'text-center'
+            },
+
+            {
+                render: function (data, type, row) {
+                    if (row['status_pembelian'] == 'Draft') {
+                        return '<span class="badge bg-warning">' + row['status_pembelian'] + '</span>';
+                    } else {
+                        return '<span class="badge bg-primary">' + row['status_pembelian'] + '</span>';
+                    }
+                }, data: 'status_pembelian', name: 'status_pembelian', className: 'text-center'
+            },
+            {
+                render: function (data, type, row) {
+                    return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
+                        '<button class="btn btn-sm m-1 btn-info" onclick="updatestatus(' + row['id'] + ')"><i class="fa fa-check"></i></button>' +
+                        '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
+                        '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
                 },
                 "className": 'text-center',
                 "orderable": false,
@@ -55,6 +74,58 @@ $(function () {
 });
 
 //===============================================================================================
+function updatestatus(id) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: true
+    })
+    Swal.fire({
+        title: 'Ganti Status ?',
+        text: "Apakah anda yakin mengganti status pembelian dari Draft ke Approve dan otomatis mengupdate status stok barang, item pada pembelian tidak dapat di rubah setelah aksi ini",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, saya yakin',
+        cancelButtonText: 'Tidak'
+    }).then((result) => {
+        if (result.value) {
+            $('#panelsatu').loading('toggle');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST',
+                url: '/laravelpos/backend/pembelian/update-status/' + id,
+                data: {
+                    '_token': $('input[name=_token]').val(),
+                },
+                success: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Updated!',
+                        'Status data berhasil diperbarui',
+                        'success'
+                    )
+                }, error: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Oops!',
+                        'Status data gagal diperbarui',
+                        'error'
+                    )
+                },complete:function () {
+                    $('#list-data').DataTable().ajax.reload();
+                    $('#panelsatu').loading('stop');
+                }
+            });
+        }
+    })
+}
+
+//===============================================================================================
 function hapusdata(kode) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -66,7 +137,6 @@ function hapusdata(kode) {
     swalWithBootstrapButtons.fire({
         title: 'Hapus Data ?',
         text: "Data tidak dapat di pulihkan kembali!",
-        icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Tidak',
@@ -87,10 +157,20 @@ function hapusdata(kode) {
                 success: function () {
                     swalWithBootstrapButtons.fire(
                         'Deleted!',
-                        'Your file has been deleted.',
+                        'Data berhasil dihapus',
                         'success'
                     )
                     $('#list-data').DataTable().ajax.reload();
+                }, error: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Oops!',
+                        'Data gagal dihapus',
+                        'error'
+                    )
+                    $('#list-data').DataTable().ajax.reload();
+                },complete:function () {
+                    $('#list-data').DataTable().ajax.reload();
+                    $('#panelsatu').loading('stop');
                 }
             });
         }

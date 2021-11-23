@@ -38,7 +38,7 @@ $(function () {
             },
             {
                 render: function (data, type, row) {
-                    return '<a href="/laravelpos/backend/barang/' + row['id'] + '" class="btn btn-warning m-1"><i class="fa fa-eye"></i></a><a href="/backend/barang/' + row['id'] + '/edit" class="btn btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn btn-danger m-1" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
+                    return '<a href="/laravelpos/backend/barang/' + row['id'] + '" class="btn btn-warning m-1"><i class="fa fa-eye"></i></a><a href="/laravelpos/backend/barang/' + row['id'] + '/edit" class="btn btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn btn-danger m-1" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
                 },
                 "className": 'text-center',
                 "orderable": false,
@@ -98,8 +98,15 @@ function hapusdata(kode) {
                 success: function () {
                     swalWithBootstrapButtons.fire(
                         'Deleted!',
-                        'Your file has been deleted.',
+                        'Data berhasil dihapus',
                         'success'
+                    )
+                    $('#list-data').DataTable().ajax.reload();
+                },error: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Oops!',
+                        'Data gagal dihapus',
+                        'error'
                     )
                     $('#list-data').DataTable().ajax.reload();
                 }

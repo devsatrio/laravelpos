@@ -51,6 +51,7 @@ Route::prefix('backend')->group(function () {
     Route::post('/data-pembelian/hapus-detail-pembelian','backend\pembelianController@hapusdetailpembelian');
     Route::get('/data-pembelian/list-detail-pembelian/{kode}','backend\pembelianController@listdetailpembelian');
     Route::get('/data-pembelian/detail-pembelian/{id}','backend\pembelianController@detailpembelian');
+    Route::post('/pembelian/update-status/{id}','backend\pembelianController@updatestatuspembelian');
     Route::resource('/pembelian','backend\pembelianController');
 
 });

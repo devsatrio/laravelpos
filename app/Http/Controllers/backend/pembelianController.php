@@ -109,6 +109,16 @@ class pembelianController extends Controller
     }
 
     //=================================================================
+    public function updatestatuspembelian(Request $request,$id)
+    {
+        DB::table('pembelian')
+        ->where('id',$id)
+        ->update([
+            'status_pembelian'=>'Approve',
+        ]);
+    }
+
+    //=================================================================
     public function listdetailpembelian($kode)
     {
         $data = DB::table('pembelian_thumb_detail')
@@ -169,7 +179,7 @@ class pembelianController extends Controller
         if(intval(str_replace('.','',$request->kekurangan)) > 0){
             $status = "Belum Lunas";
         }else{
-            $status = "Lunas";
+            $status = "Telah Lunas";
         }
         
         $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)+str_replace('.','',$request->potongan);
@@ -187,6 +197,9 @@ class pembelianController extends Controller
             'tgl_buat'=>$request->tgl_order,
             'keterangan'=>$request->keterangan,
             'status'=>$status,
+            'status_pembelian'=>'Draft',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'created_by'=>Auth::user()->id,
         ]);
 
         DB::table('pembelian_thumb_detail')->where('pembuat',Auth::user()->id)->delete();
@@ -253,9 +266,51 @@ class pembelianController extends Controller
     }
 
     //=================================================================
-    public function update(Request $request, $id)
+    public function update(Request $request, $kode_pembelian)
     {
-        //
+        DB::table('pembelian_detail')->where('kode_pembelian',$kode_pembelian)->delete();
+
+        $detail = DB::table('pembelian_thumb_detail')
+        ->where('kode_pembelian',$request->kode)
+        ->get();
+        $data=[];
+        foreach ($detail as $row) {
+            $data[] = [
+                'kode_pembelian'=>$row->kode_pembelian,
+                'kode_barang'=>$row->kode_barang,
+                'jumlah'=>$row->jumlah,
+                'harga'=>$row->harga,
+                'total'=>$row->total,
+            ]; 
+        }
+
+        DB::table('pembelian_detail')->insert($data);
+        if(intval(str_replace('.','',$request->kekurangan)) > 0){
+            $status = "Belum Lunas";
+        }else{
+            $status = "Telah Lunas";
+        }
+        
+        $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)+str_replace('.','',$request->potongan);
+        DB::table('pembelian')
+        ->where('kode',$request->kode)
+        ->update([
+            'supplier'=>$request->supplier,
+            'subtotal'=>str_replace('.','',$request->subtotal),
+            'biaya_tambahan'=>str_replace('.','',$request->biaya_tambahan),
+            'potongan'=>str_replace('.','',$request->potongan),
+            'total'=>$total,
+            'terbayar'=>str_replace('.','',$request->dibayar),
+            'kekurangan'=>str_replace('.','',$request->kekurangan),
+            'pembuat'=>Auth::user()->id,
+            'tgl_buat'=>$request->tgl_order,
+            'keterangan'=>$request->keterangan,
+            'status'=>$status,
+            'updated_at'=>date('Y-m-d H:i:s'),
+            'updated_by'=>Auth::user()->id,
+        ]);
+
+        DB::table('pembelian_thumb_detail')->where('pembuat',Auth::user()->id)->delete();
     }
 
     //=================================================================
