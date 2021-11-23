@@ -58,7 +58,9 @@
                                             <div class="input-group-append">
                                                 <span class="input-group-text">Rp</span>
                                             </div>
-                                            <input type="text" class="form-control" name="harga_beli" required @if(auth()->user()->can('view-harga-beli-barang')) @else value="0" readonly @endif>
+                                            <input type="text" class="form-control" id="harga_beli" name="harga_beli" required
+                                                @if(auth()->user()->can('view-harga-beli-barang')) @else value="0"
+                                            readonly @endif>
                                         </div>
                                     </div>
                                 </div>
@@ -69,7 +71,7 @@
                                             <div class="input-group-append">
                                                 <span class="input-group-text">Rp</span>
                                             </div>
-                                            <input type="text" class="form-control" name="harga_jual" required>
+                                            <input type="text" class="form-control" id="harga_jual" name="harga_jual" required>
                                         </div>
                                     </div>
                                 </div>
@@ -80,7 +82,7 @@
                                             <div class="input-group-append">
                                                 <span class="input-group-text">Rp</span>
                                             </div>
-                                            <input type="text" class="form-control" name="harga_grosir" required>
+                                            <input type="text" class="form-control" id="harga_grosir" name="harga_grosir" required>
                                         </div>
                                     </div>
                                 </div>
@@ -88,7 +90,8 @@
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Diskon</label>
                                         <div class="input-group">
-                                            <input type="number" min="0" max="99" name="diskon" required class="form-control">
+                                            <input type="number" min="0" max="99" name="diskon" required
+                                                class="form-control">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -99,7 +102,8 @@
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Diskon Grosir (Khusus untuk customer)</label>
                                         <div class="input-group">
-                                            <input class="form-control" type="number" min="0" max="99" name="diskon_grosir" required>
+                                            <input class="form-control" type="number" min="0" max="99"
+                                                name="diskon_grosir" required>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -110,7 +114,8 @@
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Keterangan</label>
                                         <div class="input-group">
-                                            <textarea name="keterangan" id="keterangan" class="form-control" rows="3"></textarea>
+                                            <textarea name="keterangan" id="keterangan" class="form-control"
+                                                rows="3"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -132,5 +137,5 @@
 @endpush
 
 @push('customscripts')
-<!-- <script src="{{asset('customjs/backend/admin_input.js')}}"></script> -->
+<script src="{{asset('customjs/backend/barang_input.js')}}"></script>
 @endpush

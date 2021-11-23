@@ -65,13 +65,13 @@
                                             <div class="input-group-append">
                                                 <span class="input-group-text">Rp</span>
                                             </div>
-                                            <input type="text" class="form-control" value="{{$row->harga_beli}}"
-                                                name="harga_beli" required>
+                                            <input type="text" class="form-control" value="{{number_format($row->harga_beli,0,',','.')}}"
+                                                name="harga_beli" id="harga_beli" required>
                                         </div>
                                     </div>
                                 </div>
                                 @else
-                                <input type="hidden" class="form-control" value="{{$row->harga_beli}}" name="harga_beli"
+                                <input type="hidden" class="form-control" value="{{number_format($row->harga_beli,0,',','.')}}" name="harga_beli"
                                     required>
                                 @endif
                                 <div @if(auth()->user()->can('view-harga-beli-barang')) class="col-md-4" @else
@@ -82,8 +82,8 @@
                                             <div class="input-group-append">
                                                 <span class="input-group-text">Rp</span>
                                             </div>
-                                            <input type="text" class="form-control" value="{{$row->harga_jual}}"
-                                                name="harga_jual" required>
+                                            <input type="text" class="form-control" value="{{number_format($row->harga_jual,0,',','.')}}"
+                                                name="harga_jual" id="harga_jual" required>
                                         </div>
                                     </div>
                                 </div>
@@ -97,7 +97,7 @@
                                                 <span class="input-group-text">Rp</span>
                                             </div>
                                             <input type="text" class="form-control"
-                                                value="{{$row->harga_jual_customer}}" name="harga_grosir" required>
+                                                value="{{number_format($row->harga_jual_customer,0,',','.')}}" id="harga_grosir" name="harga_grosir" required>
                                         </div>
                                     </div>
                                 </div>
@@ -154,5 +154,5 @@
 @endpush
 
 @push('customscripts')
-<!-- <script src="{{asset('customjs/backend/admin_input.js')}}"></script> -->
+<script src="{{asset('customjs/backend/barang_input.js')}}"></script>
 @endpush

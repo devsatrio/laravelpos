@@ -39,6 +39,15 @@ Route::prefix('backend')->group(function () {
 
     //-------------------------------------------------------------------------------------------
     Route::get('/data-barang','backend\barangController@listdata');
+    Route::get('/data-barang/detail','backend\barangController@caridetailbarang');
+    Route::get('/data-barang/cari-detail/{kode}','backend\barangController@pilihdetailbarang');
     Route::resource('/barang','backend\barangController');
+
+    //-------------------------------------------------------------------------------------------
+    Route::get('/data-pembelian','backend\pembelianController@listdata');
+    Route::post('/data-pembelian/add-detail-pembelian','backend\pembelianController@adddetailpembelian');
+    Route::post('/data-pembelian/hapus-detail-pembelian','backend\pembelianController@hapusdetailpembelian');
+    Route::get('/data-pembelian/list-detail-pembelian/{kode}','backend\pembelianController@listdetailpembelian');
+    Route::resource('/pembelian','backend\pembelianController');
 
 });

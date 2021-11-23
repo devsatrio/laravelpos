@@ -81,9 +81,9 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    D-Boiler Laravel 7
+                    Laravel POS V.1
                 </div> 
-                <p>Free Boiler For Everyone</p>
+                <p></p>
                 <span>By Deifa Satrio</span>
             </div>  
         </div>

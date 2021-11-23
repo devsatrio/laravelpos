@@ -87,7 +87,7 @@
             class="nav-link dropdown-toggle">Transaksi</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
             <li><a href="#" class="dropdown-item">Transaksi Penjualan</a></li>
-            <li><a href="#" class="dropdown-item">Transaksi Pembelian</a></li>
+            <li><a href="{{url('backend/pembelian')}}" class="dropdown-item">Transaksi Pembelian</a></li>
             <li><a href="#" class="dropdown-item">Transaksi Hutang</a></li>
             <li><a href="#" class="dropdown-item">Transaksi Piutang</a></li>
         </ul>

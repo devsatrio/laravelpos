@@ -25,6 +25,31 @@ class barangController extends Controller
     }
 
     //=================================================================
+    public function caridetailbarang(Request $request)
+    {
+        if($request->has('q')){
+            $cari = $request->q;
+            
+            $data = DB::table('barang')
+            ->where('kode','like','%'.$cari.'%')
+            ->orwhere('nama','like','%'.$cari.'%')
+            ->get();
+            
+            return response()->json($data);
+        }
+    }
+
+    //=================================================================
+    public function pilihdetailbarang($kode)
+    {
+        $data = DB::table('barang')
+            ->where('kode',$kode)
+            ->get();
+            
+            return response()->json($data);
+    }
+
+    //=================================================================
     public function listdata(){
         return Datatables::of(
             DB::table('barang')
@@ -51,9 +76,9 @@ class barangController extends Controller
             'kode'=>$kode,
             'nama'=>$request->nama,
             'kategori'=>$request->kategori,
-            'harga_beli'=>$request->harga_beli,
-            'harga_jual'=>$request->harga_jual,
-            'harga_jual_customer'=>$request->harga_grosir,
+            'harga_beli'=>str_replace('.','',$request->harga_beli),
+            'harga_jual'=>str_replace('.','',$request->harga_jual),
+            'harga_jual_customer'=>str_replace('.','',$request->harga_grosir),
             'diskon'=>$request->diskon,
             'diskon_customer'=>$request->diskon_grosir,
             'stok'=>0,
@@ -102,9 +127,9 @@ class barangController extends Controller
         ->update([
             'nama'=>$request->nama,
             'kategori'=>$request->kategori,
-            'harga_beli'=>$request->harga_beli,
-            'harga_jual'=>$request->harga_jual,
-            'harga_jual_customer'=>$request->harga_grosir,
+            'harga_beli'=>str_replace('.','',$request->harga_beli),
+            'harga_jual'=>str_replace('.','',$request->harga_jual),
+            'harga_jual_customer'=>str_replace('.','',$request->harga_grosir),
             'diskon'=>$request->diskon,
             'diskon_customer'=>$request->diskon_grosir,
             'stok'=>0,
