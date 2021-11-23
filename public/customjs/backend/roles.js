@@ -4,7 +4,8 @@ $(function () {
         processing: true,
         serverSide: true,
         order: [[0, "desc"]],
-        ajax: '/backend/data-roles',
+        //ajax: '/backend/data-roles',
+        ajax: '/laravelpos/backend/data-roles',
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
@@ -22,7 +23,7 @@ $(function () {
             },
             {
                 render: function (data, type, row) {
-                    return '<a href="/backend/roles/' + row['id'] + '/edit" class="btn btn-success"><i class="fa fa-wrench"></i></a> <button class="btn btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
+                    return '<a href="/laravelpos/backend/roles/' + row['id'] + '/edit" class="btn btn-success"><i class="fa fa-wrench"></i></a> <button class="btn btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
                 },
                 "className": 'text-center',
                 "orderable": false,
@@ -60,7 +61,7 @@ function hapusdata(kode) {
             });
             $.ajax({
                 type: 'DELETE',
-                url: '/backend/roles/' + kode,
+                url: '/laravelpos/backend/roles/' + kode,
                 data: {
                     '_token': $('input[name=_token]').val(),
                 },

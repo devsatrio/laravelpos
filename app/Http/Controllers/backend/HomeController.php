@@ -21,7 +21,11 @@ class HomeController extends Controller
     //=================================================================
     public function index()
     {
-        return view('backend.dashboard.index');
+        $jumlahpelanggan = DB::table('master_customer')->count();
+        $jumlahsupplier = DB::table('master_customer')->count();
+        $jumlahbarang = DB::table('barang')->count();
+        $jumlahtransaksi = 10;
+        return view('backend.dashboard.index',compact('jumlahpelanggan','jumlahsupplier','jumlahbarang','jumlahtransaksi'));
     }
 
     //==================================================================

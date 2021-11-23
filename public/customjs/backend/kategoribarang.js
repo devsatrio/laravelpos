@@ -4,7 +4,8 @@ $(function () {
         processing: true,
         serverSide: true,
         order: [[0, "desc"]],
-        ajax: '/backend/data-kategori-barang',
+        //ajax: '/backend/data-kategori-barang',
+        ajax: '/laravelpos/backend/data-kategori-barang',
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
@@ -31,7 +32,7 @@ function editdata(kode) {
     $('#panel').loading('toggle');
     $.ajax({
         type: 'GET',
-        url: '/backend/kategori-barang/' + kode,
+        url: '/laravelpos/backend/kategori-barang/' + kode,
         success: function (data) {
             $.each(data, function (key, value) {
                 $('#nama').val(value.nama);
@@ -70,7 +71,7 @@ function hapusdata(kode) {
             });
             $.ajax({
                 type: 'DELETE',
-                url: '/backend/kategori-barang/' + kode,
+                url: '/laravelpos/backend/kategori-barang/' + kode,
                 data: {
                     '_token': $('input[name=_token]').val(),
                 },
