@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 20, 2021 at 01:59 AM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.3.13
+-- Generation Time: Nov 23, 2021 at 02:03 AM
+-- Server version: 10.4.16-MariaDB
+-- PHP Version: 7.4.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -49,7 +48,8 @@ CREATE TABLE `barang` (
 INSERT INTO `barang` (`id`, `kode`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
 (2, 'BRG-0002', 'test edit', 5, 10, 20, 30, 40, 50, 0, '-'),
 (3, 'BRG-0003', 'sdaf', 5, 1, 2, 3, 4, 5, 0, '-'),
-(4, 'BRG-0004', 'test', 5, 1000, 0, 3000, 2, 2, 0, 'sf');
+(4, 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 0, 'ket Barang B'),
+(5, 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 0, 'ket barang A');
 
 -- --------------------------------------------------------
 
@@ -219,6 +219,59 @@ CREATE TABLE `password_resets` (
   `token` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembelian`
+--
+
+CREATE TABLE `pembelian` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(250) DEFAULT NULL,
+  `supplier` varchar(250) DEFAULT NULL,
+  `subtotal` int(11) DEFAULT NULL,
+  `potongan` int(11) DEFAULT NULL,
+  `biaya_tambahan` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `terbayar` int(11) DEFAULT NULL,
+  `kekurangan` int(11) DEFAULT NULL,
+  `pembuat` int(11) DEFAULT NULL,
+  `tgl_buat` date DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `status` enum('Lunas','Belum Lunas') DEFAULT 'Lunas'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembelian_detail`
+--
+
+CREATE TABLE `pembelian_detail` (
+  `id` bigint(20) NOT NULL,
+  `kode_pembelian` varchar(250) DEFAULT NULL,
+  `kode_barang` varchar(250) DEFAULT NULL,
+  `jumlah` int(11) DEFAULT NULL,
+  `harga` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pembelian_thumb_detail`
+--
+
+CREATE TABLE `pembelian_thumb_detail` (
+  `id` bigint(20) NOT NULL,
+  `kode_pembelian` varchar(250) DEFAULT NULL,
+  `kode_barang` varchar(250) DEFAULT NULL,
+  `jumlah` int(11) DEFAULT NULL,
+  `harga` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `pembuat` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -448,6 +501,24 @@ ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`);
 
 --
+-- Indexes for table `pembelian`
+--
+ALTER TABLE `pembelian`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pembelian_detail`
+--
+ALTER TABLE `pembelian_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pembelian_thumb_detail`
+--
+ALTER TABLE `pembelian_thumb_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `permissions`
 --
 ALTER TABLE `permissions`
@@ -489,7 +560,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -526,6 +597,24 @@ ALTER TABLE `master_supplier`
 --
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `pembelian`
+--
+ALTER TABLE `pembelian`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `pembelian_detail`
+--
+ALTER TABLE `pembelian_detail`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `pembelian_thumb_detail`
+--
+ALTER TABLE `pembelian_thumb_detail`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `permissions`
