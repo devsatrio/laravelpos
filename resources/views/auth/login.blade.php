@@ -16,14 +16,20 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a href="#"><b>Login</b>Page</a>
+            <a href="/"><b>Login</b>Page</a>
         </div>
         <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
                 <form action="{{ route('login') }}" method="post">
-                @csrf
+                    @csrf
+                    @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ session('error') }}
+                    </div>
+                    @endif
                     <div class="input-group mb-3">
                         <input id="username" type="text" class="form-control @error('username') is-invalid @enderror"
                             name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
@@ -33,11 +39,6 @@
                             </div>
                         </div>
                     </div>
-                    @error('username')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
                     <div class="input-group mb-3">
                         <input id="password" type="password"
                             class="form-control @error('password') is-invalid @enderror" name="password" required
@@ -50,16 +51,11 @@
                             </div>
                         </div>
                     </div>
-                    @error('password')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember"
-                                        {{ old('remember') ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember"
+                                    {{ old('remember') ? 'checked' : '' }}>
                                 <label for="remember">
                                     Remember Me
                                 </label>

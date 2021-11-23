@@ -59,6 +59,48 @@ class pembelianController extends Controller
     }
 
     //=================================================================
+    public function adddetailpembelianqr(Request $request)
+    {
+        $harga_barang=0;
+        $caribarang = DB::table('barang')->where('kode',$request->kode_barang)->get();
+        if(count($caribarang)>0){
+            foreach ($caribarang as $row_caribarang) {
+                $harga_barang = $row_caribarang->harga_beli;
+            }
+
+            $caribarangdetail = DB::table('pembelian_thumb_detail')
+            ->where([['kode_pembelian',$request->kode],['kode_barang',$request->kode_barang]])
+            ->get();
+            
+            if(count($caribarangdetail)>0){
+                foreach ($caribarangdetail as $row) {
+                    $jumlah = $row->jumlah + 1;
+                    $total = $row->total + $harga_barang;
+
+                    DB::table('pembelian_thumb_detail')
+                    ->where([['kode_pembelian',$request->kode],['kode_barang',$request->kode_barang]])
+                    ->update([
+                        'jumlah'=>$jumlah,
+                        'total'=>$total,
+                    ]);
+                }
+            }else{
+                DB::table('pembelian_thumb_detail')
+                ->insert([
+                    'kode_pembelian'=>$request->kode,
+                    'kode_barang'=>$request->kode_barang,
+                    'jumlah'=>1,
+                    'harga'=>$harga_barang,
+                    'total'=>$harga_barang,
+                    'pembuat'=>Auth::user()->id,
+                ]);
+            }
+        }else{
+
+        }
+    }
+
+    //=================================================================
     public function hapusdetailpembelian(Request $request)
     {
         $data = DB::table('pembelian_thumb_detail')
@@ -124,6 +166,11 @@ class pembelianController extends Controller
         }
 
         DB::table('pembelian_detail')->insert($data);
+        if(intval(str_replace('.','',$request->kekurangan)) > 0){
+            $status = "Belum Lunas";
+        }else{
+            $status = "Lunas";
+        }
         
         $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)+str_replace('.','',$request->potongan);
         DB::table('pembelian')
@@ -139,6 +186,7 @@ class pembelianController extends Controller
             'pembuat'=>Auth::user()->id,
             'tgl_buat'=>$request->tgl_order,
             'keterangan'=>$request->keterangan,
+            'status'=>$status,
         ]);
 
         DB::table('pembelian_thumb_detail')->where('pembuat',Auth::user()->id)->delete();
@@ -151,9 +199,57 @@ class pembelianController extends Controller
     }
 
     //=================================================================
-    public function edit($id)
+    public function edit($kode_pembelian)
     {
-        //
+        DB::table('pembelian_thumb_detail')->where([['kode_pembelian',$kode_pembelian],['pembuat',Auth::user()->id]])->delete();
+
+        $data_pembelian = DB::table('pembelian')->where('kode',$kode_pembelian)->get();
+        $data_detail_pembelian = DB::table('pembelian_detail')->where('kode_pembelian',$kode_pembelian)->get();
+        $data=[];
+        foreach ($data_detail_pembelian as $row_data_detail_pembelian) {
+            $data[] = [
+                'kode_pembelian'=>$row_data_detail_pembelian->kode_pembelian,
+                'kode_barang'=>$row_data_detail_pembelian->kode_barang,
+                'jumlah'=>$row_data_detail_pembelian->jumlah,
+                'harga'=>$row_data_detail_pembelian->harga,
+                'total'=>$row_data_detail_pembelian->total,
+                'pembuat'=>Auth::user()->id
+            ]; 
+        }
+
+        DB::table('pembelian_thumb_detail')->insert($data);
+
+        
+        $kode = $kode_pembelian;
+        $supplier = DB::table('master_supplier')->orderby('id','desc')->get();
+        return view('backend.pembelian.edit',compact('kode','supplier','data_pembelian'));
+
+    }
+
+    //=================================================================
+    public function detailpembelian($id)
+    {
+        $data = DB::table('pembelian_thumb_detail')
+        ->select(DB::raw('pembelian_thumb_detail.*,barang.nama as namabarang'))
+        ->leftjoin('barang','barang.kode','=','pembelian_thumb_detail.kode_barang')
+        ->where('pembelian_thumb_detail.id',$id)
+        ->get();
+        return response()->json($data);
+    }
+
+    //=================================================================
+    public function editdetailpembelian(Request $request)
+    {
+        $harga_barang = str_replace('.','',$request->edit_harga_barang);
+        $jumlah = str_replace('.','',$request->edit_jumlah_barang);
+        $total = $harga_barang*$jumlah;
+        DB::table('pembelian_thumb_detail')
+        ->where('id',$request->edit_id)
+        ->update([
+            'jumlah'=>$request->edit_jumlah_barang,
+            'harga'=>$harga_barang,
+            'total'=>$total,
+        ]);
     }
 
     //=================================================================

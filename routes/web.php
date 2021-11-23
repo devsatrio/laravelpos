@@ -46,8 +46,11 @@ Route::prefix('backend')->group(function () {
     //-------------------------------------------------------------------------------------------
     Route::get('/data-pembelian','backend\pembelianController@listdata');
     Route::post('/data-pembelian/add-detail-pembelian','backend\pembelianController@adddetailpembelian');
+    Route::post('/data-pembelian/add-detail-pembelian-qr','backend\pembelianController@adddetailpembelianqr');
+    Route::post('/data-pembelian/edit-detail-pembelian','backend\pembelianController@editdetailpembelian');
     Route::post('/data-pembelian/hapus-detail-pembelian','backend\pembelianController@hapusdetailpembelian');
     Route::get('/data-pembelian/list-detail-pembelian/{kode}','backend\pembelianController@listdetailpembelian');
+    Route::get('/data-pembelian/detail-pembelian/{id}','backend\pembelianController@detailpembelian');
     Route::resource('/pembelian','backend\pembelianController');
 
 });

@@ -77,6 +77,7 @@
     </div>
     <script src="{{asset('assets/plugins/jquery/jquery.min.js')}}"></script>
     <script src="{{asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{asset('assets/plugins/moment/moment.min.js')}}"></script>
     @stack('customjs')
     <script src="{{asset('assets/dist/js/adminlte.min.js')}}"></script>
     @stack('customscripts')
