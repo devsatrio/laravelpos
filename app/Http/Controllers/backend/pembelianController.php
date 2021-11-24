@@ -13,6 +13,11 @@ class pembelianController extends Controller
     function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:view-pembelian', ['only' => ['index','show','listdata']]);
+        $this->middleware('permission:create-pembelian', ['only' => ['create']]);
+        $this->middleware('permission:edit-pembelian', ['only' => ['edit']]);
+        $this->middleware('permission:delete-pembelian', ['only' => ['destroy']]);
+        $this->middleware('permission:approve-pembelian', ['only' => ['updatestatuspembelian']]);
     }
 
     //=================================================================

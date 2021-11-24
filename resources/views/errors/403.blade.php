@@ -23,6 +23,7 @@
                 <p>
                     You may <a href="{{url('backend/home')}}">return to dashboard</a>
                 </p>
+                <button type="button" onclick="history.go(-1)" class="btn btn-danger">Go Back</button>
             </div>
         </div>
 

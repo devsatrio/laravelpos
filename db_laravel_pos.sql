@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2021 at 08:04 AM
--- Server version: 10.4.16-MariaDB
--- PHP Version: 7.4.12
+-- Generation Time: Nov 24, 2021 at 03:10 PM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.3.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -48,8 +49,8 @@ CREATE TABLE `barang` (
 INSERT INTO `barang` (`id`, `kode`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
 (2, 'BRG-0002', 'test edit', 5, 10, 20, 30, 40, 50, 0, '-'),
 (3, 'BRG-0003', 'Barang C', 5, 1, 20000, 30000, 40, 0, 0, '-'),
-(4, 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 0, 'ket Barang B'),
-(5, 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 0, 'ket barang A');
+(4, 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 19, 'ket Barang B'),
+(5, 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 10, 'ket barang A');
 
 -- --------------------------------------------------------
 
@@ -127,7 +128,8 @@ CREATE TABLE `master_customer` (
 INSERT INTO `master_customer` (`id`, `kode`, `nama`, `telp`, `alamat`, `keterangan`) VALUES
 (3, 'CUS-001', 'dono', '02348902', 'gurah', 'test'),
 (4, 'CUS-002', 'dani', '567474', '-', '-'),
-(5, 'CUS-003', 'Joko', '293048290', '-', '-');
+(5, 'CUS-003', 'Joko', '293048290', '-', '-'),
+(7, 'CUS-004', 'deva', '23948', 'asdklfj', 'skldfj');
 
 -- --------------------------------------------------------
 
@@ -254,10 +256,10 @@ CREATE TABLE `pembelian` (
 INSERT INTO `pembelian` (`id`, `kode`, `supplier`, `subtotal`, `potongan`, `biaya_tambahan`, `total`, `terbayar`, `kekurangan`, `pembuat`, `tgl_buat`, `keterangan`, `status`, `status_pembelian`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
 (6, 'PMB-112021-0003', 'SUP-002', 2000000, 0, 200000, 2200000, 2200000, 0, 1, '2021-11-23', 'Tambahan biaya ongkir', 'Telah Lunas', 'Approve', NULL, '2021-11-24 03:39:39', NULL, 1),
 (7, 'PMB-112021-0004', 'SUP-003', 40075000, 200000, 500000, 40375000, 40375000, 0, 1, '2021-11-23', 'Lunas', 'Telah Lunas', 'Approve', NULL, '2021-11-24 03:59:51', NULL, 1),
-(11, 'PMB-112021-0006', 'SUP-003', 6045000, 0, 15000, 6060000, 3000000, 3060000, 1, '2021-11-24', 'belum lunas', 'Belum Lunas', 'Draft', '2021-11-23 22:25:30', '2021-11-24 05:58:58', 1, 1),
-(12, 'PMB-112021-0007', 'SUP-003', 10000000, 0, 0, 10000000, 2000000, 8000000, 1, '2021-11-24', NULL, 'Belum Lunas', 'Draft', '2021-11-24 03:23:56', NULL, 1, NULL),
-(13, 'PMB-112021-0008', 'SUP-003', 4150000, 100000, 50000, 4100000, 4100000, 0, 1, '2021-11-24', 'sfds', 'Telah Lunas', 'Draft', '2021-11-24 05:23:01', '2021-11-24 05:53:55', 1, 1),
-(14, 'PMB-112021-0009', 'SUP-003', 90000, 50000, 200000, 240000, 240000, 0, 1, '2021-11-24', 'Lunas', 'Telah Lunas', 'Draft', '2021-11-24 05:26:38', '2021-11-24 05:35:37', 1, 1);
+(11, 'PMB-112021-0006', 'SUP-003', 6045000, 0, 15000, 6060000, 3000000, 3060000, 1, '2021-11-24', 'belum lunas', 'Belum Lunas', 'Approve', '2021-11-23 22:25:30', '2021-11-24 05:58:58', 1, 1),
+(12, 'PMB-112021-0007', 'SUP-003', 10000000, 0, 0, 10000000, 2000000, 8000000, 1, '2021-11-24', NULL, 'Belum Lunas', 'Approve', '2021-11-24 03:23:56', NULL, 1, NULL),
+(13, 'PMB-112021-0008', 'SUP-003', 4150000, 100000, 50000, 4100000, 4100000, 0, 1, '2021-11-24', 'sfds', 'Telah Lunas', 'Approve', '2021-11-24 05:23:01', '2021-11-24 05:53:55', 1, 1),
+(14, 'PMB-112021-0009', 'SUP-003', 90000, 50000, 200000, 240000, 240000, 0, 1, '2021-11-24', 'Lunas', 'Telah Lunas', 'Approve', '2021-11-24 05:26:38', '2021-11-24 05:35:37', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -317,6 +319,64 @@ INSERT INTO `pembelian_thumb_detail` (`id`, `kode_pembelian`, `kode_barang`, `ju
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `penjualan`
+--
+
+CREATE TABLE `penjualan` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(250) DEFAULT NULL,
+  `customer` varchar(250) DEFAULT NULL,
+  `subtotal` int(11) DEFAULT NULL,
+  `potongan` int(11) DEFAULT NULL,
+  `biaya_tambahan` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `terbayar` int(11) DEFAULT NULL,
+  `kekurangan` int(11) DEFAULT NULL,
+  `pembuat` int(11) DEFAULT NULL,
+  `tgl_buat` date DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `status` varchar(200) DEFAULT 'Lunas',
+  `status_penjualan` varchar(200) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penjualan_detail`
+--
+
+CREATE TABLE `penjualan_detail` (
+  `id` bigint(20) NOT NULL,
+  `kode_penjualan` varchar(250) DEFAULT NULL,
+  `kode_barang` varchar(250) DEFAULT NULL,
+  `jumlah` int(11) DEFAULT NULL,
+  `harga` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penjualan_thumb_detail`
+--
+
+CREATE TABLE `penjualan_thumb_detail` (
+  `id` bigint(20) NOT NULL,
+  `kode_penjualan` varchar(250) DEFAULT NULL,
+  `kode_barang` varchar(250) DEFAULT NULL,
+  `jumlah` int(11) DEFAULT NULL,
+  `harga` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `pembuat` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `permissions`
 --
 
@@ -358,7 +418,12 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (23, 'create-barang', 'web', NULL, NULL),
 (24, 'edit-barang', 'web', NULL, NULL),
 (25, 'delete-barang', 'web', NULL, NULL),
-(26, 'view-harga-beli-barang', 'web', NULL, NULL);
+(26, 'view-harga-beli-barang', 'web', NULL, NULL),
+(27, 'view-pembelian', 'web', NULL, NULL),
+(28, 'create-pembelian', 'web', NULL, NULL),
+(29, 'edit-pembelian', 'web', NULL, NULL),
+(30, 'delete-pembelian', 'web', NULL, NULL),
+(31, 'approve-pembelian', 'web', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -426,7 +491,12 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (24, 1),
 (24, 2),
 (25, 2),
-(26, 2);
+(26, 2),
+(27, 2),
+(28, 2),
+(29, 2),
+(30, 2),
+(31, 2);
 
 -- --------------------------------------------------------
 
@@ -563,6 +633,24 @@ ALTER TABLE `pembelian_thumb_detail`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `penjualan`
+--
+ALTER TABLE `penjualan`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `penjualan_detail`
+--
+ALTER TABLE `penjualan_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `penjualan_thumb_detail`
+--
+ALTER TABLE `penjualan_thumb_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `permissions`
 --
 ALTER TABLE `permissions`
@@ -628,7 +716,7 @@ ALTER TABLE `log_stok_barang`
 -- AUTO_INCREMENT for table `master_customer`
 --
 ALTER TABLE `master_customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `master_supplier`
@@ -661,10 +749,28 @@ ALTER TABLE `pembelian_thumb_detail`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
+-- AUTO_INCREMENT for table `penjualan`
+--
+ALTER TABLE `penjualan`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `penjualan_detail`
+--
+ALTER TABLE `penjualan_detail`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
+-- AUTO_INCREMENT for table `penjualan_thumb_detail`
+--
+ALTER TABLE `penjualan_thumb_detail`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
+
+--
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `roles`

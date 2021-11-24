@@ -86,10 +86,14 @@
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Transaksi</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
-            <li><a href="#" class="dropdown-item">Transaksi Penjualan</a></li>
+            <li><a href="{{url('backend/penjualan')}}" class="dropdown-item">Transaksi Penjualan</a></li>
+            @if(auth()->user()->can('view-pembelian')
+            || auth()->user()->can('create-pembelian')
+            || auth()->user()->can('edit-pembelian')
+            || auth()->user()->can('delete-pembelian')
+            || auth()->user()->can('approve-pembelian'))
             <li><a href="{{url('backend/pembelian')}}" class="dropdown-item">Transaksi Pembelian</a></li>
-            <li><a href="#" class="dropdown-item">Transaksi Hutang</a></li>
-            <li><a href="#" class="dropdown-item">Transaksi Piutang</a></li>
+            @endif
         </ul>
     </li>
     <li class="nav-item dropdown">

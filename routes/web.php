@@ -27,6 +27,7 @@ Route::prefix('backend')->group(function () {
 
     //-------------------------------------------------------------------------------------------
     Route::get('/data-customer','backend\customerController@listdata');
+    Route::get('/data-customer/detail','backend\customerController@caridetailcustomer');
     Route::resource('/customer','backend\customerController');
 
     //-------------------------------------------------------------------------------------------
@@ -53,5 +54,8 @@ Route::prefix('backend')->group(function () {
     Route::get('/data-pembelian/detail-pembelian/{id}','backend\pembelianController@detailpembelian');
     Route::post('/pembelian/update-status/{id}','backend\pembelianController@updatestatuspembelian');
     Route::resource('/pembelian','backend\pembelianController');
+
+     //-------------------------------------------------------------------------------------------
+     Route::resource('/penjualan','backend\penjualanController');
 
 });

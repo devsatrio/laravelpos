@@ -65,6 +65,21 @@ class customerController extends Controller
     }
 
     //=================================================================
+    public function caridetailcustomer(Request $request)
+    {
+        if($request->has('q')){
+            $cari = $request->q;
+            
+            $data = DB::table('master_customer')
+            ->where('kode','like','%'.$cari.'%')
+            ->orwhere('nama','like','%'.$cari.'%')
+            ->get();
+            
+            return response()->json($data);
+        }
+    }
+
+    //=================================================================
     public function show($id)
     {
         
