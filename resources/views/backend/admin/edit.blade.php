@@ -82,7 +82,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         @if($data->gambar!="")
-                                        <img src="{{asset('img/admin/'.$data->gambar)}}" alt="">
+                                        <img src="{{asset('img/admin/'.$data->gambar)}}" alt="" class="img-thumbnail" width="200px;">
                                         <br>
                                         @endif
                                         <label for="exampleInputFile">Gambar Baru*</label>
@@ -123,5 +123,5 @@
 @endpush
 
 @push('customscripts')
-<!-- <script src="{{asset('customjs/backend/admin_input.js')}}"></script> -->
+<script src="{{asset('customjs/backend/admin_input.js')}}"></script>
 @endpush

@@ -116,6 +116,26 @@ class pembelianController extends Controller
         ->update([
             'status_pembelian'=>'Approve',
         ]);
+
+        $kode_pembelian ="";
+        $caridatapembelian = DB::table('pembelian')->where('id',$id)->get();
+        foreach($caridatapembelian as $row){
+            $kode_pembelian=$row->kode;
+        }
+
+        $data_detail_pembelian = DB::table('pembelian_detail')->where('kode_pembelian',$kode_pembelian)->get();
+        $data=[];
+        foreach ($data_detail_pembelian as $row_data_detail_pembelian) {
+            $caribarang = DB::table('barang')->where('kode',$row_data_detail_pembelian->kode_barang)->get();
+            foreach($caribarang as $row_caribarang){
+                $stok = $row_caribarang->stok+$row_data_detail_pembelian->jumlah;
+                DB::table('barang')
+                ->where('kode',$row_data_detail_pembelian->kode_barang)
+                ->update([
+                    'stok'=>$stok
+                ]);
+            }
+        }
     }
 
     //=================================================================
@@ -182,7 +202,7 @@ class pembelianController extends Controller
             $status = "Telah Lunas";
         }
         
-        $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)+str_replace('.','',$request->potongan);
+        $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)-str_replace('.','',$request->potongan);
         DB::table('pembelian')
         ->insert([
             'kode'=>$request->kode,
@@ -206,14 +226,26 @@ class pembelianController extends Controller
     }
 
     //=================================================================
-    public function show($id)
+    public function show($kode_pembelian)
     {
-        //
+        $data_pembelian = DB::table('pembelian')
+        ->select(DB::raw('pembelian.*,master_supplier.nama as namasupplier'))
+        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+        ->where('pembelian.kode',$kode_pembelian)
+        ->get();
+
+        $data_detail_pembelian = DB::table('pembelian_detail')
+        ->select(DB::raw('pembelian_detail.*,barang.nama as namabarang'))
+        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+        ->where('pembelian_detail.kode_pembelian',$kode_pembelian)
+        ->get();
+        return view('backend.pembelian.show',compact('data_detail_pembelian','data_pembelian'));
     }
 
     //=================================================================
     public function edit($kode_pembelian)
     {
+        $status="";
         DB::table('pembelian_thumb_detail')->where([['kode_pembelian',$kode_pembelian],['pembuat',Auth::user()->id]])->delete();
 
         $data_pembelian = DB::table('pembelian')->where('kode',$kode_pembelian)->get();
@@ -231,11 +263,18 @@ class pembelianController extends Controller
         }
 
         DB::table('pembelian_thumb_detail')->insert($data);
+        $supplier = DB::table('master_supplier')->orderby('id','desc')->get();
 
         
         $kode = $kode_pembelian;
-        $supplier = DB::table('master_supplier')->orderby('id','desc')->get();
-        return view('backend.pembelian.edit',compact('kode','supplier','data_pembelian'));
+        foreach ($data_pembelian as $row_data_pembelian) {
+            $status=$row_data_pembelian->status_pembelian;
+        }
+        if($status=='Approve'){
+            return view('backend.pembelian.edit_appr',compact('kode','supplier','data_pembelian'));
+        }else{
+            return view('backend.pembelian.edit',compact('kode','supplier','data_pembelian'));
+        }
 
     }
 
@@ -291,7 +330,7 @@ class pembelianController extends Controller
             $status = "Telah Lunas";
         }
         
-        $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)+str_replace('.','',$request->potongan);
+        $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)-str_replace('.','',$request->potongan);
         DB::table('pembelian')
         ->where('kode',$request->kode)
         ->update([

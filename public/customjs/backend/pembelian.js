@@ -57,10 +57,17 @@ $(function () {
             },
             {
                 render: function (data, type, row) {
-                    return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
-                        '<button class="btn btn-sm m-1 btn-info" onclick="updatestatus(' + row['id'] + ')"><i class="fa fa-check"></i></button>' +
-                        '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
-                        '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
+                    if (row['status_pembelian'] == 'Draft') {
+                        return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
+                            '<button class="btn btn-sm m-1 btn-info" onclick="updatestatus(' + row['id'] + ')"><i class="fa fa-check"></i></button>' +
+                            '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
+                            '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
+                    }else{
+                        return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
+                            '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
+                            '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
+                        
+                    }
                 },
                 "className": 'text-center',
                 "orderable": false,

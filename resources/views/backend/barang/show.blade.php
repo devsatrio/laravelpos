@@ -17,15 +17,15 @@
 <div class="content">
     <div class="container">
         <div class="row">
+            @foreach($data as $row)
             <div class="col-md-8">
                 <div class="card card-info">
                     <div class="card-header">
                         <h3 class="card-title">Detail Data</h3>
                     </div>
-                    @foreach($data as $row)
                     <div class="card-body">
                         <div class="row">
-                        <div class="col-md-6">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Kode</label>
                                     <p>{{$row->kode}}</p>
@@ -89,17 +89,40 @@
                     <div class="card-footer">
                         <button type="reset" onclick="history.go(-1)" class="btn btn-danger">Kembali</button>
                     </div>
-                    @endforeach
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card card-info">
                     <div class="card-header">
-                        <h3 class="card-title">History Stok Barang</h3>
+                        <h3 class="card-title">BarCode Barang</h3>
                     </div>
-                    <div class="card-body"></div>
+                    <div class="card-body text-center">
+                        @php
+                        $redColor = [255, 0, 0];
+                        $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+                        echo '<img class="img-thumbnail"
+                            src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode, $generator::TYPE_CODE_128,3,45)) . '">';
+                        @endphp
+                        <p>{{$row->kode}}</p>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" onclick="cetakbarcode()" class="btn btn-info">Cetak</button>
+                    </div>
                 </div>
             </div>
+            <div id="print_div" style="display:none;">
+                <div style="border-style: solid;padding-top:15px;padding-right:8px;padding-left:8px;width:300px;" align="center">
+                    @php
+                    $redColor = [255, 0, 0];
+                    $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+                    echo '<img
+                        src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode, $generator::TYPE_CODE_128)) . '">';
+                    @endphp
+                    <br>
+                    <span>{{$row->kode}}</span>
+                </div>
+            </div>
+            @endforeach
         </div>
     </div>
 </div>
@@ -109,5 +132,14 @@
 @endpush
 
 @push('customscripts')
-<!-- <script src="{{asset('customjs/backend/admin_input.js')}}"></script> -->
+<script>
+function cetakbarcode() {
+    var divToPrint = document.getElementById('print_div');
+    var newWin = window.open('', 'Print-Window');
+    newWin.document.open();
+    newWin.document.write('<html><body onload="window.print();window.close()">' + divToPrint.innerHTML +
+        '</body></html>');
+    newWin.document.close();
+}
+</script>
 @endpush

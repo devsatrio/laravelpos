@@ -94,10 +94,10 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="reset" onclick="history.go(-1)"
-                                        class="btn btn-danger">Kembali</button>
                                     <button type="button" id="tambahbtn"
-                                        class="btn btn-primary float-right">Tambah</button>
+                                        class="btn btn-primary">Tambah</button>
+                                    <button type="reset" onclick="history.go(-1)"
+                                        class="btn btn-danger float-right">Kembali</button>
                                 </div>
                             </form>
                         </div>
@@ -181,18 +181,6 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1">Dibayar</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">Rp</span>
-                                                </div>
-                                                <input type="text" class="form-control text-right" name="dibayar"
-                                                    id="dibayar" value="{{number_format($row_data_pembelian->terbayar,0,',','.')}}" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
                                             <label for="exampleInputEmail1">Potongan</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -200,6 +188,30 @@
                                                 </div>
                                                 <input type="text" class="form-control text-right" name="potongan"
                                                     id="potongan" value="{{number_format($row_data_pembelian->potongan,0,',','.')}}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Total</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Rp</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" name="total"
+                                                    id="total" value="{{number_format($row_data_pembelian->total,0,',','.')}}" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Dibayar</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Rp</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" name="dibayar"
+                                                    id="dibayar" value="{{number_format($row_data_pembelian->terbayar,0,',','.')}}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -215,11 +227,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Keterangan</label>
                                             <textarea name="keterangan" id="keterangan" class="form-control"
-                                                rows="2"></textarea>
+                                                rows="2">{{$row_data_pembelian->keterangan}}</textarea>
                                         </div>
                                     </div>
                                 </div>

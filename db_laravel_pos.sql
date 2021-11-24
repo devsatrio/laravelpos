@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2021 at 12:10 AM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.3.13
+-- Generation Time: Nov 24, 2021 at 08:04 AM
+-- Server version: 10.4.16-MariaDB
+-- PHP Version: 7.4.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -253,9 +252,12 @@ CREATE TABLE `pembelian` (
 --
 
 INSERT INTO `pembelian` (`id`, `kode`, `supplier`, `subtotal`, `potongan`, `biaya_tambahan`, `total`, `terbayar`, `kekurangan`, `pembuat`, `tgl_buat`, `keterangan`, `status`, `status_pembelian`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(6, 'PMB-112021-0003', 'SUP-003', 2000000, 0, 0, 2000000, 500000, 1500000, 1, '2021-11-23', NULL, 'Belum Lunas', 'Approve', NULL, NULL, NULL, NULL),
-(7, 'PMB-112021-0004', 'SUP-003', 40075000, 200000, 500000, 40775000, 40375000, 0, 1, '2021-11-23', 'Lunas', 'Telah Lunas', 'Draft', NULL, '2021-11-23 23:06:39', NULL, 1),
-(11, 'PMB-112021-0006', 'SUP-003', 6045000, 0, 0, 6045000, 3000000, 3045000, 1, '2021-11-24', NULL, 'Belum Lunas', 'Draft', '2021-11-23 22:25:30', NULL, 1, NULL);
+(6, 'PMB-112021-0003', 'SUP-002', 2000000, 0, 200000, 2200000, 2200000, 0, 1, '2021-11-23', 'Tambahan biaya ongkir', 'Telah Lunas', 'Approve', NULL, '2021-11-24 03:39:39', NULL, 1),
+(7, 'PMB-112021-0004', 'SUP-003', 40075000, 200000, 500000, 40375000, 40375000, 0, 1, '2021-11-23', 'Lunas', 'Telah Lunas', 'Approve', NULL, '2021-11-24 03:59:51', NULL, 1),
+(11, 'PMB-112021-0006', 'SUP-003', 6045000, 0, 15000, 6060000, 3000000, 3060000, 1, '2021-11-24', 'belum lunas', 'Belum Lunas', 'Draft', '2021-11-23 22:25:30', '2021-11-24 05:58:58', 1, 1),
+(12, 'PMB-112021-0007', 'SUP-003', 10000000, 0, 0, 10000000, 2000000, 8000000, 1, '2021-11-24', NULL, 'Belum Lunas', 'Draft', '2021-11-24 03:23:56', NULL, 1, NULL),
+(13, 'PMB-112021-0008', 'SUP-003', 4150000, 100000, 50000, 4100000, 4100000, 0, 1, '2021-11-24', 'sfds', 'Telah Lunas', 'Draft', '2021-11-24 05:23:01', '2021-11-24 05:53:55', 1, 1),
+(14, 'PMB-112021-0009', 'SUP-003', 90000, 50000, 200000, 240000, 240000, 0, 1, '2021-11-24', 'Lunas', 'Telah Lunas', 'Draft', '2021-11-24 05:26:38', '2021-11-24 05:35:37', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -277,11 +279,15 @@ CREATE TABLE `pembelian_detail` (
 --
 
 INSERT INTO `pembelian_detail` (`id`, `kode_pembelian`, `kode_barang`, `jumlah`, `harga`, `total`) VALUES
-(8, 'PMB-112021-0003', 'BRG-0005', 1, 2000000, 2000000),
-(18, 'PMB-112021-0006', 'BRG-0004', 3, 15000, 45000),
-(19, 'PMB-112021-0006', 'BRG-0005', 3, 2000000, 6000000),
-(20, 'PMB-112021-0004', 'BRG-0004', 5, 15000, 75000),
-(21, 'PMB-112021-0004', 'BRG-0005', 20, 2000000, 40000000);
+(22, 'PMB-112021-0007', 'BRG-0005', 5, 2000000, 10000000),
+(24, 'PMB-112021-0003', 'BRG-0005', 1, 2000000, 2000000),
+(25, 'PMB-112021-0004', 'BRG-0004', 5, 15000, 75000),
+(26, 'PMB-112021-0004', 'BRG-0005', 20, 2000000, 40000000),
+(31, 'PMB-112021-0009', 'BRG-0004', 6, 15000, 90000),
+(32, 'PMB-112021-0008', 'BRG-0005', 2, 2000000, 4000000),
+(33, 'PMB-112021-0008', 'BRG-0004', 10, 15000, 150000),
+(34, 'PMB-112021-0006', 'BRG-0004', 3, 15000, 45000),
+(35, 'PMB-112021-0006', 'BRG-0005', 3, 2000000, 6000000);
 
 -- --------------------------------------------------------
 
@@ -298,6 +304,15 @@ CREATE TABLE `pembelian_thumb_detail` (
   `total` int(11) DEFAULT NULL,
   `pembuat` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `pembelian_thumb_detail`
+--
+
+INSERT INTO `pembelian_thumb_detail` (`id`, `kode_pembelian`, `kode_barang`, `jumlah`, `harga`, `total`, `pembuat`) VALUES
+(144, 'PMB-112021-0003', 'BRG-0005', 1, 2000000, 2000000, 1),
+(149, 'PMB-112021-0004', 'BRG-0004', 5, 15000, 75000, 1),
+(150, 'PMB-112021-0004', 'BRG-0005', 20, 2000000, 40000000, 1);
 
 -- --------------------------------------------------------
 
@@ -460,8 +475,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `name`, `email`, `telp`, `level`, `gambar`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', NULL, 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'cppmUqduqYvxrt1RvxYZNsUEDHMMnPa83QJ2segeR5ZxL88ZPNSdE4wM7e8m', '2021-11-17 18:12:54', '2021-11-17 18:12:54'),
-(2, 'admin', 'admin', 'admin@gmail.com', '234902', 'admin', '1637324169-user.png', NULL, '$2y$10$PF1uei/mGbbYXqFLjzL/Tu.R2cEvX8wubESr/rT43Ol01KVMbaAzm', 'J4DyK5hisB9oro56CqUgP5rSRjtHKj5FO7JEoE20JCcZsRDLIgNCyDR1kEzl', '2021-11-19 05:16:10', '2021-11-19 05:16:10');
+(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', '081209380909', 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'cppmUqduqYvxrt1RvxYZNsUEDHMMnPa83QJ2segeR5ZxL88ZPNSdE4wM7e8m', '2021-11-17 18:12:54', '2021-11-23 23:20:45'),
+(2, 'admin', 'admin', 'admin@gmail.com', '234902', 'admin', '1637324169-user.png', NULL, '$2y$10$9EKR5n/fmKonHExiQzW49..H29KrhaP/ZVgFwKOregDa/Bxjn1/zq', 'J4DyK5hisB9oro56CqUgP5rSRjtHKj5FO7JEoE20JCcZsRDLIgNCyDR1kEzl', '2021-11-19 05:16:10', '2021-11-23 23:19:59');
 
 --
 -- Indexes for dumped tables
@@ -631,19 +646,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `pembelian_detail`
 --
 ALTER TABLE `pembelian_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `pembelian_thumb_detail`
 --
 ALTER TABLE `pembelian_thumb_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT for table `permissions`
