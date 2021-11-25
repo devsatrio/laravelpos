@@ -55,7 +55,10 @@ Route::prefix('backend')->group(function () {
     Route::post('/pembelian/update-status/{id}','backend\pembelianController@updatestatuspembelian');
     Route::resource('/pembelian','backend\pembelianController');
 
-     //-------------------------------------------------------------------------------------------
-     Route::resource('/penjualan','backend\penjualanController');
+    //-------------------------------------------------------------------------------------------
+    Route::post('/data-penjualan/add-detail-penjualan','backend\penjualanController@adddetailpenjualan');
+    Route::get('/data-penjualan/list-detail-penjualan/{kode}','backend\penjualanController@listdetailpenjualan');
+    Route::get('/data-penjualan/ganti-harga/{kode}/{status}','backend\penjualanController@gantiharga');
+    Route::resource('/penjualan','backend\penjualanController');
 
 });

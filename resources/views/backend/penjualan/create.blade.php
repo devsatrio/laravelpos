@@ -119,20 +119,22 @@
 
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Customer</label>
                                             <div class="input-group mb-3">
                                                 <select id="customer" name="customer" class="form-control select2">
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-info" type="button" onclick="addcustomer()"><i
-                                                            class="fas fa-plus"></i></button>
+                                                    <button class="btn btn-info" type="button"
+                                                        onclick="addcustomer()"><i class="fas fa-plus"></i></button>
+                                                    <button class="btn btn-danger" type="button"
+                                                        onclick="clearcustomer()"><i class="fas fa-times"></i></button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Tgl. Order</label>
                                             <input type="text" class="form-control float-right" id="tgl_order"
@@ -332,7 +334,8 @@
                 <div class="form-group">
                     <label for="exampleInputEmail1">Keterangan</label>
                     <div class="input-group">
-                        <textarea name="keterangan_customer" id="keterangan_customer" class="form-control" rows="2"></textarea>
+                        <textarea name="keterangan_customer" id="keterangan_customer" class="form-control"
+                            rows="2"></textarea>
                     </div>
                 </div>
             </div>

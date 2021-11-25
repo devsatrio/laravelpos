@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2021 at 03:10 PM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.3.13
+-- Generation Time: Nov 25, 2021 at 08:40 AM
+-- Server version: 10.4.16-MariaDB
+-- PHP Version: 7.4.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -370,9 +369,18 @@ CREATE TABLE `penjualan_thumb_detail` (
   `kode_barang` varchar(250) DEFAULT NULL,
   `jumlah` int(11) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
+  `harga_grosir` int(11) DEFAULT NULL,
   `total` int(11) DEFAULT NULL,
   `pembuat` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `penjualan_thumb_detail`
+--
+
+INSERT INTO `penjualan_thumb_detail` (`id`, `kode_penjualan`, `kode_barang`, `jumlah`, `harga`, `harga_grosir`, `total`, `pembuat`) VALUES
+(1, 'PNJ-112021-0001', 'BRG-0004', 9, 35000, 35000, 300000, 1),
+(2, 'PNJ-112021-0001', 'BRG-0005', 4, 3000000, 3000000, 11000000, 1);
 
 -- --------------------------------------------------------
 
@@ -764,7 +772,7 @@ ALTER TABLE `penjualan_detail`
 -- AUTO_INCREMENT for table `penjualan_thumb_detail`
 --
 ALTER TABLE `penjualan_thumb_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `permissions`
