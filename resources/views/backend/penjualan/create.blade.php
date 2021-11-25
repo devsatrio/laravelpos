@@ -56,7 +56,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="exampleInputEmail1">Harga</label>
                                                 <div class="input-group">
@@ -68,7 +68,31 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Diskon</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" name="diskon_barang"
+                                                        id="diskon_barang" readonly required>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Stok</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" name="stok_barang"
+                                                        id="stok_barang" readonly required>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Pcs</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="exampleInputEmail1">Jumlah</label>
                                                 <div class="input-group">
@@ -116,7 +140,6 @@
                                             <label for="exampleInputEmail1">Kode Pembelian</label>
                                             <input type="text" class="form-control" name="kode" id="kode"
                                                 value="{{$kode}}" required readonly>
-
                                         </div>
                                     </div>
                                     <div class="col-md-5">
@@ -148,6 +171,7 @@
                                             <tr>
                                                 <th class="text-center">#</th>
                                                 <th>Barang</th>
+                                                <th class="text-center">Diskon</th>
                                                 <th class="text-center">Jumlah</th>
                                                 <th class="text-right">Harga</th>
                                                 <th class="text-right">Total</th>
@@ -157,7 +181,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="4">Subtotal</th>
+                                                <th colspan="5">Subtotal</th>
                                                 <th>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">

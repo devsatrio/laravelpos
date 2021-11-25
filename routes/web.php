@@ -57,7 +57,9 @@ Route::prefix('backend')->group(function () {
 
     //-------------------------------------------------------------------------------------------
     Route::post('/data-penjualan/add-detail-penjualan','backend\penjualanController@adddetailpenjualan');
+    Route::post('/data-penjualan/hapus-detail-penjualan','backend\penjualanController@hapusdetailpenjualan');
     Route::get('/data-penjualan/list-detail-penjualan/{kode}','backend\penjualanController@listdetailpenjualan');
+    Route::get('/data-penjualan/detail-penjualan/{id}','backend\penjualanController@detailpenjualan');
     Route::get('/data-penjualan/ganti-harga/{kode}/{status}','backend\penjualanController@gantiharga');
     Route::resource('/penjualan','backend\penjualanController');
 

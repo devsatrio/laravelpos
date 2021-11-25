@@ -42,7 +42,7 @@ $(function () {
             cache: true
         }
     });
-    
+
     //========================================================================================
     $('#barang').select2({
         placeholder: "Cari berdasarkan nama/kode",
@@ -77,8 +77,8 @@ jumlah_barang.addEventListener("keyup", function (e) {
 });
 
 cari_barang_qr.addEventListener("keyup", function (e) {
-    var textnya =this.value;
-    if(textnya.length >= 8){
+    var textnya = this.value;
+    if (textnya.length >= 8) {
         tambahadetailbyqr(this.value);
     }
 });
@@ -99,10 +99,15 @@ function clearcustomer() {
 }
 
 //========================================================================================
+$('#customer').on('select2:select', function (e) {
+    gantiharga();
+});
+
+//========================================================================================
 function gantiharga() {
-    if($('#customer').val()=='' || $('#customer').val()==null){
+    if ($('#customer').val() == '' || $('#customer').val() == null) {
         var status = 'umum';
-    }else{
+    } else {
         var status = 'customer';
     }
     $('#paneldua').loading('toggle');
@@ -110,7 +115,7 @@ function gantiharga() {
     $('#tubuhnya').html('');
     $.ajax({
         type: 'GET',
-        url: '/laravelpos/backend/data-penjualan/ganti-harga/' + kode+'/'+status,
+        url: '/laravelpos/backend/data-penjualan/ganti-harga/' + kode + '/' + status,
         success: function (data) {
         }, complete: function () {
             getdata();
@@ -161,13 +166,17 @@ $('#barang').on('select2:select', function (e) {
         url: url,
         success: function (data) {
             $.each(data, function (key, value) {
-                if($('#customer').val()=='' || $('#customer').val()==null){
+                if ($('#customer').val() == '' || $('#customer').val() == null) {
                     var harga = value.harga_jual;
-                }else{
+                    var diskon = value.diskon;
+                } else {
                     var harga = value.harga_jual_customer;
+                    var diskon = value.diskon_customer;
                 }
                 $('#harga_barang').val(rupiah(harga));
                 $('#jumlah_barang').val('1');
+                $('#diskon_barang').val(diskon);
+                $('#stok_barang').val(value.stok);
             });
         }, complete: function () {
             document.getElementById("jumlah_barang").focus();
@@ -228,6 +237,7 @@ function hitungsubtotalbarang() {
     var harga_barang = 0;
     var jumlah = 0;
     var subtotal = 0;
+    var diskon = 0;
 
     if ($('#harga_barang').val() != '') {
         let str = document.getElementById("harga_barang").value;
@@ -238,7 +248,11 @@ function hitungsubtotalbarang() {
         jumlah = document.getElementById("jumlah_barang").value;
     }
 
-    subtotal = parseInt(harga_barang) * parseInt(jumlah);
+    if ($('#diskon_barang').val() != '') {
+        diskon = document.getElementById("diskon_barang").value;
+    }
+    jumlahdiskon = harga_barang * diskon / 100;
+    subtotal = parseInt(harga_barang - jumlahdiskon) * parseInt(jumlah);
     $('#total_harga_barang').val(rupiah(subtotal));
 }
 
@@ -251,18 +265,14 @@ $('#tambahbtn').on('click', function (e) {
             confirmButtonText: 'OK'
         });
     } else {
-        var kekurangan = 0; 
-        if ($('#kekurangan').val() != '') {
-            let str = document.getElementById("kekurangan").value;
-            kekurangan = str.replace(/\./g, '');
-        }
-        if(parseInt(kekurangan)<0){
+        if (parseInt($('#jumlah_barang').val()) > parseInt($('#stok_barang').val())) {
             swalWithBootstrapButtons.fire({
                 title: 'Oops',
-                text: 'Pembayaran melebihi kekurangan',
+                text: 'Stok tidak mencukupi',
                 confirmButtonText: 'OK'
             });
-        }else{
+            $('#jumlah_barang').val('');
+        } else {
             $('#panelsatu').loading('toggle');
             $.ajax({
                 type: 'POST',
@@ -272,14 +282,25 @@ $('#tambahbtn').on('click', function (e) {
                     'kode': $('#kode').val(),
                     'kode_barang': $('#barang').val(),
                     'harga_barang': $('#harga_barang').val(),
+                    'diskon': $('#diskon_barang').val(),
+                    'stok': $('#stok_barang').val(),
                     'jumlah_barang': $('#jumlah_barang').val(),
                     'total_harga_barang': $('#total_harga_barang').val(),
                 },
-                success: function () {
+                success: function (data) {
+                    if(data==false){
+                        swalWithBootstrapButtons.fire({
+                            title: 'Oops',
+                            text: 'Stok tidak mencukupi',
+                            confirmButtonText: 'OK'
+                        });
+                    }
                 }, complete: function () {
                     getdata();
                     $('#harga_barang').val('');
                     $('#jumlah_barang').val('');
+                    $('#diskon_barang').val('');
+                    $('#stok_barang').val('');
                     $('#total_harga_barang').val('');
                     $('#barang').val(null).trigger('change');
                     $('#cari_barang_qr').val('');
@@ -308,14 +329,15 @@ function getdata() {
                 rows = rows + '<tr>';
                 rows = rows + '<td class="text-center"><button type="button" onclick="editdetail(' + value.id + ')" class="btn btn-success btn-sm m-1"><i class="fas fa-edit"></i></button><button type="button" onclick="hapusdetail(' + value.id + ')" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></button></td>';
                 rows = rows + '<td>' + value.kode_barang + ' - ' + value.namabarang + '</td>';
+                rows = rows + '<td class="text-center">' + value.diskon + ' %</td>';
                 rows = rows + '<td class="text-center">' + value.jumlah + ' Pcs</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.harga) + '</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.total) + '</td>';
                 rows = rows + '</tr>';
                 subtotal += parseInt(value.total);
-                if($('#customer').val()=='' || $('#customer').val()==null){
+                if ($('#customer').val() == '' || $('#customer').val() == null) {
                     var harga = value.harga_jual;
-                }else{
+                } else {
                     var harga = value.harga_jual_customer;
                 }
             });
@@ -359,4 +381,50 @@ function carikekurangan() {
     $('#total').val(rupiah(parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)));
     kekurangan = parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(dibayar) - parseInt(potongan);
     $('#kekurangan').val(rupiah(kekurangan));
+}
+
+//===============================================================================================
+function hapusdetail(id) {
+    $('#paneldua').loading('toggle');
+    $.ajax({
+        type: 'POST',
+        url: '/laravelpos/backend/data-penjualan/hapus-detail-penjualan',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'kode': id,
+        },
+        success: function () {
+            getdata();
+        }, complete: function () {
+            $('#cari_barang_qr').trigger("focus");
+            $('#paneldua').loading('stop');
+        }
+    });
+}
+
+//===============================================================================================
+function editdetail(id) {
+    $('#paneldua').loading('toggle');
+    $('#edit_kode_barang').val('');
+    $('#edit_nama_barang').val('');
+    $('#edit_jumlah_barang').val('');
+    $('#edit_id').val('');
+
+    var url = '/laravelpos/backend/data-penjualan/detail-penjualan/' + id;
+    $.ajax({
+        type: 'GET',
+        url: url,
+        success: function (data) {
+            $.each(data, function (key, value) {
+                $('#edit_kode_barang').val(value.kode_barang);
+                $('#edit_nama_barang').val(value.namabarang);
+                $('#edit_jumlah_barang').val(value.jumlah);
+                $('#edit_harga_barang').val(rupiah(value.harga));
+                $('#edit_id').val(value.id);
+            });
+            $('#editdetailmodal').modal('show');
+        }, complete: function () {
+            $('#paneldua').loading('stop');
+        }
+    });
 }

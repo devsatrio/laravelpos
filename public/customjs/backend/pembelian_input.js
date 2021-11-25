@@ -72,8 +72,8 @@ biaya_tambahan.addEventListener("keyup", function (e) {
 });
 
 cari_barang_qr.addEventListener("keyup", function (e) {
-    var textnya =this.value;
-    if(textnya.length >= 8){
+    var textnya = this.value;
+    if (textnya.length >= 8) {
         tambahadetailbyqr(this.value);
     }
 });
@@ -286,43 +286,30 @@ $('#tambahbtn').on('click', function (e) {
             confirmButtonText: 'OK'
         });
     } else {
-        var kekurangan = 0; 
-        if ($('#kekurangan').val() != '') {
-            let str = document.getElementById("kekurangan").value;
-            kekurangan = str.replace(/\./g, '');
-        }
-        if(parseInt(kekurangan)<0){
-            swalWithBootstrapButtons.fire({
-                title: 'Oops',
-                text: 'Pembayaran melebihi kekurangan',
-                confirmButtonText: 'OK'
-            });
-        }else{
-            $('#panelsatu').loading('toggle');
-            $.ajax({
-                type: 'POST',
-                url: '/laravelpos/backend/data-pembelian/add-detail-pembelian',
-                data: {
-                    '_token': $('input[name=_token]').val(),
-                    'kode': $('#kode').val(),
-                    'kode_barang': $('#barang').val(),
-                    'harga_barang': $('#harga_barang').val(),
-                    'jumlah_barang': $('#jumlah_barang').val(),
-                    'total_harga_barang': $('#total_harga_barang').val(),
-                },
-                success: function () {
-                }, complete: function () {
-                    getdata();
-                    $('#harga_barang').val('');
-                    $('#jumlah_barang').val('');
-                    $('#total_harga_barang').val('');
-                    $('#barang').val(null).trigger('change');
-                    $('#cari_barang_qr').val('');
-                    $('#cari_barang_qr').trigger("focus");
-                    $('#panelsatu').loading('stop');
-                }
-            });
-        }
+        $('#panelsatu').loading('toggle');
+        $.ajax({
+            type: 'POST',
+            url: '/laravelpos/backend/data-pembelian/add-detail-pembelian',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'kode': $('#kode').val(),
+                'kode_barang': $('#barang').val(),
+                'harga_barang': $('#harga_barang').val(),
+                'jumlah_barang': $('#jumlah_barang').val(),
+                'total_harga_barang': $('#total_harga_barang').val(),
+            },
+            success: function () {
+            }, complete: function () {
+                getdata();
+                $('#harga_barang').val('');
+                $('#jumlah_barang').val('');
+                $('#total_harga_barang').val('');
+                $('#barang').val(null).trigger('change');
+                $('#cari_barang_qr').val('');
+                $('#cari_barang_qr').trigger("focus");
+                $('#panelsatu').loading('stop');
+            }
+        });
     }
 });
 
@@ -387,18 +374,18 @@ $('#simpanbtn').on('click', function (e) {
             confirmButtonText: 'OK'
         });
     } else {
-        var kekurangan = 0; 
+        var kekurangan = 0;
         if ($('#kekurangan').val() != '') {
             let str = document.getElementById("kekurangan").value;
             kekurangan = str.replace(/\./g, '');
         }
-        if(parseInt(kekurangan)<0){
+        if (parseInt(kekurangan) < 0) {
             swalWithBootstrapButtons.fire({
                 title: 'Oops',
                 text: 'Pembayaran melebihi kekurangan',
                 confirmButtonText: 'OK'
             });
-        }else{
+        } else {
             $('#panelsatu').loading('toggle');
             $('#paneldua').loading('toggle');
             $.ajax({

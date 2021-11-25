@@ -30,6 +30,9 @@ class penjualanController extends Controller
     public function create()
     {
         $kode = $this->carikode();
+        // DB::table('penjualan_thumb_detail')
+        // ->where('pembuat',Auth::user()->id)
+        // ->delete();
         return view('backend.penjualan.create',compact('kode'));
     }
 
@@ -56,15 +59,22 @@ class penjualanController extends Controller
         ->get();
         if(count($caribarangdetail)>0){
             foreach ($caribarangdetail as $row) {
+                $harga = str_replace('.','',$request->harga_barang);
+                $jumlahdiskon = $harga*$request->diskon/100;
                 $jumlah=$row->jumlah + $request->jumlah_barang;
-                $total = $row->total + str_replace('.','',$request->total_harga_barang);
-
-                DB::table('penjualan_thumb_detail')
-                ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
-                ->update([
-                    'jumlah'=>$jumlah,
-                    'total'=>$total,
-                ]);
+                $total = $jumlah*($harga-$jumlahdiskon);
+                if($jumlah>$request->stok){
+                    $status = false;
+                }else{
+                    DB::table('penjualan_thumb_detail')
+                    ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+                    ->update([
+                        'harga'=>$harga,
+                        'jumlah'=>$jumlah,
+                        'total'=>$total,
+                    ]);
+                    $status = true;
+                }
             }
         }else{
             DB::table('penjualan_thumb_detail')
@@ -72,16 +82,28 @@ class penjualanController extends Controller
                 'kode_penjualan'=>$request->kode,
                 'kode_barang'=>$request->kode_barang,
                 'jumlah'=>$request->jumlah_barang,
+                'diskon'=>$request->diskon,
                 'harga'=>str_replace('.','',$request->harga_barang),
-                'harga_grosir'=>str_replace('.','',$request->harga_barang),
                 'total'=>str_replace('.','',$request->total_harga_barang),
                 'pembuat'=>Auth::user()->id,
             ]);
+            $status = true;
         }
+        return response()->json($status);
     }
 
     //=================================================================
     public function listdetailpenjualan($kode)
+    {
+        $data = DB::table('penjualan_thumb_detail')
+        ->select(DB::raw('penjualan_thumb_detail.*,barang.nama as namabarang'))
+        ->leftjoin('barang','barang.kode','=','penjualan_thumb_detail.kode_barang')
+        ->where([['penjualan_thumb_detail.pembuat',Auth::user()->id],['penjualan_thumb_detail.kode_penjualan',$kode]])
+        ->get();
+        return response()->json($data);
+    }
+
+    public function detailpenjualan($kode)
     {
         $data = DB::table('penjualan_thumb_detail')
         ->select(DB::raw('penjualan_thumb_detail.*,barang.nama as namabarang'))
@@ -101,27 +123,32 @@ class penjualanController extends Controller
     public function gantiharga($kode,$status)
     {
         $caribarangdetail = DB::table('penjualan_thumb_detail')
-        ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+        ->where([['kode_penjualan',$kode],['pembuat',Auth::user()->id]])
         ->get();
 
         if(count($caribarangdetail)>0){
             foreach ($caribarangdetail as $row) {
                 $harga=0;
+                $diskon=0;
                 $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
                 foreach($caribarang as $row_caribarang){
                     if($status=='umum'){
                         $harga = $row_caribarang->harga_jual;
+                        $diskon=$row_caribarang->diskon;
                     }else{
                         $harga = $row_caribarang->harga_jual_customer;
+                        $diskon=$row_caribarang->diskon_customer;
                     }
                 }
                                 
-                $jumlah=$row->jumlah;
-                $total = $row->total + str_replace('.','',$request->total_harga_barang);
+                $jumlah = $row->jumlah;
+                $jumlahdiskon = $harga*$diskon/100;
+                $total = $jumlah*($harga-$jumlahdiskon);
 
                 DB::table('penjualan_thumb_detail')
-                ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+                ->where([['kode_penjualan',$kode],['kode_barang',$row->kode_barang]])
                 ->update([
+                    'harga'=>$harga,
                     'jumlah'=>$jumlah,
                     'total'=>$total,
                 ]);
@@ -129,46 +156,33 @@ class penjualanController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    //=================================================================
+    public function hapusdetailpenjualan(Request $request)
+    {
+        $data = DB::table('penjualan_thumb_detail')
+        ->where('id',$request->kode)
+        ->delete();
+    }
+
+    //=================================================================
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    //=================================================================
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+   //=================================================================
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    //=================================================================
     public function destroy($id)
     {
         //
