@@ -10,6 +10,9 @@ var harga_barang = document.getElementById("harga_barang");
 var jumlah_barang = document.getElementById("jumlah_barang");
 var biaya_tambahan = document.getElementById("biaya_tambahan");
 var cari_barang_qr = document.getElementById("cari_barang_qr");
+var potongan = document.getElementById("potongan");
+var dibayar = document.getElementById("dibayar");
+var total = document.getElementById("total");
 
 //========================================================================================
 $(function () {
@@ -76,12 +79,60 @@ jumlah_barang.addEventListener("keyup", function (e) {
     hitungsubtotalbarang();
 });
 
+potongan.addEventListener("keyup", function (e) {
+    potongan.value = formatRupiah(this.value);
+    carikekurangan();
+});
+
+dibayar.addEventListener("keyup", function (e) {
+    dibayar.value = formatRupiah(this.value);
+    carikekurangan();
+});
+
+biaya_tambahan.addEventListener("keyup", function (e) {
+    biaya_tambahan.value = formatRupiah(this.value);
+    carikekurangan();
+});
+
 cari_barang_qr.addEventListener("keyup", function (e) {
     var textnya = this.value;
     if (textnya.length >= 8) {
         tambahadetailbyqr(this.value);
     }
 });
+
+//========================================================================================
+function tambahadetailbyqr(kodebarang) {
+    if ($('#customer').val() == '' || $('#customer').val() == null) {
+        var status = 'umum';
+    } else {
+        var status = 'customer';
+    }
+    $('#panelsatu').loading('toggle');
+    $.ajax({
+        type: 'POST',
+        url: '/laravelpos/backend/data-penjualan/add-detail-penjualan-qr',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'kode': $('#kode').val(),
+            'kode_barang': kodebarang,
+            'status':status,
+        },
+        success: function () {
+        }, complete: function () {
+            getdata();
+            $('#harga_barang').val('');
+            $('#jumlah_barang').val('');
+            $('#total_harga_barang').val('');
+            $('#dikon_barang').val('');
+            $('#stok_barang').val('');
+            $('#barang').val(null).trigger('change');
+            $('#cari_barang_qr').val('');
+            $('#cari_barang_qr').trigger("focus");
+            $('#panelsatu').loading('stop');
+        }
+    });
+}
 
 //========================================================================================
 function addcustomer() {

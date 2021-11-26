@@ -142,6 +142,13 @@
                                                 value="{{$kode}}" required readonly>
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Tgl. Order</label>
+                                            <input type="text" class="form-control float-right" id="tgl_order"
+                                                name="tgl_order">
+                                        </div>
+                                    </div>
                                     <div class="col-md-5">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Customer</label>
@@ -155,13 +162,6 @@
                                                         onclick="clearcustomer()"><i class="fas fa-times"></i></button>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">Tgl. Order</label>
-                                            <input type="text" class="form-control float-right" id="tgl_order"
-                                                name="tgl_order">
                                         </div>
                                     </div>
                                 </div>

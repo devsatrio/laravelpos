@@ -148,6 +148,7 @@ class penjualanController extends Controller
                 DB::table('penjualan_thumb_detail')
                 ->where([['kode_penjualan',$kode],['kode_barang',$row->kode_barang]])
                 ->update([
+                    'diskon'=>$diskon,
                     'harga'=>$harga,
                     'jumlah'=>$jumlah,
                     'total'=>$total,
@@ -162,6 +163,67 @@ class penjualanController extends Controller
         $data = DB::table('penjualan_thumb_detail')
         ->where('id',$request->kode)
         ->delete();
+    }
+
+    //=================================================================
+    public function adddetailpenjualanqr(Request $request)
+    {
+        $caribarang = DB::table('barang')->where('kode',$request->kode_barang)->get();
+
+        if(count($caribarang)>0){
+            foreach ($caribarang as $row_caribarang) {
+                $stok=$row_caribarang->stok;
+                if($request->status=='umum'){
+                    $harga = $row_caribarang->harga_jual;
+                    $diskon = $row_caribarang->diskon;
+                }else{
+                    $harga = $row_caribarang->harga_jual_customer;
+                    $diskon = $row_caribarang->diskon_customer;
+                }
+            }
+
+            $caribarangdetail = DB::table('penjualan_thumb_detail')
+            ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+            ->get();
+
+            if(count($caribarangdetail)>0){
+                foreach ($caribarangdetail as $row) {
+                    $jumlahdiskon = $harga*$diskon/100;
+                    $jumlah=$row->jumlah + 1;
+                    $total = $jumlah*($harga-$jumlahdiskon);
+                    if($jumlah>$stok){
+                        $status = false;
+                    }else{
+                        DB::table('penjualan_thumb_detail')
+                        ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+                        ->update([
+                            'diskon'=>$diskon,
+                            'harga'=>$harga,
+                            'jumlah'=>$jumlah,
+                            'total'=>$total,
+                        ]);
+                        $status = true;
+                    }
+                }
+                dd('ada');
+            }else{
+                $jumlahdiskon = $harga*$diskon/100;
+                $jumlah=1;
+                $total = $jumlah*($harga-$jumlahdiskon);
+                DB::table('penjualan_thumb_detail')
+                ->insert([
+                    'kode_penjualan'=>$request->kode,
+                    'kode_barang'=>$request->kode_barang,
+                    'jumlah'=>$jumlah,
+                    'diskon'=>$diskon,
+                    'harga'=>$harga,
+                    'total'=>$total,
+                    'pembuat'=>Auth::user()->id,
+                ]);
+                $status = true;
+                dd('tidak');
+            }
+        }
     }
 
     //=================================================================
