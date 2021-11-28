@@ -164,6 +164,9 @@ class pembelianController extends Controller
     public function create()
     {
         $kode = $this->carikode();
+        // DB::table('pembelian_thumb_detail')
+        // ->where('pembuat',Auth::user()->id)
+        // ->delete();
         $supplier = DB::table('master_supplier')->orderby('id','desc')->get();
         return view('backend.pembelian.create',compact('kode','supplier'));
     }
@@ -360,10 +363,28 @@ class pembelianController extends Controller
     //=================================================================
     public function destroy($id)
     {
+        $kode='';
         $data = DB::table('pembelian')->where('id',$id)->get();
         foreach ($data as $row) {
-            DB::table('pembelian_detail')->where('kode_pembelian',$row->kode)->delete();
+            $kode=$row->kode;
         }
+
+        $detail = DB::table('pembelian_detail')
+        ->where('kode_pembelian',$kode)
+        ->get();
+        foreach ($detail as $row) {
+            $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
+            foreach($caribarang as $row_caribarang){
+                $newstok = $row_caribarang->stok - $row->jumlah;
+                DB::table('barang')
+                ->where('kode',$row->kode_barang)
+                ->update([
+                    'stok'=>$newstok
+                ]);
+            }
+        }
+
+        DB::table('pembelian_detail')->where('kode_pembelian',$kode)->delete();
         DB::table('pembelian')->where('id',$id)->delete();
     }
 }

@@ -367,7 +367,7 @@ function carikekurangan() {
 
 //===============================================================================================
 $('#simpanbtn').on('click', function (e) {
-    if ($('#kode').val() == "" || $('#supplier').val() == "" || $('#tgl_order').val() == "" || $('#subtotal').val() == "" || $('#subtotal').val() == "0") {
+    if ($('#kode').val() == "" || $('#supplier').val() == "" || $('#tgl_order').val() == "" || $('#subtotal').val() == "" || $('#subtotal').val() == "0"|| $('#dibayar').val() == ""|| $('#potongan').val() == ""|| $('#biaya_tambahan').val() == "") {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
             text: 'Data tidak boleh kosog',

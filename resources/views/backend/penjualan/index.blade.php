@@ -51,13 +51,14 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Kode</th>
-                                            <th>Supplier</th>
+                                            <th>Customer</th>
+                                            <th>Pembuat</th>
                                             <th>Tgl Buat</th>
                                             <th>Total</th>
                                             <th>Terbayar</th>
                                             <th>Kekurangan</th>
+                                            <th>Kembalian</th>
                                             <th>Status</th>
-                                            <th>Status Pembelian</th>
                                             <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
@@ -68,13 +69,14 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Kode</th>
-                                            <th>Supplier</th>
+                                            <th>Customer</th>
+                                            <th>Pembuat</th>
                                             <th>Tgl Buat</th>
                                             <th>Total</th>
                                             <th>Terbayar</th>
                                             <th>Kekurangan</th>
+                                            <th>Kembalian</th>
                                             <th>Status</th>
-                                            <th>Status Pembelian</th>
                                             <th class="text-center">Aksi</th>
                                         </tr>
                                     </tfoot>
@@ -87,6 +89,62 @@
         </div>
     </div>
 </div>
+<div id="print_div" style="display:none;font-size:11px;">
+    <b>Nama Toko Anda</b><br>
+    Alamat Toko Anda
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    <table width="100%">
+        <thead>
+            <tr>
+                <td>Nama</td>
+                <td>Disk</td>
+                <td>Qty</td>
+                <td align="right">Harga</td>
+                <td align="right">Total</td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <hr style="margin:0px;border-top: 1px dashed black;">
+                </td>
+            </tr>
+        </thead>
+        <tbody id="print_detail">
+
+        </tbody>
+    </table>
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    <table width="100%">
+        <tr>
+            <td>Biaya Tambahan</td>
+            <td align="right"><span id="print_biaya_tambahan">-</span></td>
+        </tr>
+        <tr>
+            <td>Potongan</td>
+            <td align="right"><span id="print_potongan">-</span></td>
+        </tr>
+        <tr>
+            <td>Total</td>
+            <td align="right"><span id="print_total">-</span></td>
+        </tr>
+        <tr>
+            <td>Tunai</td>
+            <td align="right"><span id="print_dibayar">-</span></td>
+        </tr>
+        <tr>
+            <td>Kekurangan</td>
+            <td align="right"><span id="print_kekurangan">-</span></td>
+        </tr>
+        <tr>
+            <td>Kembalian</td>
+            <td align="right"><span id="print_kembalian">-</span></td>
+        </tr>
+    </table>
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    <span id="print_kode"></span> || <span id="print_tgl_order"></span><br>
+    <span id="print_pembuat"></span> || <span id="print_customer"></span><br>
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    Barang yang sudah dibeli tidak bisa ditukar atau dikembalikan
+</div>
 @endsection
 
 @push('customjs')
@@ -97,5 +155,5 @@
 @endpush
 
 @push('customscripts')
-<!-- <script src="{{asset('customjs/backend/pembelian.js')}}"></script> -->
+<script src="{{asset('customjs/backend/penjualan.js')}}"></script>
 @endpush

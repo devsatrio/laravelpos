@@ -56,11 +56,14 @@ Route::prefix('backend')->group(function () {
     Route::resource('/pembelian','backend\pembelianController');
 
     //-------------------------------------------------------------------------------------------
+    Route::get('/data-penjualan','backend\penjualanController@listdata');
     Route::post('/data-penjualan/add-detail-penjualan','backend\penjualanController@adddetailpenjualan');
     Route::post('/data-penjualan/hapus-detail-penjualan','backend\penjualanController@hapusdetailpenjualan');
     Route::post('/data-penjualan/add-detail-penjualan-qr','backend\penjualanController@adddetailpenjualanqr');
+    Route::post('/data-penjualan/edit-detail-penjualan','backend\penjualanController@editdetailpembelian');
     Route::get('/data-penjualan/list-detail-penjualan/{kode}','backend\penjualanController@listdetailpenjualan');
     Route::get('/data-penjualan/detail-penjualan/{id}','backend\penjualanController@detailpenjualan');
+    Route::get('/data-penjualan/cetak-ulang/{kode}','backend\penjualanController@cetakulang');
     Route::get('/data-penjualan/ganti-harga/{kode}/{status}','backend\penjualanController@gantiharga');
     Route::resource('/penjualan','backend\penjualanController');
 

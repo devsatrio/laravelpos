@@ -17,7 +17,14 @@ class penjualanController extends Controller
 
     //=================================================================
     public function listdata(){
-        
+        return Datatables::of(
+            DB::table('penjualan')
+            ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
+            ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
+            ->leftjoin('users','users.id','=','penjualan.pembuat')
+            ->orderby('penjualan.id','desc')
+            ->get()
+            )->make(true);
     }
 
     //=================================================================
@@ -103,20 +110,110 @@ class penjualanController extends Controller
         return response()->json($data);
     }
 
+    //=================================================================
     public function detailpenjualan($kode)
     {
         $data = DB::table('penjualan_thumb_detail')
-        ->select(DB::raw('penjualan_thumb_detail.*,barang.nama as namabarang'))
+        ->select(DB::raw('penjualan_thumb_detail.*,barang.nama as namabarang,barang.stok'))
         ->leftjoin('barang','barang.kode','=','penjualan_thumb_detail.kode_barang')
-        ->where([['penjualan_thumb_detail.pembuat',Auth::user()->id],['penjualan_thumb_detail.kode_penjualan',$kode]])
+        ->where('penjualan_thumb_detail.id',$kode)
         ->get();
         return response()->json($data);
     }
 
     //=================================================================
+    public function editdetailpembelian(Request $request)
+    {
+        $harga_barang = str_replace('.','',$request->edit_harga_barang);
+        $jumlah = str_replace('.','',$request->edit_jumlah_barang);
+        $total = $harga_barang*$jumlah;
+        DB::table('penjualan_thumb_detail')
+        ->where('id',$request->edit_id)
+        ->update([
+            'jumlah'=>$request->edit_jumlah_barang,
+            'harga'=>$harga_barang,
+            'total'=>$total,
+        ]);
+    }
+
+    //=================================================================
     public function store(Request $request)
     {
-        //
+        $detail = DB::table('penjualan_thumb_detail')
+        ->where('kode_penjualan',$request->kode)
+        ->get();
+        $data=[];
+        foreach ($detail as $row) {
+            $data[] = [
+                'kode_penjualan'=>$row->kode_penjualan,
+                'kode_barang'=>$row->kode_barang,
+                'jumlah'=>$row->jumlah,
+                'diskon'=>$row->diskon,
+                'harga'=>$row->harga,
+                'total'=>$row->total,
+            ]; 
+
+            $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
+            foreach($caribarang as $row_caribarang){
+                $newstok = $row_caribarang->stok - $row->jumlah;
+                DB::table('barang')
+                ->where('kode',$row->kode_barang)
+                ->update([
+                    'stok'=>$newstok
+                ]);
+            }
+        }
+
+        DB::table('penjualan_detail')->insert($data);
+        if(intval(str_replace('.','',$request->kekurangan)) > 0){
+            $status = "Belum Lunas";
+            DB::table('pembayaran')
+            ->insert([
+                'kode_penjualan'=>$request->kode,
+                'jumlah'=>str_replace('.','',$request->dibayar),
+                'tgl_bayar'=>date('Y-m-d'),
+                'created_at'=>date('Y-m-d H:i:s'),
+                'created_by'=>Auth::user()->id,
+                'keterangan'=>'Pembayaran Pertama',
+                'customer'=>$request->customer,
+            ]);
+        }else{
+            $status = "Telah Lunas";
+            DB::table('pembayaran')
+            ->insert([
+                'kode_penjualan'=>$request->kode,
+                'jumlah'=>str_replace('.','',$request->dibayar),
+                'tgl_bayar'=>date('Y-m-d'),
+                'created_at'=>date('Y-m-d H:i:s'),
+                'created_by'=>Auth::user()->id,
+                'keterangan'=>'Pembayaran Pertama & Pelunasan',
+                'customer'=>$request->customer,
+            ]);
+        }
+        
+        $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)-str_replace('.','',$request->potongan);
+        
+        DB::table('penjualan')
+        ->insert([
+            'kode'=>$request->kode,
+            'customer'=>$request->customer,
+            'subtotal'=>str_replace('.','',$request->subtotal),
+            'biaya_tambahan'=>str_replace('.','',$request->biaya_tambahan),
+            'potongan'=>str_replace('.','',$request->potongan),
+            'total'=>$total,
+            'terbayar'=>str_replace('.','',$request->dibayar),
+            'kekurangan'=>str_replace('.','',$request->kekurangan),
+            'kembalian'=>str_replace('.','',$request->kembalian),
+            'pembuat'=>Auth::user()->id,
+            'tgl_buat'=>$request->tgl_order,
+            'keterangan'=>$request->keterangan,
+            'status'=>$status,
+            'status_penjualan'=>'Draft',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'created_by'=>Auth::user()->id,
+        ]);
+
+        DB::table('penjualan_thumb_detail')->where('pembuat',Auth::user()->id)->delete();
     }
 
     //=================================================================
@@ -168,7 +265,9 @@ class penjualanController extends Controller
     //=================================================================
     public function adddetailpenjualanqr(Request $request)
     {
-        $caribarang = DB::table('barang')->where('kode',$request->kode_barang)->get();
+        $status = true;
+        $kode_barang = strtoupper($request->kode_barang);
+        $caribarang = DB::table('barang')->where('kode',$kode_barang)->get();
 
         if(count($caribarang)>0){
             foreach ($caribarang as $row_caribarang) {
@@ -183,7 +282,7 @@ class penjualanController extends Controller
             }
 
             $caribarangdetail = DB::table('penjualan_thumb_detail')
-            ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+            ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_barang]])
             ->get();
 
             if(count($caribarangdetail)>0){
@@ -195,7 +294,7 @@ class penjualanController extends Controller
                         $status = false;
                     }else{
                         DB::table('penjualan_thumb_detail')
-                        ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+                        ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_barang]])
                         ->update([
                             'diskon'=>$diskon,
                             'harga'=>$harga,
@@ -205,7 +304,6 @@ class penjualanController extends Controller
                         $status = true;
                     }
                 }
-                dd('ada');
             }else{
                 $jumlahdiskon = $harga*$diskon/100;
                 $jumlah=1;
@@ -213,7 +311,7 @@ class penjualanController extends Controller
                 DB::table('penjualan_thumb_detail')
                 ->insert([
                     'kode_penjualan'=>$request->kode,
-                    'kode_barang'=>$request->kode_barang,
+                    'kode_barang'=>$kode_barang,
                     'jumlah'=>$jumlah,
                     'diskon'=>$diskon,
                     'harga'=>$harga,
@@ -221,15 +319,32 @@ class penjualanController extends Controller
                     'pembuat'=>Auth::user()->id,
                 ]);
                 $status = true;
-                dd('tidak');
             }
         }
+        return response()->json($status);
     }
 
     //=================================================================
-    public function show($id)
+    public function show($kode)
     {
-        //
+        $item = DB::table('penjualan_detail')
+        ->select(DB::raw('penjualan_detail.*,barang.nama as namabarang'))
+        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
+        ->where('penjualan_detail.kode_penjualan',$kode)
+        ->get();
+        $detail = DB::table('penjualan')
+        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,master_customer.kode as kodecustomer,users.name'))
+        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
+        ->leftjoin('users','users.id','=','penjualan.pembuat')
+        ->where('penjualan.kode',$kode)
+        ->get();
+
+        $pembayaran = DB::table('pembayaran')
+        ->select(DB::raw('pembayaran.*,users.name'))
+        ->leftjoin('users','users.id','=','pembayaran.created_by')
+        ->where('pembayaran.kode_penjualan',$kode)
+        ->get();
+        return view('backend.penjualan.show',compact('item','detail','pembayaran'));
     }
 
     //=================================================================
@@ -245,8 +360,47 @@ class penjualanController extends Controller
     }
 
     //=================================================================
-    public function destroy($id)
+    public function destroy($kode)
     {
-        //
+        $detail = DB::table('penjualan_detail')
+        ->where('kode_penjualan',$kode)
+        ->get();
+        foreach ($detail as $row) {
+            $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
+            foreach($caribarang as $row_caribarang){
+                $newstok = $row_caribarang->stok + $row->jumlah;
+                DB::table('barang')
+                ->where('kode',$row->kode_barang)
+                ->update([
+                    'stok'=>$newstok
+                ]);
+            }
+        }
+
+        DB::table('penjualan_detail')->where('kode_penjualan',$kode)->delete();
+        DB::table('pembayaran')->where('kode_penjualan',$kode)->delete();
+        DB::table('penjualan')->where('kode',$kode)->delete();
+    }
+
+    //=================================================================
+    public function cetakulang($kode)
+    {
+        $item = DB::table('penjualan_detail')
+        ->select(DB::raw('penjualan_detail.*,barang.nama as namabarang'))
+        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
+        ->where('penjualan_detail.kode_penjualan',$kode)
+        ->get();
+        $detail = DB::table('penjualan')
+        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
+        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
+        ->leftjoin('users','users.id','=','penjualan.pembuat')
+        ->where('penjualan.kode',$kode)
+        ->get();
+
+        $print=[
+            'item'=>$item,
+            'detail'=>$detail,
+        ];
+        return response()->json($print);
     }
 }
