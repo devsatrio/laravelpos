@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2021 at 09:43 AM
--- Server version: 10.4.16-MariaDB
--- PHP Version: 7.4.12
+-- Generation Time: Nov 29, 2021 at 02:12 PM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.3.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -30,6 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `barang` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(250) DEFAULT NULL,
+  `kode_qr` text DEFAULT NULL,
   `nama` varchar(300) DEFAULT NULL,
   `kategori` int(11) DEFAULT NULL,
   `harga_beli` int(11) DEFAULT NULL,
@@ -45,11 +47,12 @@ CREATE TABLE `barang` (
 -- Dumping data for table `barang`
 --
 
-INSERT INTO `barang` (`id`, `kode`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
-(2, 'BRG-0002', 'Barang D', 5, 10000, 20000, 12000, 0, 0, 0, '-'),
-(3, 'BRG-0003', 'Barang C', 5, 5000, 20000, 30000, 40, 0, 0, '-'),
-(4, 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 29, 'ket Barang B'),
-(5, 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 11, 'ket barang A');
+INSERT INTO `barang` (`id`, `kode`, `kode_qr`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
+(2, 'BRG-0002', NULL, 'Barang D', 5, 10000, 20000, 12000, 0, 0, 0, '-'),
+(3, 'BRG-0003', NULL, 'Barang C', 5, 5000, 20000, 30000, 40, 0, 0, '-'),
+(4, 'BRG-0004', NULL, 'Barang B', 5, 15000, 35000, 30000, 10, 0, 29, 'ket Barang B'),
+(5, 'BRG-0005', NULL, 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 11, 'ket barang A'),
+(6, 'BRG-0006', '120823', 'barang E', 5, 25000, 50000, 40000, 0, 0, 0, '-');
 
 -- --------------------------------------------------------
 
@@ -244,7 +247,11 @@ CREATE TABLE `pembayaran` (
 
 INSERT INTO `pembayaran` (`id`, `kode_penjualan`, `customer`, `jumlah`, `tgl_bayar`, `created_at`, `created_by`, `keterangan`) VALUES
 (14, 'PNJ-112021-0001', NULL, 3000000, '2021-11-27', '2021-11-27 13:49:05', 1, 'Pembayaran Pertama & Pelunasan'),
-(15, 'PNJ-112021-0002', 'CUS-003', 2000000, '2021-11-27', '2021-11-27 14:00:16', 1, 'Pembayaran Pertama');
+(15, 'PNJ-112021-0002', 'CUS-003', 2000000, '2021-11-27', '2021-11-27 14:00:16', 1, 'Pembayaran Pertama'),
+(16, 'PNJ-112021-0002', NULL, 200000, '2021-11-29', '2021-11-29 11:30:18', 1, 'Pembayaran Hutang'),
+(17, 'PNJ-112021-0002', NULL, 100000, '2021-11-29', '2021-11-29 11:31:24', 1, 'Pembayaran Hutang'),
+(18, 'PNJ-112021-0002', NULL, 230000, '2021-11-30', '2021-11-29 11:33:22', 1, 'Pembayaran Hutang'),
+(19, 'PNJ-112021-0002', NULL, 0, '2021-11-29', '2021-11-29 11:34:35', 1, 'Pembayaran Hutang');
 
 -- --------------------------------------------------------
 
@@ -372,7 +379,7 @@ CREATE TABLE `penjualan` (
 
 INSERT INTO `penjualan` (`id`, `kode`, `customer`, `subtotal`, `potongan`, `biaya_tambahan`, `total`, `terbayar`, `kekurangan`, `kembalian`, `pembuat`, `tgl_buat`, `keterangan`, `status`, `status_penjualan`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
 (30, 'PNJ-112021-0001', NULL, 2731500, 0, 0, 2731500, 3000000, 0, 268500, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 13:49:05', NULL, 1, NULL),
-(31, 'PNJ-112021-0002', 'CUS-003', 2530000, 0, 0, 2530000, 2000000, 530000, 0, 1, '2021-11-27', NULL, 'Belum Lunas', 'Draft', '2021-11-27 14:00:16', NULL, 1, NULL);
+(31, 'PNJ-112021-0002', 'CUS-003', 2530000, 0, 0, 2530000, 0, 0, 0, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 14:00:16', NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -466,7 +473,15 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (28, 'create-pembelian', 'web', NULL, NULL),
 (29, 'edit-pembelian', 'web', NULL, NULL),
 (30, 'delete-pembelian', 'web', NULL, NULL),
-(31, 'approve-pembelian', 'web', NULL, NULL);
+(31, 'approve-pembelian', 'web', NULL, NULL),
+(32, 'view-penjualan', 'web', NULL, NULL),
+(33, 'create-penjualan', 'web', NULL, NULL),
+(34, 'update-hutang-penjualan', 'web', NULL, NULL),
+(35, 'delete-penjualan', 'web', NULL, NULL),
+(36, 'view-transaksi-lain', 'web', NULL, NULL),
+(37, 'create-transaksi-lain', 'web', NULL, NULL),
+(38, 'edit-transaksi-lain', 'web', NULL, NULL),
+(39, 'delete-transaksi-lain', 'web', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -539,7 +554,15 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (28, 2),
 (29, 2),
 (30, 2),
-(31, 2);
+(31, 2),
+(32, 2),
+(33, 2),
+(34, 2),
+(35, 2),
+(36, 2),
+(37, 2),
+(38, 2),
+(39, 2);
 
 -- --------------------------------------------------------
 
@@ -552,15 +575,41 @@ CREATE TABLE `settings` (
   `nama_program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `singkatan_nama_program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `instansi` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi_program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL
+  `alamat` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deskripsi_program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `note` text COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `nama_program`, `singkatan_nama_program`, `instansi`, `deskripsi_program`) VALUES
-(1, 'Laravel POS V.1', 'LPV1', 'unknow', 'A laravel 7 pos v.1');
+INSERT INTO `settings` (`id`, `nama_program`, `singkatan_nama_program`, `instansi`, `alamat`, `deskripsi_program`, `note`) VALUES
+(1, 'Laravel POS V.1', 'LPV1', 'AGSPEED SHOP', 'Desa Gurah 1, Kec.Gurah, Kab. Kediri', 'A laravel 7 pos v.1', 'Barang Yang Sudah Dibeli Tidak Bisa Dikembalikan');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transaksi_lain`
+--
+
+CREATE TABLE `transaksi_lain` (
+  `id` bigint(20) NOT NULL,
+  `status` varchar(100) DEFAULT NULL,
+  `jumlah` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `tgl_buat` date DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `transaksi_lain`
+--
+
+INSERT INTO `transaksi_lain` (`id`, `status`, `jumlah`, `keterangan`, `tgl_buat`, `created_by`, `created_at`) VALUES
+(1, 'Pengeluaran', 20000, NULL, '2021-11-30', 1, '2021-11-29 13:04:43'),
+(3, 'Pemasukan', 35000, 'test edit', '2021-11-29', 1, '2021-11-29 13:04:17');
 
 -- --------------------------------------------------------
 
@@ -727,6 +776,12 @@ ALTER TABLE `settings`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `transaksi_lain`
+--
+ALTER TABLE `transaksi_lain`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -741,7 +796,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -783,7 +838,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `pembelian`
@@ -825,7 +880,7 @@ ALTER TABLE `penjualan_thumb_detail`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -838,6 +893,12 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `settings`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `transaksi_lain`
+--
+ALTER TABLE `transaksi_lain`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`

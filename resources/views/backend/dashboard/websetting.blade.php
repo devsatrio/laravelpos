@@ -46,6 +46,18 @@
                                         <input type="text" name="instansi" class="form-control" value="{{$row->instansi}}" required>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Alamat Instansi</label>
+                                        <textarea name="alamat" class="form-control" rows="4">{{$row->alamat}}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Note Transaksi</label>
+                                        <textarea name="note" class="form-control" rows="4">{{$row->note}}</textarea>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Deskripsi Program</label>

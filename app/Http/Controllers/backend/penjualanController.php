@@ -13,6 +13,10 @@ class penjualanController extends Controller
     function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:view-penjualan', ['only' => ['index','show']]);
+        $this->middleware('permission:create-penjualan', ['only' => ['create']]);
+        $this->middleware('permission:update-hutang-penjualan', ['only' => ['updatehutang']]);
+        $this->middleware('permission:delete-penjualan', ['only' => ['destroy']]);
     }
 
     //=================================================================
@@ -37,9 +41,9 @@ class penjualanController extends Controller
     public function create()
     {
         $kode = $this->carikode();
-        // DB::table('penjualan_thumb_detail')
-        // ->where('pembuat',Auth::user()->id)
-        // ->delete();
+        DB::table('penjualan_thumb_detail')
+        ->where('pembuat',Auth::user()->id)
+        ->delete();
         return view('backend.penjualan.create',compact('kode'));
     }
 
@@ -267,7 +271,7 @@ class penjualanController extends Controller
     {
         $status = true;
         $kode_barang = strtoupper($request->kode_barang);
-        $caribarang = DB::table('barang')->where('kode',$kode_barang)->get();
+        $caribarang = DB::table('barang')->where('kode_qr',$kode_barang)->get();
 
         if(count($caribarang)>0){
             foreach ($caribarang as $row_caribarang) {
@@ -402,5 +406,33 @@ class penjualanController extends Controller
             'detail'=>$detail,
         ];
         return response()->json($print);
+    }
+
+    //=================================================================
+    public function updatehutang(Request $request)
+    {
+        $terbayar = str_replace('.','',$request->hutang)+str_replace('.','',$request->dibayar);
+        $kekurangan = str_replace('.','',$request->kekurangan);
+        if($kekurangan>0){
+            $status = "Belum Lunas";
+        }else{
+            $status = "Telah Lunas";
+        }
+        DB::table('penjualan')
+        ->where('kode',$request->kode)
+        ->update([
+            'status'=>$status,
+            'terbayar'=>$terbayar,
+            'kekurangan'=>$kekurangan
+        ]);
+        DB::table('pembayaran')
+        ->insert([
+            'kode_penjualan'=>$request->kode,
+            'jumlah'=>str_replace('.','',$request->dibayar),
+            'tgl_bayar'=>$request->tgl_bayar,
+            'created_at'=>date('Y-m-d H:i:s'),
+            'created_by'=>Auth::user()->id,
+            'keterangan'=>'Pembayaran Hutang',
+        ]);
     }
 }

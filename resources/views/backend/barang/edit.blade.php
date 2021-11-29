@@ -45,7 +45,13 @@
                                             required autofocus>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Kode QR</label>
+                                        <input type="text" class="form-control" value="{{$row->kode_qr}}" name="kode_qr" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Kategori</label>
                                         <select name="kategori" class="form-control">

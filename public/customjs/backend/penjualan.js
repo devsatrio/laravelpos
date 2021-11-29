@@ -63,13 +63,13 @@ $(function () {
                 render: function (data, type, row) {
                     if (row['status'] == 'Belum Lunas') {
                         return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-                        `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang('` + row['kode'] + `')"><i class="fa fa-edit"></i></button>` +
-                        `<button class="btn btn-sm m-1 btn-success" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
-                        `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
-                    }else{
+                            `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang('` + row['kode'] + `')"><i class="fa fa-edit"></i></button>` +
+                            `<button class="btn btn-sm m-1 btn-success" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
+                            `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
+                    } else {
                         return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-                        `<button class="btn btn-sm m-1 btn-success" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
-                        `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
+                            `<button class="btn btn-sm m-1 btn-success" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
+                            `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
                     }
 
                 },
@@ -267,15 +267,19 @@ function cetakulang(kode) {
 //===============================================================================================
 function bayarhutang(kode) {
     $('#panelsatu').loading('toggle');
+    $('#edit_kode').val('');
+    $('#edit_customer').val('');
+    $('#edit_hutang').val('');
+    $('#edit_kekurangan').val('');
     $('#bayarhutangmodal').modal('show');
-    var url= '/laravelpos/backend/data-penjualan/cetak-ulang/' + kode;
+    var url = '/laravelpos/backend/data-penjualan/cetak-ulang/' + kode;
     $.ajax({
         type: 'GET',
         url: url,
         success: function (data) {
             $.each(data.detail, function (key, value) {
                 $('#edit_kode').val(value.kode);
-                $('#edit_customer').val(value.customer+' - '+value.namacustomer);
+                $('#edit_customer').val(value.customer + ' - ' + value.namacustomer);
                 $('#edit_hutang').val(rupiah(parseInt(value.kekurangan)));
                 $('#edit_kekurangan').val(rupiah(parseInt(value.kekurangan)));
             });
@@ -295,9 +299,9 @@ edit_dibayar.addEventListener("keyup", function (e) {
 
 //===============================================================================================
 function hitungkekurangan() {
-    var kekurangan =0;
-    var dibayar=0;
-    var hutang=0;
+    var kekurangan = 0;
+    var dibayar = 0;
+    var hutang = 0;
 
     if ($('#edit_hutang').val() != '') {
         let str = document.getElementById("edit_hutang").value;
@@ -308,37 +312,65 @@ function hitungkekurangan() {
         let str = document.getElementById("edit_dibayar").value;
         dibayar = str.replace(/\./g, '');
     }
-    if(parseInt(dibayar)>parseInt(hutang)){
+    if (parseInt(dibayar) > parseInt(hutang)) {
         $('#edit_kekurangan').val('0');
-    }else{
-        kekurangan = parseInt(hutang)-parseInt(dibayar);
+    } else {
+        kekurangan = parseInt(hutang) - parseInt(dibayar);
         $('#edit_kekurangan').val(rupiah(kekurangan));
     }
-    
+
 }
 
 //===============================================================================================
 $('#btnsimpanhutang').on('click', function (e) {
-    if (parseInt($('#edit_hutang').val()) < parseInt($('#edit_dibayar').val())) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: true
+    })
+    let strsatu = document.getElementById("edit_hutang").value;
+    var edit_hutang = strsatu.replace(/\./g, '');
+    let strdua = document.getElementById("edit_dibayar").value;
+    var edit_dibayar = strdua.replace(/\./g, '');
+
+    if (parseInt(edit_hutang) < parseInt(edit_dibayar)) {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
             text: 'Pembayaran melebihi kekurangan',
             confirmButtonText: 'OK'
         });
     } else {
+        $('#bayarhutangmodal').modal('hide');
         $('#panelsatu').loading('toggle');
         $.ajax({
             type: 'POST',
             url: '/laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
             data: {
                 '_token': $('input[name=_token]').val(),
-                'edit_jumlah_barang': $('#edit_jumlah_barang').val(),
-                'edit_harga_barang': $('#edit_harga_barang').val(),
+                'kode': $('#edit_kode').val(),
+                'hutang': $('#edit_hutang').val(),
+                'dibayar': $('#edit_dibayar').val(),
+                'kekurangan': $('#edit_kekurangan').val(),
+                'tgl_bayar': $('#tgl_bayar').val(),
             },
             success: function () {
+                swalWithBootstrapButtons.fire(
+                    'Info',
+                    'Data berhasil diperbarui',
+                    'success'
+                )
+            }, error: function () {
+                swalWithBootstrapButtons.fire(
+                    'Oops!',
+                    'Data gagal diperbarui',
+                    'error'
+                )
+                $('#list-data').DataTable().ajax.reload();
             }, complete: function () {
-                $('#cari_barang_qr').trigger("focus");
-                $('#paneldua').loading('stop');
+                $('#panelsatu').loading('stop');
+                $('#list-data').DataTable().ajax.reload();
             }
         });
     }

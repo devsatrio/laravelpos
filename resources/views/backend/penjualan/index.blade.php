@@ -168,9 +168,13 @@
         </div>
     </div>
 </div>
+@php
+$datasetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
+@endphp
+@foreach($datasetting as $row_setting)
 <div id="print_div" style="display:none;font-size:11px;">
-    <b>Nama Toko Anda</b><br>
-    Alamat Toko Anda
+    <b>{{$row_setting->instansi}}</b><br>
+    {{$row_setting->alamat}}
     <hr style="margin:0px;border-top: 1px dashed black;">
     <table width="100%">
         <thead>
@@ -222,8 +226,9 @@
     <span id="print_kode"></span> || <span id="print_tgl_order"></span><br>
     <span id="print_pembuat"></span> || <span id="print_customer"></span><br>
     <hr style="margin:0px;border-top: 1px dashed black;">
-    Barang yang sudah dibeli tidak bisa ditukar atau dikembalikan
+    {{$row_setting->note}}
 </div>
+@endforeach
 @endsection
 
 @push('customjs')

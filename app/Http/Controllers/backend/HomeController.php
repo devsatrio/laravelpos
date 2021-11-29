@@ -105,6 +105,8 @@ class HomeController extends Controller
             'singkatan_nama_program'=>$request->singkatan_nama_program,
             'nama_program'=>$request->nama_program,
             'instansi'=>$request->instansi,
+            'alamat'=>$request->alamat,
+            'note'=>$request->note,
             'deskripsi_program'=>$request->deskripsi,
         ]);
         return redirect('/backend/home')->with('status','Sukses memperbarui setting web');

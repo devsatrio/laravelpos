@@ -82,11 +82,25 @@
     </li>
     @endif
 
+    @if(auth()->user()->can('view-penjualan')
+    || auth()->user()->can('create-penjualan')
+    || auth()->user()->can('delete-penjualan')
+    || auth()->user()->can('update-hutang-penjualan')
+    || auth()->user()->can('view-pembelian')
+    || auth()->user()->can('create-pembelian')
+    || auth()->user()->can('edit-pembelian')
+    || auth()->user()->can('delete-pembelian')
+    || auth()->user()->can('approve-pembelian'))
     <li class="nav-item dropdown">
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Transaksi</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
+            @if(auth()->user()->can('view-penjualan')
+            || auth()->user()->can('create-penjualan')
+            || auth()->user()->can('delete-penjualan')
+            || auth()->user()->can('update-hutang-penjualan'))
             <li><a href="{{url('backend/penjualan')}}" class="dropdown-item">Transaksi Penjualan</a></li>
+            @endif
             @if(auth()->user()->can('view-pembelian')
             || auth()->user()->can('create-pembelian')
             || auth()->user()->can('edit-pembelian')
@@ -96,6 +110,8 @@
             @endif
         </ul>
     </li>
+    @endif
+
     <li class="nav-item dropdown">
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Laporan</a>
@@ -112,7 +128,12 @@
             class="nav-link dropdown-toggle">Lain - Lain</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
             <li><a href="#" class="dropdown-item">Perbaikan Stok</a></li>
-            <li><a href="#" class="dropdown-item">Pengeluaran / Pembelian Lainnya</a></li>
+            @if(auth()->user()->can('view-transaksi-lain')
+            || auth()->user()->can('create-transaksi-lain')
+            || auth()->user()->can('edit-transaksi-lain')
+            || auth()->user()->can('delete-transaksi-lain'))
+            <li><a href="{{url('backend/transaksi-lain')}}" class="dropdown-item">Pengeluaran / Pemasukan Lainnya</a></li>
+            @endif
         </ul>
     </li>
 </ul>

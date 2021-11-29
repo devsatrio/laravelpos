@@ -74,6 +74,7 @@ class barangController extends Controller
         DB::table('barang')
         ->insert([
             'kode'=>$kode,
+            'kode_qr'=>$request->kode_qr,
             'nama'=>$request->nama,
             'kategori'=>$request->kategori,
             'harga_beli'=>str_replace('.','',$request->harga_beli),
@@ -125,6 +126,7 @@ class barangController extends Controller
         DB::table('barang')
         ->where('id',$id)
         ->update([
+            'kode_qr'=>$request->kode_qr,
             'nama'=>$request->nama,
             'kategori'=>$request->kategori,
             'harga_beli'=>str_replace('.','',$request->harga_beli),

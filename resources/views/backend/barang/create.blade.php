@@ -41,7 +41,13 @@
                                         <input type="text" class="form-control" name="nama" required autofocus>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Kode QR</label>
+                                        <input type="text" class="form-control" name="kode_qr" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Kategori</label>
                                         <select name="kategori" class="form-control">

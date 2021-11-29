@@ -67,7 +67,7 @@ class pembelianController extends Controller
     public function adddetailpembelianqr(Request $request)
     {
         $harga_barang=0;
-        $caribarang = DB::table('barang')->where('kode',$request->kode_barang)->get();
+        $caribarang = DB::table('barang')->where('kode_qr',$request->kode_barang)->get();
         if(count($caribarang)>0){
             foreach ($caribarang as $row_caribarang) {
                 $harga_barang = $row_caribarang->harga_beli;
@@ -164,9 +164,9 @@ class pembelianController extends Controller
     public function create()
     {
         $kode = $this->carikode();
-        // DB::table('pembelian_thumb_detail')
-        // ->where('pembuat',Auth::user()->id)
-        // ->delete();
+        DB::table('pembelian_thumb_detail')
+        ->where('pembuat',Auth::user()->id)
+        ->delete();
         $supplier = DB::table('master_supplier')->orderby('id','desc')->get();
         return view('backend.pembelian.create',compact('kode','supplier'));
     }

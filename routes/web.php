@@ -58,6 +58,7 @@ Route::prefix('backend')->group(function () {
     //-------------------------------------------------------------------------------------------
     Route::get('/data-penjualan','backend\penjualanController@listdata');
     Route::post('/data-penjualan/add-detail-penjualan','backend\penjualanController@adddetailpenjualan');
+    Route::post('/data-penjualan/bayar-hutang-penjualan','backend\penjualanController@updatehutang');
     Route::post('/data-penjualan/hapus-detail-penjualan','backend\penjualanController@hapusdetailpenjualan');
     Route::post('/data-penjualan/add-detail-penjualan-qr','backend\penjualanController@adddetailpenjualanqr');
     Route::post('/data-penjualan/edit-detail-penjualan','backend\penjualanController@editdetailpembelian');
@@ -66,5 +67,9 @@ Route::prefix('backend')->group(function () {
     Route::get('/data-penjualan/cetak-ulang/{kode}','backend\penjualanController@cetakulang');
     Route::get('/data-penjualan/ganti-harga/{kode}/{status}','backend\penjualanController@gantiharga');
     Route::resource('/penjualan','backend\penjualanController');
+
+    //-------------------------------------------------------------------------------------------
+    Route::get('/data-transaksi-lain','backend\transaksiLainController@listdata');
+    Route::resource('/transaksi-lain','backend\transaksiLainController');
 
 });
