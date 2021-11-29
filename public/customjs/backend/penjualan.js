@@ -78,8 +78,8 @@ $(function () {
                 "data": null,
             },
         ],
-        pageLength: 10,
-        lengthMenu: [[5, 10, 20], [5, 10, 20]]
+        pageLength: 100,
+        lengthMenu: [[100, 300, 500, 900], [100, 300, 500, 900]]
     });
 
 });
@@ -233,11 +233,11 @@ function cetakulang(kode) {
                 $('#print_kode').html(value.kode);
                 $('#print_tgl_order').html(value.tgl_buat);
                 $('#print_pembuat').html(value.name);
-                $('#print_customer').html(value.namacustomer);
+                $('#print_customer').html(value.namacustomer+' - '+value.customer);
                 $('#print_total').html('Rp. ' + rupiah(parseInt(value.total)));
                 $('#print_biaya_tambahan').html('Rp. ' + rupiah(parseInt(value.biaya_tambahan)));
                 $('#print_potongan').html('Rp. ' + rupiah(parseInt(value.potongan)));
-                $('#print_dibayar').html('Rp. ' + rupiah(parseInt(value.dibayar)));
+                $('#print_dibayar').html('Rp. ' + rupiah(parseInt(value.terbayar)));
                 $('#print_kekurangan').html('Rp. ' + rupiah(parseInt(value.kekurangan)));
                 $('#print_kembalian').html('Rp. ' + rupiah(parseInt(value.kembalian)));
             });
@@ -375,3 +375,4 @@ $('#btnsimpanhutang').on('click', function (e) {
         });
     }
 });
+

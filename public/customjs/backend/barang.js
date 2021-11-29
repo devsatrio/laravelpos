@@ -45,8 +45,8 @@ $(function () {
                 "data": null,
             },
         ],
-        pageLength: 10,
-        lengthMenu: [[5, 10, 20], [5, 10, 20]]
+        pageLength: 100,
+        lengthMenu: [[100, 300, 500, 900], [100, 300, 500, 900]]
     });
 
 });
@@ -115,3 +115,55 @@ function hapusdata(kode) {
     })
 }
 window.hapusdata = hapusdata;
+
+//===============================================================================================
+function cetaklabel(id) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: true
+    })
+    Swal.fire({
+        title: 'Ganti Status ?',
+        text: "Apakah anda yakin mengganti status pembelian dari Draft ke Approve dan otomatis mengupdate status stok barang, item pada pembelian tidak dapat di rubah setelah aksi ini",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, saya yakin',
+        cancelButtonText: 'Tidak'
+    }).then((result) => {
+        if (result.value) {
+            $('#panelsatu').loading('toggle');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST',
+                url: '/laravelpos/backend/pembelian/update-status/' + id,
+                data: {
+                    '_token': $('input[name=_token]').val(),
+                },
+                success: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Updated!',
+                        'Status data berhasil diperbarui',
+                        'success'
+                    )
+                }, error: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Oops!',
+                        'Status data gagal diperbarui',
+                        'error'
+                    )
+                }, complete: function () {
+                    $('#list-data').DataTable().ajax.reload();
+                    $('#panelsatu').loading('stop');
+                }
+            });
+        }
+    })
+}

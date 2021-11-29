@@ -25,8 +25,8 @@ $(function () {
                 "data": null,
             },
         ],
-        pageLength: 10,
-        lengthMenu: [[5, 10, 20], [5, 10, 20]]
+        pageLength: 100,
+        lengthMenu: [[100, 300, 500, 900], [100, 300, 500, 900]]
     });
 
 });
