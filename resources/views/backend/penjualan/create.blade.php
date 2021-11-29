@@ -258,6 +258,18 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
+                                            <label for="exampleInputEmail1">Kembalian</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Rp</span>
+                                                </div>
+                                                <input type="text" class="form-control text-right" name="kembalian"
+                                                    id="kembalian" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
                                             <label for="exampleInputEmail1">Keterangan</label>
                                             <textarea name="keterangan" id="keterangan" class="form-control"
                                                 rows="2"></textarea>
@@ -301,20 +313,58 @@
                             required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Harga Barang</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="edit_harga_barang" id="edit_harga_barang" readonly
-                            required>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Diskon</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="edit_diskon_barang"
+                                    id="edit_diskon_barang" readonly required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Harga Barang</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input type="text" class="form-control text-right" name="edit_harga_barang"
+                                    id="edit_harga_barang" readonly required>
+                            </div>
+                            <div class="input-group">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Jumlah Barang</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="edit_jumlah_barang" id="edit_jumlah_barang"
-                            required>
-                        <div class="input-group-append">
-                            <span class="input-group-text">Pcs</span>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Stok</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="edit_stok_barang" id="edit_stok_barang"
+                                    readonly required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Pcs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Jumlah Barang</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="edit_jumlah_barang"
+                                    id="edit_jumlah_barang" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Pcs</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -370,6 +420,63 @@
         </div>
     </div>
 </div>
+<div id="print_div" style="display:none;font-size:11px;">
+    <b>Nama Toko Anda</b><br>
+    Alamat Toko Anda
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    <table width="100%">
+        <thead>
+            <tr>
+                <td>Nama</td>
+                <td>Disk</td>
+                <td>Qty</td>
+                <td align="right">Harga</td>
+                <td align="right">Total</td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <hr style="margin:0px;border-top: 1px dashed black;">
+                </td>
+            </tr>
+        </thead>
+        <tbody id="print_detail">
+
+        </tbody>
+    </table>
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    <table width="100%">
+        <tr>
+            <td>Biaya Tambahan</td>
+            <td align="right"><span id="print_biaya_tambahan">-</span></td>
+        </tr>
+        <tr>
+            <td>Potongan</td>
+            <td align="right"><span id="print_potongan">-</span></td>
+        </tr>
+        <tr>
+            <td>Total</td>
+            <td align="right"><span id="print_total">-</span></td>
+        </tr>
+        <tr>
+            <td>Tunai</td>
+            <td align="right"><span id="print_dibayar">-</span></td>
+        </tr>
+        <tr>
+            <td>Kekurangan</td>
+            <td align="right"><span id="print_kekurangan">-</span></td>
+        </tr>
+        <tr>
+            <td>Kembalian</td>
+            <td align="right"><span id="print_kembalian">-</span></td>
+        </tr>
+    </table>
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    <span>{{$kode}}</span> || <span id="print_tgl_order">{{date('Y-m-d')}}</span><br>
+    <span>{{Auth::user()->name}}</span> || <span id="print_customer"></span><br>
+    <hr style="margin:0px;border-top: 1px dashed black;">
+    Barang yang sudah dibeli tidak bisa ditukar atau dikembalikan
+</div>
+<br><br><br>
 @endsection
 
 @push('customjs')
