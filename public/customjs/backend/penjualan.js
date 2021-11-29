@@ -1,5 +1,11 @@
-
+var edit_dibayar = document.getElementById("edit_dibayar");
 $(function () {
+    $('#tgl_bayar').daterangepicker({
+        singleDatePicker: true,
+        locale: {
+            format: 'YYYY-MM-DD'
+        }
+    });
     $('#list-data').DataTable({
         processing: true,
         serverSide: true,
@@ -57,7 +63,7 @@ $(function () {
                 render: function (data, type, row) {
                     if (row['status'] == 'Belum Lunas') {
                         return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-                        `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang(` + row['id'] + `)"><i class="fa fa-edit"></i></button>` +
+                        `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang('` + row['kode'] + `')"><i class="fa fa-edit"></i></button>` +
                         `<button class="btn btn-sm m-1 btn-success" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
                         `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
                     }else{
@@ -184,6 +190,23 @@ function hapusdata(kode) {
 }
 
 //===============================================================================================
+function formatRupiah(angka) {
+    var number_string = angka.replace(/[^,\d]/g, "").toString(),
+        split = number_string.split(","),
+        sisa = split[0].length % 3,
+        rupiah = split[0].substr(0, sisa),
+        ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    if (ribuan) {
+        separator = sisa ? "." : "";
+        rupiah += separator + ribuan.join(".");
+    }
+
+    rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+    return rupiah;
+}
+
+//===============================================================================================
 function rupiah(bilangan) {
     var number_string = bilangan.toString(),
         sisa = number_string.length % 3,
@@ -240,3 +263,83 @@ function cetakulang(kode) {
         }
     });
 }
+
+//===============================================================================================
+function bayarhutang(kode) {
+    $('#panelsatu').loading('toggle');
+    $('#bayarhutangmodal').modal('show');
+    var url= '/laravelpos/backend/data-penjualan/cetak-ulang/' + kode;
+    $.ajax({
+        type: 'GET',
+        url: url,
+        success: function (data) {
+            $.each(data.detail, function (key, value) {
+                $('#edit_kode').val(value.kode);
+                $('#edit_customer').val(value.customer+' - '+value.namacustomer);
+                $('#edit_hutang').val(rupiah(parseInt(value.kekurangan)));
+                $('#edit_kekurangan').val(rupiah(parseInt(value.kekurangan)));
+            });
+            $('#bayarhutangmodal').modal('show');
+        }, complete: function () {
+            $('#panelsatu').loading('stop');
+        }
+    });
+}
+
+
+//===============================================================================================
+edit_dibayar.addEventListener("keyup", function (e) {
+    edit_dibayar.value = formatRupiah(this.value);
+    hitungkekurangan();
+});
+
+//===============================================================================================
+function hitungkekurangan() {
+    var kekurangan =0;
+    var dibayar=0;
+    var hutang=0;
+
+    if ($('#edit_hutang').val() != '') {
+        let str = document.getElementById("edit_hutang").value;
+        hutang = str.replace(/\./g, '');
+    }
+
+    if ($('#edit_dibayar').val() != '') {
+        let str = document.getElementById("edit_dibayar").value;
+        dibayar = str.replace(/\./g, '');
+    }
+    if(parseInt(dibayar)>parseInt(hutang)){
+        $('#edit_kekurangan').val('0');
+    }else{
+        kekurangan = parseInt(hutang)-parseInt(dibayar);
+        $('#edit_kekurangan').val(rupiah(kekurangan));
+    }
+    
+}
+
+//===============================================================================================
+$('#btnsimpanhutang').on('click', function (e) {
+    if (parseInt($('#edit_hutang').val()) < parseInt($('#edit_dibayar').val())) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Pembayaran melebihi kekurangan',
+            confirmButtonText: 'OK'
+        });
+    } else {
+        $('#panelsatu').loading('toggle');
+        $.ajax({
+            type: 'POST',
+            url: '/laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'edit_jumlah_barang': $('#edit_jumlah_barang').val(),
+                'edit_harga_barang': $('#edit_harga_barang').val(),
+            },
+            success: function () {
+            }, complete: function () {
+                $('#cari_barang_qr').trigger("focus");
+                $('#paneldua').loading('stop');
+            }
+        });
+    }
+});

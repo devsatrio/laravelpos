@@ -7,6 +7,7 @@
 @section('customcss')
 <link rel="stylesheet" href="{{asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/plugins/daterangepicker/daterangepicker.css')}}">
 <link href="{{asset('assets/loadingjs/loading.css')}}" rel="stylesheet">
 @endsection
 
@@ -89,6 +90,84 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="bayarhutangmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Bayar Kekurangan / Hutang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Kode Penjualan</label>
+                            <input type="text" class="form-control" name="edit_kode" id="edit_kode" readonly required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Customer</label>
+                            <input type="text" class="form-control" name="edit_customer" id="edit_customer" readonly
+                                required>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Kekurangan Pembayaran / Hutang</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input type="text" class="form-control text-right" name="edit_hutang" id="edit_hutang"
+                                    readonly required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Dibayar</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input type="text" class="form-control text-right" name="edit_dibayar" id="edit_dibayar"
+                                required>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Kekurangan</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                            <input type="text" class="form-control text-right" name="edit_kekurangan" id="edit_kekurangan"
+                               readonly required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tgl Bayar</label>
+                            <input type="text" class="form-control" name="tgl_bayar" id="tgl_bayar" value="{{date('Y-m-d')}}"
+                                required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btnsimpanhutang" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="print_div" style="display:none;font-size:11px;">
     <b>Nama Toko Anda</b><br>
     Alamat Toko Anda
@@ -151,6 +230,7 @@
 <script src="{{asset('assets/plugins/datatables/jquery.dataTables.js')}}"></script>
 <script src="{{asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('assets/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+<script src="{{asset('assets/plugins/daterangepicker/daterangepicker.js')}}"></script>
 <script src="{{asset('assets/loadingjs/loading.js')}}"></script>
 @endpush
 
