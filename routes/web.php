@@ -72,4 +72,11 @@ Route::prefix('backend')->group(function () {
     Route::get('/data-transaksi-lain','backend\transaksiLainController@listdata');
     Route::resource('/transaksi-lain','backend\transaksiLainController');
 
+    //-------------------------------------------------------------------------------------------
+    Route::get('/data-perbaikan-stok','backend\perbaikanStokController@listdata');
+    Route::post('/perbaikan-stok/aksi/add-detail-perbaikan','backend\perbaikanStokController@adddetail');
+    Route::post('/perbaikan-stok/aksi/hapus-detail-perbaikan','backend\perbaikanStokController@hapusdetail');
+    Route::get('/perbaikan-stok/aksi/list-detail-perbaikan/{kode}','backend\perbaikanStokController@listdetail');
+    Route::resource('/perbaikan-stok','backend\perbaikanStokController');
+
 });

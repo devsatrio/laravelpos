@@ -127,7 +127,7 @@
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Lain - Lain</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
-            <li><a href="#" class="dropdown-item">Perbaikan Stok</a></li>
+            <li><a href="{{url('backend/perbaikan-stok')}}" class="dropdown-item">Perbaikan Stok</a></li>
             @if(auth()->user()->can('view-transaksi-lain')
             || auth()->user()->can('create-transaksi-lain')
             || auth()->user()->can('edit-transaksi-lain')

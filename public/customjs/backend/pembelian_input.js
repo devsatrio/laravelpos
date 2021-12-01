@@ -282,7 +282,7 @@ $('#tambahbtn').on('click', function (e) {
     if ($('#barang').val() == "" || $('#harga_barang').val() == "" || $('#jumlah_barang').val() == "" || $('#total_harga_barang').val() == "") {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
-            text: 'Data tidak boleh kosog',
+            text: 'Data tidak boleh kosong',
             confirmButtonText: 'OK'
         });
     } else {
@@ -370,7 +370,7 @@ $('#simpanbtn').on('click', function (e) {
     if ($('#kode').val() == "" || $('#supplier').val() == "" || $('#tgl_order').val() == "" || $('#subtotal').val() == "" || $('#subtotal').val() == "0"|| $('#dibayar').val() == ""|| $('#potongan').val() == ""|| $('#biaya_tambahan').val() == "") {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
-            text: 'Data tidak boleh kosog',
+            text: 'Data tidak boleh kosong',
             confirmButtonText: 'OK'
         });
     } else {

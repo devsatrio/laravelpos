@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2021 at 02:12 PM
+-- Generation Time: Dec 02, 2021 at 12:39 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.3.13
 
@@ -50,9 +50,47 @@ CREATE TABLE `barang` (
 INSERT INTO `barang` (`id`, `kode`, `kode_qr`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
 (2, 'BRG-0002', NULL, 'Barang D', 5, 10000, 20000, 12000, 0, 0, 0, '-'),
 (3, 'BRG-0003', NULL, 'Barang C', 5, 5000, 20000, 30000, 40, 0, 0, '-'),
-(4, 'BRG-0004', NULL, 'Barang B', 5, 15000, 35000, 30000, 10, 0, 29, 'ket Barang B'),
-(5, 'BRG-0005', NULL, 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 11, 'ket barang A'),
+(4, 'BRG-0004', NULL, 'Barang B', 5, 15000, 35000, 30000, 10, 0, 28, 'ket Barang B'),
+(5, 'BRG-0005', NULL, 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 10, 'ket barang A'),
 (6, 'BRG-0006', '120823', 'barang E', 5, 25000, 50000, 40000, 0, 0, 0, '-');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `detail_perbaikan_stok`
+--
+
+CREATE TABLE `detail_perbaikan_stok` (
+  `id` int(11) NOT NULL,
+  `kode_perbaikan_stok` text DEFAULT NULL,
+  `kode_barang` text DEFAULT NULL,
+  `stok_lama` int(11) DEFAULT NULL,
+  `stok_baru` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `detail_perbaikan_stok`
+--
+
+INSERT INTO `detail_perbaikan_stok` (`id`, `kode_perbaikan_stok`, `kode_barang`, `stok_lama`, `stok_baru`, `keterangan`) VALUES
+(7, 'PBS-0001', 'BRG-0003', 0, 1, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `detail_perbaikan_stok_thumb`
+--
+
+CREATE TABLE `detail_perbaikan_stok_thumb` (
+  `id` int(11) NOT NULL,
+  `kode_perbaikan_stok` text DEFAULT NULL,
+  `kode_barang` text DEFAULT NULL,
+  `stok_lama` int(11) DEFAULT NULL,
+  `stok_baru` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `pembuat` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -251,7 +289,9 @@ INSERT INTO `pembayaran` (`id`, `kode_penjualan`, `customer`, `jumlah`, `tgl_bay
 (16, 'PNJ-112021-0002', NULL, 200000, '2021-11-29', '2021-11-29 11:30:18', 1, 'Pembayaran Hutang'),
 (17, 'PNJ-112021-0002', NULL, 100000, '2021-11-29', '2021-11-29 11:31:24', 1, 'Pembayaran Hutang'),
 (18, 'PNJ-112021-0002', NULL, 230000, '2021-11-30', '2021-11-29 11:33:22', 1, 'Pembayaran Hutang'),
-(19, 'PNJ-112021-0002', NULL, 0, '2021-11-29', '2021-11-29 11:34:35', 1, 'Pembayaran Hutang');
+(19, 'PNJ-112021-0002', NULL, 0, '2021-11-29', '2021-11-29 11:34:35', 1, 'Pembayaran Hutang'),
+(20, 'PNJ-112021-0003', NULL, 3000000, '2021-11-29', '2021-11-29 22:02:25', 1, 'Pembayaran Pertama & Pelunasan'),
+(21, 'PNJ-112021-0004', 'CUS-004', 30000, '2021-11-29', '2021-11-29 22:08:41', 1, 'Pembayaran Pertama & Pelunasan');
 
 -- --------------------------------------------------------
 
@@ -379,7 +419,9 @@ CREATE TABLE `penjualan` (
 
 INSERT INTO `penjualan` (`id`, `kode`, `customer`, `subtotal`, `potongan`, `biaya_tambahan`, `total`, `terbayar`, `kekurangan`, `kembalian`, `pembuat`, `tgl_buat`, `keterangan`, `status`, `status_penjualan`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
 (30, 'PNJ-112021-0001', NULL, 2731500, 0, 0, 2731500, 3000000, 0, 268500, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 13:49:05', NULL, 1, NULL),
-(31, 'PNJ-112021-0002', 'CUS-003', 2530000, 0, 0, 2530000, 0, 0, 0, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 14:00:16', NULL, 1, NULL);
+(31, 'PNJ-112021-0002', 'CUS-003', 2530000, 0, 0, 2530000, 0, 0, 0, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 14:00:16', NULL, 1, NULL),
+(32, 'PNJ-112021-0003', NULL, 2700000, 0, 20000, 2720000, 3000000, 0, 280000, 1, '2021-11-30', NULL, 'Telah Lunas', 'Draft', '2021-11-29 22:02:25', NULL, 1, NULL),
+(33, 'PNJ-112021-0004', 'CUS-004', 30000, 0, 0, 30000, 30000, 0, 0, 1, '2021-11-30', NULL, 'Telah Lunas', 'Draft', '2021-11-29 22:08:42', NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -405,7 +447,9 @@ INSERT INTO `penjualan_detail` (`id`, `kode_penjualan`, `kode_barang`, `jumlah`,
 (64, 'PNJ-112021-0001', 'BRG-0004', 1, 35000, 10, 31500),
 (65, 'PNJ-112021-0001', 'BRG-0005', 1, 3000000, 10, 2700000),
 (66, 'PNJ-112021-0002', 'BRG-0004', 1, 30000, 0, 30000),
-(67, 'PNJ-112021-0002', 'BRG-0005', 1, 2500000, 0, 2500000);
+(67, 'PNJ-112021-0002', 'BRG-0005', 1, 2500000, 0, 2500000),
+(68, 'PNJ-112021-0003', 'BRG-0005', 1, 3000000, 10, 2700000),
+(69, 'PNJ-112021-0004', 'BRG-0004', 1, 30000, 0, 30000);
 
 -- --------------------------------------------------------
 
@@ -423,6 +467,28 @@ CREATE TABLE `penjualan_thumb_detail` (
   `total` int(11) DEFAULT NULL,
   `pembuat` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `perbaikan_stok`
+--
+
+CREATE TABLE `perbaikan_stok` (
+  `id` int(11) NOT NULL,
+  `kode` text DEFAULT NULL,
+  `pembuat` int(11) DEFAULT NULL,
+  `tgl_buat` date DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Draft'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `perbaikan_stok`
+--
+
+INSERT INTO `perbaikan_stok` (`id`, `kode`, `pembuat`, `tgl_buat`, `keterangan`, `status`) VALUES
+(2, 'PBS-0001', 1, '2021-12-01', NULL, 'Draft');
 
 -- --------------------------------------------------------
 
@@ -651,6 +717,18 @@ ALTER TABLE `barang`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `detail_perbaikan_stok`
+--
+ALTER TABLE `detail_perbaikan_stok`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `detail_perbaikan_stok_thumb`
+--
+ALTER TABLE `detail_perbaikan_stok_thumb`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -749,6 +827,12 @@ ALTER TABLE `penjualan_thumb_detail`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `perbaikan_stok`
+--
+ALTER TABLE `perbaikan_stok`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `permissions`
 --
 ALTER TABLE `permissions`
@@ -799,6 +883,18 @@ ALTER TABLE `barang`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `detail_perbaikan_stok`
+--
+ALTER TABLE `detail_perbaikan_stok`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `detail_perbaikan_stok_thumb`
+--
+ALTER TABLE `detail_perbaikan_stok_thumb`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -838,7 +934,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `pembelian`
@@ -862,19 +958,25 @@ ALTER TABLE `pembelian_thumb_detail`
 -- AUTO_INCREMENT for table `penjualan`
 --
 ALTER TABLE `penjualan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `penjualan_detail`
 --
 ALTER TABLE `penjualan_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `penjualan_thumb_detail`
 --
 ALTER TABLE `penjualan_thumb_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT for table `perbaikan_stok`
+--
+ALTER TABLE `perbaikan_stok`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `permissions`

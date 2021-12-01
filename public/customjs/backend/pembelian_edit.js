@@ -281,7 +281,7 @@ $('#tambahbtn').on('click', function (e) {
     if ($('#barang').val() == "" || $('#harga_barang').val() == "" || $('#jumlah_barang').val() == "" || $('#total_harga_barang').val() == "") {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
-            text: 'Data tidak boleh kosog',
+            text: 'Data tidak boleh kosong',
             confirmButtonText: 'OK'
         });
     } else {
