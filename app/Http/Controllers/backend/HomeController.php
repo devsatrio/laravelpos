@@ -24,8 +24,20 @@ class HomeController extends Controller
         $jumlahpelanggan = DB::table('master_customer')->count();
         $jumlahsupplier = DB::table('master_customer')->count();
         $jumlahbarang = DB::table('barang')->count();
-        $jumlahtransaksi = 10;
-        return view('backend.dashboard.index',compact('jumlahpelanggan','jumlahsupplier','jumlahbarang','jumlahtransaksi'));
+        $jumlahtransaksi = DB::table('penjualan')->count();
+        $barangstokmenipis = DB::table('barang')->where('stok','<','10')->count();
+        $jumlahhutang = DB::table('pembelian')->where('status','Belum Lunas')->count();
+        $jumlahpiutang = DB::table('penjualan')->where('status','Belum Lunas')->count();
+
+        $kategoritahunan = DB::table('penjualan_detail')
+        ->select(DB::raw('penjualan_detail.*,penjualan.tgl_buat,barang.kategori,kategori_barang.nama,sum(penjualan_detail.jumlah) as totalpcs'))
+        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
+        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
+        ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
+        ->whereYear('penjualan.tgl_buat',date('Y'))
+        ->groupby('barang.kategori')
+        ->get();
+        return view('backend.dashboard.index',compact('kategoritahunan','jumlahpiutang','jumlahhutang','jumlahpelanggan','jumlahsupplier','jumlahbarang','jumlahtransaksi','barangstokmenipis'));
     }
 
     //==================================================================

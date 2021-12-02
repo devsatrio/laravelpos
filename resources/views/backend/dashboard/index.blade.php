@@ -32,7 +32,7 @@
                     <div class="icon">
                         <i class="fas fa-shopping-cart"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    <a href="{{url('/backend/penjualan')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <div class="col-lg-3 col-6">
@@ -116,29 +116,29 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="info-box mb-3">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-exclamation-triangle"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Barang Stok Menipis</span>
-                                <span class="info-box-number">2,000</span>
+                                <span class="info-box-number">{{$barangstokmenipis}} Barang</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="info-box mb-3">
-                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-frown"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Semua Hutang</span>
-                                <span class="info-box-number">41,410</span>
+                                <span class="info-box-number">{{$jumlahhutang}} Pembelian</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-success elevation-1"><i
-                                    class="fas fa-shopping-cart"></i></span>
+                                    class="fas fa-heartbeat"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Semua Piutang</span>
-                                <span class="info-box-number">760</span>
+                                <span class="info-box-number">{{$jumlahpiutang}} Penjualan</span>
                             </div>
                         </div>
                     </div>
@@ -147,6 +147,20 @@
         </div>
     </div>
 </div>
+@php
+$nama_kategori = '';
+$value_kategori ='';
+$warna_kategori='';
+@endphp
+
+@foreach($kategoritahunan as $row_kategoritahunan)
+@php
+$nama_kategori = $nama_kategori."'".$row_kategoritahunan->nama."',";
+$value_kategori =$value_kategori."".$row_kategoritahunan->totalpcs.",";
+$warna_kategori =$warna_kategori."'#". str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT)."',";
+@endphp
+@endforeach
+
 @endsection
 
 @push('customjs')
@@ -196,17 +210,10 @@ $(function() {
         }, ]
     }
     var donutData = {
-        labels: [
-            'Chrome',
-            'IE',
-            'FireFox',
-            'Safari',
-            'Opera',
-            'Navigator',
-        ],
+        labels: [{!!substr($nama_kategori, 0, -1)!!}],
         datasets: [{
-            data: [700, 500, 400, 600, 300, 100],
-            backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+            data: [{!!substr($value_kategori, 0, -1)!!}],
+            backgroundColor: [{!!substr($warna_kategori, 0, -1)!!}],
         }]
     }
     var areaChartOptions = {

@@ -13,6 +13,11 @@ class perbaikanStokController extends Controller
     function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:view-perbaikan-stok', ['only' => ['index','show']]);
+        $this->middleware('permission:create-perbaikan-stok', ['only' => ['create']]);
+        $this->middleware('permission:edit-perbaikan-stok', ['only' => ['edit']]);
+        $this->middleware('permission:delete-perbaikan-stok', ['only' => ['destroy']]);
+        $this->middleware('permission:approve-perbaikan-stok', ['only' => ['updatestatus']]);
     }
 
     //=================================================================
@@ -142,15 +147,119 @@ class perbaikanStokController extends Controller
     }
 
     //=================================================================
-    public function edit($id)
+    public function updatestatus(Request $request,$kode)
     {
-        //
+        $detail = DB::table('detail_perbaikan_stok')
+        ->where('kode_perbaikan_stok',$request->kode)
+        ->get();
+        $data=[];
+        foreach ($detail as $row) {
+            $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
+            foreach($caribarang as $row_caribarang){
+                $newstok = $row->stok_baru;
+                DB::table('barang')
+                ->where('kode',$row->kode_barang)
+                ->update([
+                    'stok'=>$newstok
+                ]);
+            } 
+        }
+
+        DB::table('perbaikan_stok')
+        ->where('kode',$kode)
+        ->update([
+            'status'=>'Approve',
+        ]);
     }
 
     //=================================================================
-    public function update(Request $request, $id)
+    public function edit($id)
     {
-        //
+        $kode='';
+        $status="Draft";
+        $data_perbaikan = DB::table('perbaikan_stok')->where('id',$id)->get();
+        foreach ($data_perbaikan as $row_data_perbaikan) {
+            $kode=$row_data_perbaikan->kode;
+            $status=$row_data_perbaikan->status;
+        }
+        DB::table('detail_perbaikan_stok_thumb')->where('pembuat',Auth::user()->id)->delete();
+        
+        
+
+        if($status=='Draft'){
+            $detail = DB::table('detail_perbaikan_stok')
+            ->where('kode_perbaikan_stok',$kode)
+            ->get();
+            $data=[];
+            foreach ($detail as $row) {
+                $data[] = [
+                    'kode_perbaikan_stok'=>$row->kode_perbaikan_stok,
+                    'kode_barang'=>$row->kode_barang,
+                    'stok_lama'=>$row->stok_lama,
+                    'stok_baru'=>$row->stok_baru,
+                    'keterangan'=>$row->keterangan,
+                    'pembuat'=>Auth::user()->id,
+                ]; 
+            }
+
+            DB::table('detail_perbaikan_stok_thumb')->insert($data);
+            return view('backend.perbaikanstok.edit',compact('data_perbaikan'));
+        }else{
+            
+            $detail = DB::table('detail_perbaikan_stok')
+            ->select(DB::raw('detail_perbaikan_stok.*,barang.nama as namabarang'))
+            ->leftjoin('barang','barang.kode','=','detail_perbaikan_stok.kode_barang')
+            ->where('detail_perbaikan_stok.kode_perbaikan_stok',$kode)
+            ->get();
+            return view('backend.perbaikanstok.edit_dua',compact('data_perbaikan','detail'));
+        }
+    }
+
+    //=================================================================
+    public function update(Request $request, $kode)
+    {
+        $status="Draft";
+        $data_perbaikan = DB::table('perbaikan_stok')->where('kode',$kode)->get();
+        foreach ($data_perbaikan as $row_data_perbaikan) {
+            $status=$row_data_perbaikan->status;
+        }
+
+        if($status=='Draft'){
+
+            DB::table('detail_perbaikan_stok')->where('kode_perbaikan_stok',$kode)->delete();
+
+            $detail = DB::table('detail_perbaikan_stok_thumb')
+            ->where('kode_perbaikan_stok',$request->kode)
+            ->get();
+            $data=[];
+            foreach ($detail as $row) {
+                $data[] = [
+                    'kode_perbaikan_stok'=>$row->kode_perbaikan_stok,
+                    'kode_barang'=>$row->kode_barang,
+                    'stok_lama'=>$row->stok_lama,
+                    'stok_baru'=>$row->stok_baru,
+                    'keterangan'=>$row->keterangan,
+                ]; 
+            }
+
+            DB::table('detail_perbaikan_stok')->insert($data);
+            DB::table('perbaikan_stok')
+            ->where('kode',$kode)
+            ->update([
+                'pembuat'=>Auth::user()->id,
+                'tgl_buat'=>$request->tgl_buat,
+                'keterangan'=>$request->keterangan,
+            ]);
+        }else{
+            DB::table('perbaikan_stok')
+            ->where('kode',$kode)
+            ->update([
+                'pembuat'=>Auth::user()->id,
+                'tgl_buat'=>$request->tgl_buat,
+                'keterangan'=>$request->keterangan,
+            ]);
+        }
+        
     }
 
     //=================================================================

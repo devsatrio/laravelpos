@@ -7,6 +7,7 @@
 @section('customcss')
 <link rel="stylesheet" href="{{asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
+<link href="{{asset('assets/loadingjs/loading.css')}}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -43,31 +44,33 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="list-data" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Pembuat</th>
-                                        <th>Tgl Buat</th>
-                                        <th>Keterangan</th>
-                                        <th>Status</th>
-                                        <th class="text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <div class="table-responsive">
+                                <table id="list-data" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Pembuat</th>
+                                            <th>Tgl Buat</th>
+                                            <th>Keterangan</th>
+                                            <th>Status</th>
+                                            <th class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Pembuat</th>
-                                        <th>Tgl Buat</th>
-                                        <th>Keterangan</th>
-                                        <th>Status</th>
-                                        <th class="text-center">Aksi</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Pembuat</th>
+                                            <th>Tgl Buat</th>
+                                            <th>Keterangan</th>
+                                            <th>Status</th>
+                                            <th class="text-center">Aksi</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,6 +84,7 @@
 <script src="{{asset('assets/plugins/datatables/jquery.dataTables.js')}}"></script>
 <script src="{{asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('assets/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+<script src="{{asset('assets/loadingjs/loading.js')}}"></script>
 @endpush
 
 @push('customscripts')

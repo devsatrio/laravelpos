@@ -60,11 +60,7 @@
                                 @csrf
                             </form>
                             <div class="dropdown-divider"></div>
-                            @if(auth()->user()->can('setting-web'))
-                            <a href="{{url('backend/web-setting')}}" class="dropdown-item">
-                                Web Setting
-                            </a>
-                            @endif
+                            
                         </div>
                     </li>
                 </ul>

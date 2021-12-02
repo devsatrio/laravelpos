@@ -26,10 +26,17 @@ $(function () {
             },
             {
                 render: function (data, type, row) {
-                    return `<a href="/laravelpos/backend/perbaikan-stok/` + row['kode'] + `" class="btn btn-sm m-1 btn-warning"><i class="fa fa-eye"></i></a>`+
-                    `<a href="/laravelpos/backend/admin/` + row['id'] + `/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>`+
-                    `<button class="btn btn-sm m-1 btn-info" onclick="updatestatus('` + row['kode'] + `')"><i class="fa fa-check"></i></button>`+
-                    `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>`;
+                    if (row['status'] == 'Draft') {
+                        return `<a href="/laravelpos/backend/perbaikan-stok/` + row['kode'] + `" class="btn btn-sm m-1 btn-warning"><i class="fa fa-eye"></i></a>` +
+                        `<a href="/laravelpos/backend/perbaikan-stok/` + row['id'] + `/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>` +
+                        `<button class="btn btn-sm m-1 btn-info" onclick="updatestatus('` + row['kode'] + `')"><i class="fa fa-check"></i></button>` +
+                        `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(` + row['id'] + `)"><i class="fa fa-trash"></i></button>`;
+                    } else {
+                        return `<a href="/laravelpos/backend/perbaikan-stok/` + row['kode'] + `" class="btn btn-sm m-1 btn-warning"><i class="fa fa-eye"></i></a>` +
+                        `<a href="/laravelpos/backend/perbaikan-stok/` + row['id'] + `/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>` +
+                       `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(` + row['id'] + `)"><i class="fa fa-trash"></i></button>`;
+                    }
+                    
                 },
                 "className": 'text-center',
                 "orderable": false,
@@ -41,6 +48,58 @@ $(function () {
     });
 
 });
+
+function updatestatus(kode) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: true
+    })
+    swalWithBootstrapButtons.fire({
+        title: 'Ubah Status ?',
+        text: "Ubah status data dari draft menjadi approve dan update stok baran",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Tidak',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.value) {
+            $('#panelsatu').loading('toggle');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST',
+                url: '/laravelpos/backend/perbaikan-stok/aksi/update-status/' + kode,
+                data: {
+                    '_token': $('input[name=_token]').val(),
+                },
+                success: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Info!',
+                        'Data berhasil diperbarui',
+                        'success'
+                    )
+                    $('#list-data').DataTable().ajax.reload();
+                }, error: function () {
+                    swalWithBootstrapButtons.fire(
+                        'Oops!',
+                        'Data gagal diperbarui',
+                        'error'
+                    )
+                    $('#list-data').DataTable().ajax.reload();
+                }, complete: function () {
+                    $('#panelsatu').loading('stop');
+                }
+            });
+        }
+    })
+}
 
 function hapusdata(kode) {
     const swalWithBootstrapButtons = Swal.mixin({
@@ -60,6 +119,7 @@ function hapusdata(kode) {
         reverseButtons: true
     }).then((result) => {
         if (result.value) {
+            $('#panelsatu').loading('toggle');
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -78,16 +138,17 @@ function hapusdata(kode) {
                         'success'
                     )
                     $('#list-data').DataTable().ajax.reload();
-                },error: function () {
+                }, error: function () {
                     swalWithBootstrapButtons.fire(
                         'Oops!',
                         'Data gagal dihapus',
                         'error'
                     )
                     $('#list-data').DataTable().ajax.reload();
+                }, complete: function () {
+                    $('#panelsatu').loading('stop');
                 }
             });
         }
     })
 }
-window.hapusdata = hapusdata;

@@ -123,17 +123,40 @@
             <li><a href="#" class="dropdown-item">Laporan Laba Rugi</a></li>
         </ul>
     </li>
+
+    @if(auth()->user()->can('view-perbaikan-stok')
+    || auth()->user()->can('create-perbaikan-stok')
+    || auth()->user()->can('edit-perbaikan-stok')
+    || auth()->user()->can('delete-perbaikan-stok')
+    || auth()->user()->can('approve-perbaikan-stok')
+    || auth()->user()->can('view-transaksi-lain')
+    || auth()->user()->can('create-transaksi-lain')
+    || auth()->user()->can('edit-transaksi-lain')
+    || auth()->user()->can('delete-transaksi-lain')
+    || auth()->user()->can('setting-web'))
     <li class="nav-item dropdown">
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Lain - Lain</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
+            @if(auth()->user()->can('view-perbaikan-stok')
+            || auth()->user()->can('create-perbaikan-stok')
+            || auth()->user()->can('edit-perbaikan-stok')
+            || auth()->user()->can('delete-perbaikan-stok')
+            || auth()->user()->can('approve-perbaikan-stok'))
             <li><a href="{{url('backend/perbaikan-stok')}}" class="dropdown-item">Perbaikan Stok</a></li>
+            @endif
+
             @if(auth()->user()->can('view-transaksi-lain')
             || auth()->user()->can('create-transaksi-lain')
             || auth()->user()->can('edit-transaksi-lain')
             || auth()->user()->can('delete-transaksi-lain'))
             <li><a href="{{url('backend/transaksi-lain')}}" class="dropdown-item">Pengeluaran / Pemasukan Lainnya</a></li>
             @endif
+
+            @if(auth()->user()->can('setting-web'))
+            <li><a href="{{url('backend/web-setting')}}" class="dropdown-item">Web Setting</a></li>
+            @endif
         </ul>
     </li>
+    @endif
 </ul>
