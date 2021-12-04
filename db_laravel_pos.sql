@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2021 at 12:39 AM
+-- Generation Time: Dec 04, 2021 at 02:39 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.3.13
 
@@ -49,9 +49,9 @@ CREATE TABLE `barang` (
 
 INSERT INTO `barang` (`id`, `kode`, `kode_qr`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
 (2, 'BRG-0002', NULL, 'Barang D', 5, 10000, 20000, 12000, 0, 0, 0, '-'),
-(3, 'BRG-0003', NULL, 'Barang C', 5, 5000, 20000, 30000, 40, 0, 0, '-'),
-(4, 'BRG-0004', NULL, 'Barang B', 5, 15000, 35000, 30000, 10, 0, 28, 'ket Barang B'),
-(5, 'BRG-0005', NULL, 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 10, 'ket barang A'),
+(3, 'BRG-0003', NULL, 'Barang C', 5, 5000, 20000, 30000, 40, 0, 4, '-'),
+(4, 'BRG-0004', NULL, 'Barang B', 5, 15000, 35000, 30000, 10, 0, 30, 'ket Barang B'),
+(5, 'BRG-0005', 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 0, 'ket barang A'),
 (6, 'BRG-0006', '120823', 'barang E', 5, 25000, 50000, 40000, 0, 0, 0, '-');
 
 -- --------------------------------------------------------
@@ -68,13 +68,6 @@ CREATE TABLE `detail_perbaikan_stok` (
   `stok_baru` int(11) DEFAULT NULL,
   `keterangan` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `detail_perbaikan_stok`
---
-
-INSERT INTO `detail_perbaikan_stok` (`id`, `kode_perbaikan_stok`, `kode_barang`, `stok_lama`, `stok_baru`, `keterangan`) VALUES
-(7, 'PBS-0001', 'BRG-0003', 0, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -291,7 +284,9 @@ INSERT INTO `pembayaran` (`id`, `kode_penjualan`, `customer`, `jumlah`, `tgl_bay
 (18, 'PNJ-112021-0002', NULL, 230000, '2021-11-30', '2021-11-29 11:33:22', 1, 'Pembayaran Hutang'),
 (19, 'PNJ-112021-0002', NULL, 0, '2021-11-29', '2021-11-29 11:34:35', 1, 'Pembayaran Hutang'),
 (20, 'PNJ-112021-0003', NULL, 3000000, '2021-11-29', '2021-11-29 22:02:25', 1, 'Pembayaran Pertama & Pelunasan'),
-(21, 'PNJ-112021-0004', 'CUS-004', 30000, '2021-11-29', '2021-11-29 22:08:41', 1, 'Pembayaran Pertama & Pelunasan');
+(21, 'PNJ-112021-0004', 'CUS-004', 30000, '2021-11-29', '2021-11-29 22:08:41', 1, 'Pembayaran Pertama & Pelunasan'),
+(22, 'PNJ-122021-0001', 'CUS-004', 0, '2021-12-04', '2021-12-04 01:15:15', 1, 'Pembayaran Pertama'),
+(23, 'PNJ-122021-0002', NULL, 3000000, '2021-12-04', '2021-12-04 01:15:36', 1, 'Pembayaran Pertama & Pelunasan');
 
 -- --------------------------------------------------------
 
@@ -421,7 +416,9 @@ INSERT INTO `penjualan` (`id`, `kode`, `customer`, `subtotal`, `potongan`, `biay
 (30, 'PNJ-112021-0001', NULL, 2731500, 0, 0, 2731500, 3000000, 0, 268500, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 13:49:05', NULL, 1, NULL),
 (31, 'PNJ-112021-0002', 'CUS-003', 2530000, 0, 0, 2530000, 0, 0, 0, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 14:00:16', NULL, 1, NULL),
 (32, 'PNJ-112021-0003', NULL, 2700000, 0, 20000, 2720000, 3000000, 0, 280000, 1, '2021-11-30', NULL, 'Telah Lunas', 'Draft', '2021-11-29 22:02:25', NULL, 1, NULL),
-(33, 'PNJ-112021-0004', 'CUS-004', 30000, 0, 0, 30000, 30000, 0, 0, 1, '2021-11-30', NULL, 'Telah Lunas', 'Draft', '2021-11-29 22:08:42', NULL, 1, NULL);
+(33, 'PNJ-112021-0004', 'CUS-004', 30000, 0, 0, 30000, 30000, 0, 0, 1, '2021-11-30', NULL, 'Telah Lunas', 'Draft', '2021-11-29 22:08:42', NULL, 1, NULL),
+(34, 'PNJ-122021-0001', 'CUS-004', 30000, 0, 0, 30000, 0, 30000, 0, 1, '2021-12-04', NULL, 'Belum Lunas', 'Draft', '2021-12-04 01:15:15', NULL, 1, NULL),
+(35, 'PNJ-122021-0002', NULL, 2700000, 0, 0, 2700000, 3000000, 0, 300000, 1, '2021-12-04', NULL, 'Telah Lunas', 'Draft', '2021-12-04 01:15:36', NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -449,7 +446,9 @@ INSERT INTO `penjualan_detail` (`id`, `kode_penjualan`, `kode_barang`, `jumlah`,
 (66, 'PNJ-112021-0002', 'BRG-0004', 1, 30000, 0, 30000),
 (67, 'PNJ-112021-0002', 'BRG-0005', 1, 2500000, 0, 2500000),
 (68, 'PNJ-112021-0003', 'BRG-0005', 1, 3000000, 10, 2700000),
-(69, 'PNJ-112021-0004', 'BRG-0004', 1, 30000, 0, 30000);
+(69, 'PNJ-112021-0004', 'BRG-0004', 1, 30000, 0, 30000),
+(70, 'PNJ-122021-0001', 'BRG-0003', 1, 30000, 0, 30000),
+(71, 'PNJ-122021-0002', 'BRG-0005', 1, 3000000, 10, 2700000);
 
 -- --------------------------------------------------------
 
@@ -482,13 +481,6 @@ CREATE TABLE `perbaikan_stok` (
   `keterangan` text DEFAULT NULL,
   `status` varchar(50) DEFAULT 'Draft'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `perbaikan_stok`
---
-
-INSERT INTO `perbaikan_stok` (`id`, `kode`, `pembuat`, `tgl_buat`, `keterangan`, `status`) VALUES
-(2, 'PBS-0001', 1, '2021-12-01', NULL, 'Draft');
 
 -- --------------------------------------------------------
 
@@ -547,7 +539,12 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (36, 'view-transaksi-lain', 'web', NULL, NULL),
 (37, 'create-transaksi-lain', 'web', NULL, NULL),
 (38, 'edit-transaksi-lain', 'web', NULL, NULL),
-(39, 'delete-transaksi-lain', 'web', NULL, NULL);
+(39, 'delete-transaksi-lain', 'web', NULL, NULL),
+(40, 'create-perbaikan-stok', 'web', NULL, NULL),
+(41, 'view-perbaikan-stok', 'web', NULL, NULL),
+(42, 'edit-perbaikan-stok', 'web', NULL, NULL),
+(43, 'delete-perbaikan-stok', 'web', NULL, NULL),
+(44, 'approve-perbaikan-stok', 'web', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -628,7 +625,12 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (36, 2),
 (37, 2),
 (38, 2),
-(39, 2);
+(39, 2),
+(40, 2),
+(41, 2),
+(42, 2),
+(43, 2),
+(44, 2);
 
 -- --------------------------------------------------------
 
@@ -886,13 +888,13 @@ ALTER TABLE `barang`
 -- AUTO_INCREMENT for table `detail_perbaikan_stok`
 --
 ALTER TABLE `detail_perbaikan_stok`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `detail_perbaikan_stok_thumb`
 --
 ALTER TABLE `detail_perbaikan_stok_thumb`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -934,7 +936,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `pembelian`
@@ -958,31 +960,31 @@ ALTER TABLE `pembelian_thumb_detail`
 -- AUTO_INCREMENT for table `penjualan`
 --
 ALTER TABLE `penjualan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `penjualan_detail`
 --
 ALTER TABLE `penjualan_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `penjualan_thumb_detail`
 --
 ALTER TABLE `penjualan_thumb_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `perbaikan_stok`
 --
 ALTER TABLE `perbaikan_stok`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `roles`

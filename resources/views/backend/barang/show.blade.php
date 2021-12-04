@@ -33,6 +33,12 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="exampleInputEmail1">Kode Barcode</label>
+                                    <p>{{$row->kode_qr}}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="exampleInputEmail1">Nama</label>
                                     <p>{{$row->nama}}</p>
                                 </div>
@@ -101,9 +107,9 @@
                         $redColor = [255, 0, 0];
                         $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
                         echo '<img class="img-thumbnail"
-                            src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode, $generator::TYPE_CODE_128,3,45)) . '">';
+                            src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode_qr, $generator::TYPE_CODE_128,3,45)) . '">';
                         @endphp
-                        <p>{{$row->kode}}</p>
+                        <p>{{$row->kode_qr}}</p>
                     </div>
                     <div class="card-footer">
                         <button type="button" onclick="cetakbarcode()" class="btn btn-info">Cetak</button>
@@ -116,10 +122,10 @@
                     $redColor = [255, 0, 0];
                     $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
                     echo '<img
-                        src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode, $generator::TYPE_CODE_128)) . '">';
+                        src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode_qr, $generator::TYPE_CODE_128)) . '">';
                     @endphp
                     <br>
-                    <span>{{$row->kode}}</span>
+                    <span>{{$row->kode_qr}}</span>
                 </div>
             </div>
             @endforeach
