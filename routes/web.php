@@ -42,6 +42,7 @@ Route::prefix('backend')->group(function () {
     Route::get('/data-barang','backend\barangController@listdata');
     Route::get('/data-barang/detail','backend\barangController@caridetailbarang');
     Route::get('/data-barang/cari-detail/{kode}','backend\barangController@pilihdetailbarang');
+    Route::get('/barang/cetak-barcode','backend\barangController@cetakbarcodebarang');
     Route::resource('/barang','backend\barangController');
 
     //-------------------------------------------------------------------------------------------
@@ -79,5 +80,8 @@ Route::prefix('backend')->group(function () {
     Route::post('/perbaikan-stok/aksi/update-status/{kode}','backend\perbaikanStokController@updatestatus');
     Route::get('/perbaikan-stok/aksi/list-detail-perbaikan/{kode}','backend\perbaikanStokController@listdetail');
     Route::resource('/perbaikan-stok','backend\perbaikanStokController');
+
+    //-------------------------------------------------------------------------------------------
+    Route::get('/laporan-penjualan','backend\laporanController@laporanpenjualan');
 
 });

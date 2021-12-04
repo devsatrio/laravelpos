@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 04, 2021 at 02:39 AM
+-- Generation Time: Dec 04, 2021 at 02:30 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.3.13
 
@@ -48,9 +48,9 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id`, `kode`, `kode_qr`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`) VALUES
-(2, 'BRG-0002', NULL, 'Barang D', 5, 10000, 20000, 12000, 0, 0, 0, '-'),
-(3, 'BRG-0003', NULL, 'Barang C', 5, 5000, 20000, 30000, 40, 0, 4, '-'),
-(4, 'BRG-0004', NULL, 'Barang B', 5, 15000, 35000, 30000, 10, 0, 30, 'ket Barang B'),
+(2, 'BRG-0002', 'BRG-0002', 'Barang D', 5, 10000, 20000, 12000, 0, 0, 0, '-'),
+(3, 'BRG-0003', 'BRG-0003', 'Barang C', 5, 5000, 20000, 30000, 40, 0, 0, '-'),
+(4, 'BRG-0004', 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 0, 'ket Barang B'),
 (5, 'BRG-0005', 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 0, 'ket barang A'),
 (6, 'BRG-0006', '120823', 'barang E', 5, 25000, 50000, 40000, 0, 0, 0, '-');
 

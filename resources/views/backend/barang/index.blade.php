@@ -39,6 +39,10 @@
                                     Data
                                 </button>
                             </a>
+                            <a href="{{url('/backend/barang/cetak-barcode')}}">
+                                <button type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i> Cetak Barcode
+                                </button>
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
