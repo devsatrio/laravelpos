@@ -147,19 +147,6 @@
         </div>
     </div>
 </div>
-@php
-$nama_kategori = '';
-$value_kategori ='';
-$warna_kategori='';
-@endphp
-
-@foreach($kategoritahunan as $row_kategoritahunan)
-@php
-$nama_kategori = $nama_kategori."'".$row_kategoritahunan->nama."',";
-$value_kategori =$value_kategori."".$row_kategoritahunan->totalpcs.",";
-$warna_kategori =$warna_kategori."'#". str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT)."',";
-@endphp
-@endforeach
 
 @endsection
 
@@ -172,9 +159,9 @@ $warna_kategori =$warna_kategori."'#". str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, 
 $(function() {
 
     var areaChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [{!!substr($linelabelmgn, 0, -1)!!}],
         datasets: [{
-            label: 'Digital Goods',
+            label: 'Transaksi Mingguan',
             backgroundColor: 'rgba(60,141,188,0.9)',
             borderColor: 'rgba(60,141,188,0.8)',
             pointRadius: false,
@@ -182,11 +169,11 @@ $(function() {
             pointStrokeColor: 'rgba(60,141,188,1)',
             pointHighlightFill: '#fff',
             pointHighlightStroke: 'rgba(60,141,188,1)',
-            data: [28, 48, 40, 19, 86, 27, 90]
+            data: [{!!substr($linevaluemgn, 0, -1)!!}]
         }, ]
     }
     var areaChartDataDua = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [{!!substr($linelabeltahun, 0, -1)!!}],
         datasets: [{
             label: 'Lunas',
             backgroundColor: '#28a745',
@@ -196,7 +183,7 @@ $(function() {
             pointStrokeColor: 'rgba(60,141,188,1)',
             pointHighlightFill: '#fff',
             pointHighlightStroke: 'rgba(60,141,188,1)',
-            data: [28, 48, 40, 19, 86, 27, 90]
+            data: [{!!substr($linevallunastahun, 0, -1)!!}]
         },{
             label: 'Belum Lunas',
             backgroundColor: '#ffc107',
@@ -206,7 +193,7 @@ $(function() {
             pointStrokeColor: 'rgba(60,141,188,1)',
             pointHighlightFill: '#fff',
             pointHighlightStroke: 'rgba(60,141,188,1)',
-            data: [28, 48, 40, 19, 86, 27, 90]
+            data: [{!!substr($linevalbelumlunastahun, 0, -1)!!}]
         }, ]
     }
     var donutData = {
@@ -272,11 +259,11 @@ $(function() {
     //- BAR CHART -
     //-------------
     var barChartCanvas = $('#barChart').get(0).getContext('2d')
-    var barChartData = jQuery.extend(true, {}, areaChartData)
+    var barChartData = jQuery.extend(true, {}, areaChartDataDua)
     var temp1 = areaChartDataDua.datasets[0]
     var temp0 = areaChartDataDua.datasets[1]
-    barChartData.datasets[0] = temp1
-    barChartData.datasets[1] = temp0
+    areaChartDataDua.datasets[0] = temp1
+    areaChartDataDua.datasets[1] = temp0
 
     var barChartOptions = {
         responsive: true,
