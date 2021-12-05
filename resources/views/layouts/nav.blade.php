@@ -117,8 +117,9 @@
             class="nav-link dropdown-toggle">Laporan</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
             <li><a href="{{url('backend/laporan-penjualan')}}" class="dropdown-item">Laporan Penjualan</a></li>
-            <li><a href="#" class="dropdown-item">Laporan Pembelian</a></li>
-            <li><a href="#" class="dropdown-item">Laporan Pengeluaran / Pemasukan Lainya</a></li>
+            <li><a href="{{url('backend/laporan-detail-penjualan')}}" class="dropdown-item">Laporan Detail Penjualan</a></li>
+            <li><a href="{{url('backend/laporan-pembelian')}}" class="dropdown-item">Laporan Pembelian</a></li>
+            <li><a href="{{url('backend/laporan-pemasukan-pengeluaran-lain')}}" class="dropdown-item">Laporan Pengeluaran / Pemasukan Lainya</a></li>
             <li><a href="#" class="dropdown-item">Laporan Laba Rugi</a></li>
         </ul>
     </li>

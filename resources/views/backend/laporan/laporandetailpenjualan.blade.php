@@ -5,6 +5,8 @@
 @endsection
 
 @section('customcss')
+<link rel="stylesheet" href="{{asset('assets/plugins/select2/css/select2.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
 <link rel="stylesheet" href="{{asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
 <link rel="stylesheet" href="{{asset('assets/plugins/daterangepicker/daterangepicker.css')}}">
@@ -15,14 +17,14 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12 text-center">
-                <h1 class="m-0 text-dark"> Laporan Penjualan</h1>
+                <h1 class="m-0 text-dark"> Laporan Detail Penjualan</h1>
             </div>
         </div>
     </div>
 </div>
 <div class="content">
     <div class="container-fluit">
-        <div class="row">
+        <div class="row pr-5 pl-5">
             <div class="col-12">
                 <div class="card card-primary">
                     <div class="card-header">
@@ -34,7 +36,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-3 mt-3">
                                     <div class="input-group">
-                                        <select name="customer" class="form-control">
+                                        <select name="customer" class="form-control select2">
                                             <option @if(Request::has('customer')) @if(Request::get('customer')=='Semua'
                                                 ) selected @endif @endif value="Semua" selected>Semua Customer</option>
                                             <option @if(Request::has('customer')) @if(Request::get('customer')=='' )
@@ -48,7 +50,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-2 mt-3">
                                     <div class="input-group">
                                         <select name="pembuat" class="form-control">
                                             <option @if(Request::has('pembuat')) @if(Request::get('pembuat')=='Semua' )
@@ -61,17 +63,18 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <div class="input-group">
-                                        <select name="status" class="form-control">
-                                            <option @if(Request::has('status')) @if(Request::get('status')=='Semua' )
-                                                selected @endif @endif value="Semua" selected>Semua Status</option>
-                                            <option @if(Request::has('status'))
-                                                @if(Request::get('status')=='Telah Lunas' ) selected @endif @endif
-                                                value="Telah Lunas">Telah Lunas</option>
-                                            <option @if(Request::has('status'))
-                                                @if(Request::get('status')=='Belum Lunas' ) selected @endif @endif
-                                                value="Belum Lunas">Belum Lunas</option>
+                                        <select class="form-control select2" id="barang" name="barang">
+                                            <option @if(Request::has('barang')) @if(Request::get('barang')=='Semua' )
+                                                selected @endif @endif value="Semua" selected>Semua Barang</option>
+                                            @foreach($databarang as $row_databarang)
+                                            <option @if(Request::has('barang'))
+                                                @if(Request::get('barang')==$row_databarang->kode) selected @endif
+                                                @endif
+                                                value="{{$row_databarang->kode}}">{{$row_databarang->kode}} -
+                                                {{$row_databarang->nama}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -83,8 +86,8 @@
                                         <div class="input-group-append">
                                             <button class="btn btn-secondary" type="submit"><i
                                                     class="fa fa-search"></i></button>
-                                            <a href="{{url('/backend/laporan-penjualan')}}" class="btn btn-secondary"><i
-                                                    class="fas fa-sync"></i></a>
+                                            <a href="{{url('/backend/laporan-detail-penjualan')}}"
+                                                class="btn btn-secondary"><i class="fas fa-sync"></i></a>
                                             <button class="btn btn-secondary" onclick="cetak()" type="button"><i
                                                     class="fa fa-print"></i></button>
                                             <button class="btn btn-secondary" id="export_button" type="button"><i
@@ -97,16 +100,6 @@
                         <hr>
                         @if(Request::has('tanggal'))
                         Hasil Pencarian @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
-                        @if(Request::has('customer'))
-                        @if(Request::get('customer')!='Semua')
-                        @php
-                        $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
-                        @endphp
-                        @foreach($customer_data as $row_customer_data)
-                        Customer <b>{{$row_customer_data->kode}} {{$row_customer_data->nama}}</b>
-                        @endforeach
-                        @endif
-                        @endif
 
                         @if(Request::has('pembuat'))
                         @if(Request::get('pembuat')!='Semua')
@@ -119,65 +112,77 @@
                         @endif
                         @endif
 
-                        @if(Request::has('status'))
-                        @if(Request::get('status')!='Semua')
-                        Status <b>{{Request::get('status')}}</b>
+                        @if(Request::has('customer'))
+                        @if(Request::get('customer')!='Semua')
+                        @php
+                        $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
+                        @endphp
+                        @foreach($customer_data as $row_customer_data)
+                        Customer <b>{{$row_customer_data->nama}}</b>
+                        @endforeach
+                        @endif
+                        @endif
+
+                        @if(Request::has('barang'))
+                        @if(Request::get('barang')!='Semua')
+                        @php
+                        $barang_data = DB::table('barang')->where('kode',Request::get('barang'))->get();
+                        @endphp
+                        @foreach($barang_data as $row_barang_data)
+                        Barang <b>{{$row_barang_data->kode}} - {{$row_barang_data->nama}}</b>
+                        @endforeach
                         @endif
                         @endif
 
                         @else
-                        Hasil Pencarian Tanggal <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
+                        Hasil Pencarian <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
                         @endif
                         <div class="table-responsive">
                             <table id="list-data" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Kode</th>
-                                        <th>Customer</th>
-                                        <th>Pembuat</th>
+                                        <th>Kode Penjualan</th>
                                         <th>Tgl Buat</th>
+                                        <th>Pembuat</th>
+                                        <th>Customer</th>
+                                        <th>Barang</th>
+                                        <th>Jumlah</th>
+                                        <th>Diskon</th>
+                                        <th class="text-right">Harga</th>
                                         <th class="text-right">Total</th>
-                                        <th class="text-right">Terbayar</th>
-                                        <th class="text-right">Kekurangan</th>
-                                        <th class="text-right">Kembalian</th>
-                                        <th>Status</th>
-                                        <th class="text-center">#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $no=1; @endphp
+                                    @php $i=1; @endphp
                                     @foreach($data as $row)
                                     <tr>
-                                        <td>{{$no}}</td>
-                                        <td>{{$row->kode}}</td>
-                                        <td>@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
-                                        <td>{{$row->name}}</td>
+                                        <td>{{$i}}</td>
+                                        <td>{{$row->kode_penjualan}}</td>
                                         <td>{{$row->tgl_buat}}</td>
+                                        <td>{{$row->name}}</td>
+                                        <td>@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
+                                        <td>{{$row->kode_barang}} - {{$row->nama}}</td>
+                                        <td>{{$row->jumlah}} Pcs</td>
+                                        <td>{{$row->diskon}} %</td>
+                                        <td class="text-right">Rp. {{number_format($row->harga,0,',','.')}}</td>
                                         <td class="text-right">Rp. {{number_format($row->total,0,',','.')}}</td>
-                                        <td class="text-right">Rp. {{number_format($row->terbayar,0,',','.')}}</td>
-                                        <td class="text-right">Rp. {{number_format($row->kekurangan,0,',','.')}}</td>
-                                        <td class="text-right">Rp. {{number_format($row->kembalian,0,',','.')}}</td>
-                                        <td>{{$row->status}}</td>
-                                        <td class="text-center"><a href="{{url('/backend/penjualan/'.$row->kode)}}"
-                                                class="btn btn-sm btn-warning"><i class="fas fa-eye"></i></a></td>
                                     </tr>
-                                    @php $no++; @endphp
+                                    @php $i++; @endphp
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>No</th>
-                                        <th>Kode</th>
-                                        <th>Customer</th>
-                                        <th>Pembuat</th>
+                                        <th>Kode Penjualan</th>
                                         <th>Tgl Buat</th>
-                                        <th>Total</th>
-                                        <th>Terbayar</th>
-                                        <th>Kekurangan</th>
-                                        <th>Kembalian</th>
-                                        <th>Status</th>
-                                        <th class="text-center">#</th>
+                                        <th>Pembuat</th>
+                                        <th>Customer</th>
+                                        <th>Barang</th>
+                                        <th>Jumlah</th>
+                                        <th>Diskon</th>
+                                        <th class="text-right">Harga</th>
+                                        <th class="text-right">Total</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -188,19 +193,10 @@
         </div>
     </div>
 </div>
+
 <div id="print_div" style="display:none;">
     @if(Request::has('tanggal'))
-    Laporan Penjualan @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
-    @if(Request::has('customer'))
-    @if(Request::get('customer')!='Semua')
-    @php
-    $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
-    @endphp
-    @foreach($customer_data as $row_customer_data)
-    Customer <b>{{$row_customer_data->kode}} {{$row_customer_data->nama}}</b>
-    @endforeach
-    @endif
-    @endif
+    Laporan Detail Penjualan @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
 
     @if(Request::has('pembuat'))
     @if(Request::get('pembuat')!='Semua')
@@ -213,28 +209,44 @@
     @endif
     @endif
 
-    @if(Request::has('status'))
-    @if(Request::get('status')!='Semua')
-    Status <b>{{Request::get('status')}}</b>
+    @if(Request::has('customer'))
+    @if(Request::get('customer')!='Semua')
+    @php
+    $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
+    @endphp
+    @foreach($customer_data as $row_customer_data)
+    Customer <b>{{$row_customer_data->nama}}</b>
+    @endforeach
+    @endif
     @endif
 
+    @if(Request::has('barang'))
+    @if(Request::get('barang')!='Semua')
+    @php
+    $barang_data = DB::table('barang')->where('kode',Request::get('barang'))->get();
+    @endphp
+    @foreach($barang_data as $row_barang_data)
+    Barang <b>{{$row_barang_data->kode}} - {{$row_barang_data->nama}}</b>
+    @endforeach
     @endif
+    @endif
+
     @else
-    Laporan Penjualan Tanggal <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
+    Laporan Detail Penjualan <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
     @endif
     <table width="100%" border="1" cellpadding="0" cellspacing="0" id="data_penjualan">
         <thead>
             <tr>
                 <th style="padding:3px;">No</th>
-                <th style="padding:3px;">Kode</th>
-                <th style="padding:3px;">Customer</th>
-                <th style="padding:3px;">Pembuat</th>
+                <th style="padding:3px;">Kode Penjualan</th>
                 <th style="padding:3px;">Tgl Buat</th>
+                <th style="padding:3px;">Pembuat</th>
+                <th style="padding:3px;">Customer</th>
+                <th style="padding:3px;">Barang</th>
+                <th style="padding:3px;">Jumlah</th>
+                <th style="padding:3px;">Diskon</th>
+                <th style="padding:3px;" align="right">Harga</th>
                 <th style="padding:3px;" align="right">Total</th>
-                <th style="padding:3px;" align="right">Terbayar</th>
-                <th style="padding:3px;" align="right">Kekurangan</th>
-                <th style="padding:3px;" align="right">Kembalian</th>
-                <th style="padding:3px;">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -242,15 +254,15 @@
             @foreach($data as $row)
             <tr>
                 <td style="padding:3px;">{{$no}}</td>
-                <td style="padding:3px;">{{$row->kode}}</td>
-                <td style="padding:3px;">@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
-                <td style="padding:3px;">{{$row->name}}</td>
+                <td style="padding:3px;">{{$row->kode_penjualan}}</td>
                 <td style="padding:3px;">{{$row->tgl_buat}}</td>
+                <td style="padding:3px;">{{$row->name}}</td>
+                <td style="padding:3px;">@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
+                <td style="padding:3px;">{{$row->kode_barang}} - {{$row->nama}}</td>
+                <td style="padding:3px;">{{$row->jumlah}} Pcs</td>
+                <td style="padding:3px;">{{$row->diskon}} %</td>
+                <td style="padding:3px;" align="right">Rp. {{number_format($row->harga,0,',','.')}}</td>
                 <td style="padding:3px;" align="right">Rp. {{number_format($row->total,0,',','.')}}</td>
-                <td style="padding:3px;" align="right">Rp. {{number_format($row->terbayar,0,',','.')}}</td>
-                <td style="padding:3px;" align="right">Rp. {{number_format($row->kekurangan,0,',','.')}}</td>
-                <td style="padding:3px;" align="right">Rp. {{number_format($row->kembalian,0,',','.')}}</td>
-                <td style="padding:3px;">{{$row->status}}</td>
             </tr>
             @php $no++; @endphp
             @endforeach
@@ -265,12 +277,14 @@
 <script src="{{asset('assets/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
 <script src="{{asset('assets/plugins/moment/moment.min.js')}}"></script>
 <script src="{{asset('assets/plugins/daterangepicker/daterangepicker.js')}}"></script>
+<script src="{{asset('assets/plugins/select2/js/select2.full.min.js')}}"></script>
 <script src="{{asset('customjs/backend/xlsx.full.min.js')}}"></script>
 @endpush
 
 @push('customscripts')
 <script>
 $(function() {
+    $('#select2').select2();
     $('#tanggal').daterangepicker({
         locale: {
             format: 'YYYY-MM-DD'
