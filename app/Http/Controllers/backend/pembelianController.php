@@ -66,15 +66,17 @@ class pembelianController extends Controller
     //=================================================================
     public function adddetailpembelianqr(Request $request)
     {
+        $statusbarang=true;
         $harga_barang=0;
         $caribarang = DB::table('barang')->where('kode_qr',$request->kode_barang)->get();
         if(count($caribarang)>0){
             foreach ($caribarang as $row_caribarang) {
+                $kode_brg=$row_caribarang->kode;
                 $harga_barang = $row_caribarang->harga_beli;
             }
 
             $caribarangdetail = DB::table('pembelian_thumb_detail')
-            ->where([['kode_pembelian',$request->kode],['kode_barang',$request->kode_barang]])
+            ->where([['kode_pembelian',$request->kode],['kode_barang',$kode_brg]])
             ->get();
             
             if(count($caribarangdetail)>0){
@@ -83,7 +85,7 @@ class pembelianController extends Controller
                     $total = $row->total + $harga_barang;
 
                     DB::table('pembelian_thumb_detail')
-                    ->where([['kode_pembelian',$request->kode],['kode_barang',$request->kode_barang]])
+                    ->where([['kode_pembelian',$request->kode],['kode_barang',$kode_brg]])
                     ->update([
                         'jumlah'=>$jumlah,
                         'total'=>$total,
@@ -93,7 +95,7 @@ class pembelianController extends Controller
                 DB::table('pembelian_thumb_detail')
                 ->insert([
                     'kode_pembelian'=>$request->kode,
-                    'kode_barang'=>$request->kode_barang,
+                    'kode_barang'=>$kode_brg,
                     'jumlah'=>1,
                     'harga'=>$harga_barang,
                     'total'=>$harga_barang,
@@ -101,8 +103,9 @@ class pembelianController extends Controller
                 ]);
             }
         }else{
-
+            $statusbarang=false;
         }
+        return response()->json($statusbarang);
     }
 
     //=================================================================

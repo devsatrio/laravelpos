@@ -79,7 +79,7 @@ cari_barang_qr.addEventListener("keyup", function (e) {
 
 //========================================================================================
 function tambahadetailbyqr(kodebarang) {
-    $('#panelsatu').loading('toggle');
+    //$('#panelsatu').loading('toggle');
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-pembelian/add-detail-pembelian-qr',
@@ -88,16 +88,18 @@ function tambahadetailbyqr(kodebarang) {
             'kode': $('#kode').val(),
             'kode_barang': kodebarang,
         },
-        success: function () {
+        success: function (data) {
+            if(data!=false){
+                getdata();
+            }
         }, complete: function () {
-            getdata();
             $('#harga_barang').val('');
             $('#jumlah_barang').val('');
             $('#total_harga_barang').val('');
             $('#barang').val(null).trigger('change');
             $('#cari_barang_qr').val('');
             $('#cari_barang_qr').trigger("focus");
-            $('#panelsatu').loading('stop');
+            //$('#panelsatu').loading('stop');
         }
     });
 }

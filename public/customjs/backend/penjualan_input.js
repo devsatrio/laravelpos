@@ -114,7 +114,7 @@ function tambahadetailbyqr(kodebarang) {
     } else {
         var status = 'customer';
     }
-    $('#panelsatu').loading('toggle');
+    //$('#panelsatu').loading('toggle');
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/add-detail-penjualan-qr',
@@ -125,15 +125,18 @@ function tambahadetailbyqr(kodebarang) {
             'status': status,
         },
         success: function (data) {
-            if (data == false) {
+            if (data.status == false) {
                 swalWithBootstrapButtons.fire({
                     title: 'Oops',
                     text: 'Stok tidak mencukupi',
                     confirmButtonText: 'OK'
                 });
+            }else{
+                if(data.statusbarang!=false){
+                    getdata();
+                }
             }
         }, complete: function () {
-            getdata();
             $('#harga_barang').val('');
             $('#jumlah_barang').val('');
             $('#total_harga_barang').val('');
@@ -142,7 +145,7 @@ function tambahadetailbyqr(kodebarang) {
             $('#barang').val(null).trigger('change');
             $('#cari_barang_qr').val('');
             $('#cari_barang_qr').trigger("focus");
-            $('#panelsatu').loading('stop');
+            //$('#panelsatu').loading('stop');
         }
     });
 }

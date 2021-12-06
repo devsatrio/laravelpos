@@ -270,7 +270,8 @@ class penjualanController extends Controller
     public function adddetailpenjualanqr(Request $request)
     {
         $status = true;
-        $kode_barang = strtoupper($request->kode_barang);
+        $statusbarang=true;
+        $kode_barang = $request->kode_barang;
         $caribarang = DB::table('barang')->where('kode_qr',$kode_barang)->get();
 
         if(count($caribarang)>0){
@@ -279,14 +280,16 @@ class penjualanController extends Controller
                 if($request->status=='umum'){
                     $harga = $row_caribarang->harga_jual;
                     $diskon = $row_caribarang->diskon;
+                    $kode_brg = $row_caribarang->kode;
                 }else{
                     $harga = $row_caribarang->harga_jual_customer;
                     $diskon = $row_caribarang->diskon_customer;
+                    $kode_brg = $row_caribarang->kode;
                 }
             }
 
             $caribarangdetail = DB::table('penjualan_thumb_detail')
-            ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_barang]])
+            ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_brg]])
             ->get();
 
             if(count($caribarangdetail)>0){
@@ -298,7 +301,7 @@ class penjualanController extends Controller
                         $status = false;
                     }else{
                         DB::table('penjualan_thumb_detail')
-                        ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_barang]])
+                        ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_brg]])
                         ->update([
                             'diskon'=>$diskon,
                             'harga'=>$harga,
@@ -315,7 +318,7 @@ class penjualanController extends Controller
                 DB::table('penjualan_thumb_detail')
                 ->insert([
                     'kode_penjualan'=>$request->kode,
-                    'kode_barang'=>$kode_barang,
+                    'kode_barang'=>$kode_brg,
                     'jumlah'=>$jumlah,
                     'diskon'=>$diskon,
                     'harga'=>$harga,
@@ -324,8 +327,14 @@ class penjualanController extends Controller
                 ]);
                 $status = true;
             }
+        }else{
+            $statusbarang=false;
         }
-        return response()->json($status);
+        $data =[
+            'statusbarang'=>$statusbarang,
+            'status'=>$status,
+        ];
+        return response()->json($data);
     }
 
     //=================================================================
