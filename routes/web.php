@@ -32,6 +32,7 @@ Route::prefix('backend')->group(function () {
 
     //-------------------------------------------------------------------------------------------
     Route::get('/data-kategori-barang','backend\kategoriBarangController@listdata');
+    Route::get('/kategori-barang/export-excel','backend\kategoriBarangController@exsportexcel');
     Route::resource('/kategori-barang','backend\kategoriBarangController');
     
     //-------------------------------------------------------------------------------------------
@@ -43,6 +44,8 @@ Route::prefix('backend')->group(function () {
     Route::get('/data-barang/detail','backend\barangController@caridetailbarang');
     Route::get('/data-barang/cari-detail/{kode}','backend\barangController@pilihdetailbarang');
     Route::get('/barang/cetak-barcode','backend\barangController@cetakbarcodebarang');
+    Route::get('/barang/export-excel','backend\barangController@exsportexcel');
+    Route::post('/barang/import-excel','backend\barangController@importexcel');
     Route::resource('/barang','backend\barangController');
 
     //-------------------------------------------------------------------------------------------

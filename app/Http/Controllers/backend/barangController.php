@@ -4,6 +4,10 @@ namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Imports\BarangImport;
+use App\Exports\BarangExport;
+use Session;
+use Excel;
 use DB;
 use DataTables;
 
@@ -16,12 +20,37 @@ class barangController extends Controller
         $this->middleware('permission:create-barang', ['only' => ['create']]);
         $this->middleware('permission:edit-barang', ['only' => ['edit']]);
         $this->middleware('permission:delete-barang', ['only' => ['destroy']]);
+        $this->middleware('permission:cetak-barcode-barang', ['only' => ['cetakbarcodebarang']]);
+        $this->middleware('permission:import-export-barang', ['only' => ['exsportexcel','importexcel']]);
     }
 
     //=================================================================
     public function index()
     {
         return view('backend.barang.index');
+    }
+
+    //==================================================================
+    public function exsportexcel(){
+        return Excel::download(new BarangExport, 'Data Barang.xlsx');
+    }
+
+    //==================================================================
+    public function importexcel(Request $request)
+    {
+        try {
+            if($request->hasFile('file_excel')){
+                $error = Excel::import(new BarangImport, request()->file('file_excel'));
+                return redirect('backend/barang')->with('status','Berhasil Import Data');
+             }else{
+                Session::flash('errorexcel_satu', 'error uploading data');
+                return redirect('backend/barang');
+             }
+        }catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            Session::flash('errorexcel', $failures);
+            return redirect('backend/barang');
+        }
     }
 
     //=================================================================

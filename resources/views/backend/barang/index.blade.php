@@ -28,6 +28,29 @@
             {{ session('status') }}
         </div>
         @endif
+        @if(Session::get('errorexcel'))
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <strong>Error Logs :</strong>
+            <ul>
+                @foreach (Session::get('errorexcel') as $failure)
+                @foreach ($failure->errors() as $error)
+                <li><b>Field {{$failure->attribute()}} error</b> {{ $error }} ( in Line
+                    {{$failure->row()}} ) </li>
+                @endforeach
+                @endforeach
+            </ul>
+            <hr>
+            <b>NB : Semua data tidak disimpan ketika error</b>
+        </div>
+        @endif
+        @if(Session::get('errorexcel_satu'))
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4>Oops</h4>
+            {{ Session::get('errorexcel_satu') }}
+        </div>
+        @endif
         <div class="row">
             <div class="col-12">
                 <div class="card card-primary">
@@ -39,10 +62,23 @@
                                     Data
                                 </button>
                             </a>
+                            @if(auth()->user()->can('cetak-barcode-barang'))
                             <a href="{{url('/backend/barang/cetak-barcode')}}">
-                                <button type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i> Cetak Barcode
+                                <button type="button" class="btn btn-default btn-sm"><i class="fas fa-barcode"></i>
+                                    Cetak Barcode
                                 </button>
                             </a>
+                            @endif
+                            @if(auth()->user()->can('import-export-barang'))
+                            <a href="{{url('/backend/barang/export-excel')}}">
+                                <button type="button" class="btn btn-default btn-sm"><i class="fas fa-download"></i>
+                                    Export Excel
+                                </button>
+                            </a>
+                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal"
+                                data-target="#importmodal"><i class="fas fa-upload"></i> Import Excel
+                            </button>
+                            @endif
                         </div>
                     </div>
                     <div class="card-body">
@@ -82,6 +118,67 @@
             </div>
         </div>
     </div><!-- /.container-fluid -->
+</div>
+<div class="modal fade bd-example-modal-lg" id="importmodal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Import Data Barang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{url('backend/barang/import-excel')}}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b>Cara Pengisian : </b>
+                            <ol>
+                                <li>Download template excel dengan mengklik tombol <b>Download Template</b> dibawah.
+                                </li>
+                                <li><b>kode_qr</b> dapat dikosongi atau diisi sesuai kode yang ada di barcode barang.
+                                </li>
+                                <li><b>nama</b> harus diisi dengan format string atau text.</li>
+                                <li><b>kategori</b> harus diisi dengan id kategori barang, data id kategori barang dapat
+                                    dilihat dengan mendownload di tombol <b>Export kategori barang</b> dibawah.</li>
+                                <li><b>harga_beli, harga_jual, harga_jual_customer</b> harus diisi dengan format numerik
+                                    atau angka tanpa titik atau koma, contoh <b>200000</b>.</li>
+                                <li><b>diskon & diskon_customer</b> harus diisi dengan format numerik atau angka tanpa
+                                    titik atau koma dengan range 0 - 99, contoh <b>10</b>.</li>
+                                <li><b>nama</b> dapat dikosongi atau diisi dengan format string atau text.</li>
+                            </ol>
+                            <a href="{{asset('/assets/template_import_barang.xlsx')}}">
+                                <button type="button" class="btn btn-sm btn-info btn-sm"><i class="fas fa-file"></i>
+                                    Download Template
+                                </button>
+                            </a>
+                            <a href="{{url('/backend/kategori-barang/export-excel')}}">
+                                <button type="button" class="btn btn-sm btn-info btn-sm"><i class="fas fa-file"></i>
+                                    Export Kategori Barang
+                                </button>
+                            </a>
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">File Excel</label>
+                                <div class="input-group">
+                                    <input type="file" id="excelfile" class="form-control mb-2" name="file_excel"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Exports\KategoriBarangExport;
+use Excel;
 use DataTables;
 use DB;
 
@@ -22,6 +24,11 @@ class kategoriBarangController extends Controller
     public function index()
     {
         return view('backend.kategoribarang.index');
+    }
+
+    //==================================================================
+    public function exsportexcel(){
+        return Excel::download(new KategoriBarangExport, 'Data Kategori Barang.xlsx');
     }
 
     //=================================================================
