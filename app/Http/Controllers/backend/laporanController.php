@@ -444,24 +444,143 @@ class laporanController extends Controller
         return view('backend.laporan.laporandetailpenjualan',compact('datacustomer','dataadmin','data','databarang'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    //==========================================================================
+    public function laporandetailpembelian(Request $request)
     {
-        //
+        if($request->has('tanggal')){
+            $tanggal = explode(' - ',$request->tanggal);
+            $tglsatu = $tanggal[0];
+            $tgldua = $tanggal[1];
+        }else{
+            $tglsatu = date('Y-m-d');
+            $tgldua = date('Y-m-d');
+        }
+
+        if ($request->has('supplier') ||$request->has('pembuat')||$request->has('barang')) {
+            if($request->supplier!='Semua'){
+                if($request->pembuat!='Semua'){
+                    if($request->barang!='Semua'){
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->where('pembelian.supplier','=',$request->supplier)
+                        ->where('pembelian.pembuat','=',$request->pembuat)
+                        ->where('pembelian_detail.kode_barang','=',$request->barang)
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }else{
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->where('pembelian.supplier','=',$request->supplier)
+                        ->where('pembelian.pembuat','=',$request->pembuat)
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }
+                }else{
+                    if($request->barang!='Semua'){
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->where('pembelian.supplier','=',$request->supplier)
+                        ->where('pembelian_detail.kode_barang','=',$request->barang)
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }else{                        
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->where('pembelian.supplier','=',$request->supplier)
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }
+                }
+            }else{
+                if($request->pembuat!='Semua'){
+                    if($request->barang!='Semua'){
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->where('pembelian.pembuat','=',$request->pembuat)
+                        ->where('pembelian_detail.kode_barang','=',$request->barang)
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }else{
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->where('pembelian.pembuat','=',$request->pembuat)
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }
+                }else{
+                    if($request->barang!='Semua'){
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->where('pembelian_detail.kode_barang','=',$request->barang)
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }else{
+                        $data = DB::table('pembelian_detail')
+                        ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+                        ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+                        ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+                        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+                        ->leftjoin('users','users.id','=','pembelian.pembuat')
+                        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+                        ->orderby('pembelian_detail.id','desc')
+                        ->get();
+                    }
+                }
+            }
+        }else{
+            $data = DB::table('pembelian_detail')
+            ->select(DB::raw('pembelian_detail.*,pembelian.tgl_buat,pembelian.pembuat,pembelian.supplier,master_supplier.nama as namasupplier,users.name,barang.nama as namabarang'))
+            ->leftjoin('pembelian','pembelian.kode','=','pembelian_detail.kode_pembelian')
+            ->leftjoin('barang','barang.kode','=','pembelian_detail.kode_barang')
+            ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+            ->leftjoin('users','users.id','=','pembelian.pembuat')
+            ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+            ->orderby('pembelian_detail.id','desc')
+            ->get();
+        }
+        $datasupplier = DB::table('master_supplier')->orderby('id','desc')->get();
+        $dataadmin = DB::table('users')->orderby('id','desc')->get();
+        $databarang= DB::table('barang')->orderby('id','desc')->get();
+        
+        return view('backend.laporan.laporandetailpembelian',compact('datasupplier','dataadmin','data','databarang'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    //==========================================================================
     public function update(Request $request, $id)
     {
         //

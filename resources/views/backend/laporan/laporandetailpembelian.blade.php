@@ -17,14 +17,14 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12 text-center">
-                <h1 class="m-0 text-dark"> Laporan Detail Penjualan</h1>
+                <h1 class="m-0 text-dark"> Laporan Detail Pembelian</h1>
             </div>
         </div>
     </div>
 </div>
 <div class="content">
     <div class="container-fluit">
-        <div class="row pr-5 pl-5">
+        <div class="row">
             <div class="col-12">
                 <div class="card card-primary">
                     <div class="card-header">
@@ -36,16 +36,14 @@
                             <div class="row mb-3">
                                 <div class="col-md-3 mt-3">
                                     <div class="input-group">
-                                        <select name="customer" class="form-control select2">
-                                            <option @if(Request::has('customer')) @if(Request::get('customer')=='Semua'
-                                                ) selected @endif @endif value="Semua" selected>Semua Customer</option>
-                                            <option @if(Request::has('customer')) @if(Request::get('customer')=='' )
-                                                selected @endif @endif value="">-</option>
-                                            @foreach($datacustomer as $row_datacustomer)
-                                            <option @if(Request::has('customer'))
-                                                @if(Request::get('customer')==$row_datacustomer->kode) selected @endif
-                                                @endif value="{{$row_datacustomer->kode}}">{{$row_datacustomer->kode}} -
-                                                {{$row_datacustomer->nama}}</option>
+                                        <select name="supplier" class="form-control">
+                                            <option @if(Request::has('supplier')) @if(Request::get('supplier')=='Semua'
+                                                ) selected @endif @endif value="Semua" selected>Semua Supplier</option>
+                                            @foreach($datasupplier as $row_datasupplier)
+                                            <option @if(Request::has('supplier'))
+                                                @if(Request::get('supplier')==$row_datasupplier->kode) selected @endif
+                                                @endif value="{{$row_datasupplier->kode}}">{{$row_datasupplier->kode}} -
+                                                {{$row_datasupplier->nama}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -86,7 +84,7 @@
                                         <div class="input-group-append">
                                             <button class="btn btn-secondary" type="submit"><i
                                                     class="fa fa-search"></i></button>
-                                            <a href="{{url('/backend/laporan-detail-penjualan')}}"
+                                            <a href="{{url('/backend/laporan-detail-pembelian')}}"
                                                 class="btn btn-secondary"><i class="fas fa-sync"></i></a>
                                             <button class="btn btn-secondary" onclick="cetak()" type="button"><i
                                                     class="fa fa-print"></i></button>
@@ -100,6 +98,16 @@
                         <hr>
                         @if(Request::has('tanggal'))
                         Hasil Pencarian @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
+                        @if(Request::has('supplier'))
+                        @if(Request::get('supplier')!='Semua')
+                        @php
+                        $supplier_data = DB::table('master_supplier')->where('kode',Request::get('supplier'))->get();
+                        @endphp
+                        @foreach($supplier_data as $row_supplier_data)
+                        Customer <b>{{$row_supplier_data->kode}} {{$row_supplier_data->nama}}</b>
+                        @endforeach
+                        @endif
+                        @endif
 
                         @if(Request::has('pembuat'))
                         @if(Request::get('pembuat')!='Semua')
@@ -108,17 +116,6 @@
                         @endphp
                         @foreach($pembuat_data as $row_pembuat_data)
                         Pembuat <b>{{$row_pembuat_data->name}}</b>
-                        @endforeach
-                        @endif
-                        @endif
-
-                        @if(Request::has('customer'))
-                        @if(Request::get('customer')!='Semua')
-                        @php
-                        $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
-                        @endphp
-                        @foreach($customer_data as $row_customer_data)
-                        Customer <b>{{$row_customer_data->nama}}</b>
                         @endforeach
                         @endif
                         @endif
@@ -135,54 +132,56 @@
                         @endif
 
                         @else
-                        Hasil Pencarian <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
+                        Hasil Pencarian Tanggal <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
                         @endif
                         <div class="table-responsive">
                             <table id="list-data" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Kode Penjualan</th>
-                                        <th>Tgl Buat</th>
+                                        <th>Kode Pembelian</th>
+                                        <th>Supplier</th>
                                         <th>Pembuat</th>
-                                        <th>Customer</th>
+                                        <th>Tgl Buat</th>
                                         <th>Barang</th>
-                                        <th>Jumlah</th>
-                                        <th>Diskon</th>
+                                        <th class="text-center">Jumlah</th>
                                         <th class="text-right">Harga</th>
                                         <th class="text-right">Total</th>
+                                        <th class="text-center">#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $i=1; @endphp
+                                    @php $no=1; @endphp
                                     @foreach($data as $row)
                                     <tr>
-                                        <td>{{$i}}</td>
-                                        <td>{{$row->kode_penjualan}}</td>
-                                        <td>{{$row->tgl_buat}}</td>
+                                        <td>{{$no}}</td>
+                                        <td>{{$row->kode_pembelian}}</td>
+                                        <td>{{$row->namasupplier}}</td>
                                         <td>{{$row->name}}</td>
-                                        <td>@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
-                                        <td>{{$row->kode_barang}} - {{$row->nama}}</td>
-                                        <td>{{$row->jumlah}} Pcs</td>
-                                        <td>{{$row->diskon}} %</td>
+                                        <td>{{$row->tgl_buat}}</td>
+                                        <td>{{$row->kode_barang}} - {{$row->namabarang}}</td>
+                                        <td class="text-center">{{$row->jumlah}} Pcs</td>
                                         <td class="text-right">Rp. {{number_format($row->harga,0,',','.')}}</td>
                                         <td class="text-right">Rp. {{number_format($row->total,0,',','.')}}</td>
+                                        <td class="text-center"><a
+                                                href="{{url('/backend/pembelian/'.$row->kode_pembelian)}}"
+                                                class="btn btn-sm btn-warning"><i class="fas fa-eye"></i></a></td>
                                     </tr>
-                                    @php $i++; @endphp
+                                    @php $no++; @endphp
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>No</th>
-                                        <th>Kode Penjualan</th>
-                                        <th>Tgl Buat</th>
+                                        <th>Kode Pembelian</th>
+                                        <th>Supplier</th>
                                         <th>Pembuat</th>
-                                        <th>Customer</th>
+                                        <th>Tgl Buat</th>
                                         <th>Barang</th>
-                                        <th>Jumlah</th>
-                                        <th>Diskon</th>
+                                        <th class="text-center">Jumlah</th>
                                         <th class="text-right">Harga</th>
                                         <th class="text-right">Total</th>
+                                        <th class="text-center">#</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -196,7 +195,7 @@
 
 <div id="print_div" style="display:none;">
     @if(Request::has('tanggal'))
-    Laporan Detail Penjualan @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
+    Laporan Detail Pembelian @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
 
     @if(Request::has('pembuat'))
     @if(Request::get('pembuat')!='Semua')
@@ -209,13 +208,13 @@
     @endif
     @endif
 
-    @if(Request::has('customer'))
-    @if(Request::get('customer')!='Semua')
+    @if(Request::has('barang'))
+    @if(Request::get('barang')!='Semua')
     @php
-    $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
+    $barang_data = DB::table('barang')->where('kode',Request::get('barang'))->get();
     @endphp
-    @foreach($customer_data as $row_customer_data)
-    Customer <b>{{$row_customer_data->nama}}</b>
+    @foreach($barang_data as $row_barang_data)
+    Barang <b>{{$row_barang_data->kode}} - {{$row_barang_data->nama}}</b>
     @endforeach
     @endif
     @endif
@@ -232,19 +231,18 @@
     @endif
 
     @else
-    Laporan Detail Penjualan <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
+    Laporan Detail Pembelian <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
     @endif
     <table width="100%" border="1" cellpadding="0" cellspacing="0" id="data_penjualan">
         <thead>
             <tr>
                 <th style="padding:3px;">No</th>
-                <th style="padding:3px;">Kode Penjualan</th>
-                <th style="padding:3px;">Tgl Buat</th>
+                <th style="padding:3px;">Kode Pembelian</th>
+                <th style="padding:3px;">Supplier</th>
                 <th style="padding:3px;">Pembuat</th>
-                <th style="padding:3px;">Customer</th>
+                <th style="padding:3px;">Tgl Buat</th>
                 <th style="padding:3px;">Barang</th>
                 <th style="padding:3px;">Jumlah</th>
-                <th style="padding:3px;">Diskon</th>
                 <th style="padding:3px;" align="right">Harga</th>
                 <th style="padding:3px;" align="right">Total</th>
             </tr>
@@ -254,13 +252,12 @@
             @foreach($data as $row)
             <tr>
                 <td style="padding:3px;">{{$no}}</td>
-                <td style="padding:3px;">{{$row->kode_penjualan}}</td>
-                <td style="padding:3px;">{{$row->tgl_buat}}</td>
+                <td style="padding:3px;">{{$row->kode_pembelian}}</td>
+                <td style="padding:3px;">{{$row->namasupplier}}</td>
                 <td style="padding:3px;">{{$row->name}}</td>
-                <td style="padding:3px;">@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
-                <td style="padding:3px;">{{$row->kode_barang}} - {{$row->nama}}</td>
+                <td style="padding:3px;">{{$row->tgl_buat}}</td>
+                <td style="padding:3px;">{{$row->kode_barang}} - {{$row->namabarang}}</td>
                 <td style="padding:3px;">{{$row->jumlah}} Pcs</td>
-                <td style="padding:3px;">{{$row->diskon}} %</td>
                 <td style="padding:3px;" align="right">Rp. {{number_format($row->harga,0,',','.')}}</td>
                 <td style="padding:3px;" align="right">Rp. {{number_format($row->total,0,',','.')}}</td>
             </tr>

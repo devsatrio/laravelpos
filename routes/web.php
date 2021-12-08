@@ -88,5 +88,6 @@ Route::prefix('backend')->group(function () {
     Route::get('/laporan-penjualan','backend\laporanController@laporanpenjualan');
     Route::get('/laporan-pembelian','backend\laporanController@laporanpembelian');
     Route::get('/laporan-detail-penjualan','backend\laporanController@laporandetailpenjualan');
+    Route::get('/laporan-detail-pembelian','backend\laporanController@laporandetailpembelian');
     Route::get('/laporan-pemasukan-pengeluaran-lain','backend\laporanController@laporanlain');
 });
