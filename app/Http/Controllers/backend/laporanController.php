@@ -581,19 +581,40 @@ class laporanController extends Controller
     }
 
     //==========================================================================
-    public function update(Request $request, $id)
+    public function laporanlabarugi(Request $request)
     {
-        //
-    }
+        if($request->has('tanggal')){
+            $tanggal = explode(' - ',$request->tanggal);
+            $tglsatu = $tanggal[0];
+            $tgldua = $tanggal[1];
+        }else{
+            $tglsatu = date('Y-m-d');
+            $tgldua = date('Y-m-d');
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        
+        $pemasukan_penjualan = DB::table('penjualan')
+        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
+        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
+        ->leftjoin('users','users.id','=','penjualan.pembuat')
+        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
+        ->orderby('penjualan.id','desc')
+        ->get();
+
+        $pengeluaran_pembelian = DB::table('pembelian')
+        ->select(DB::raw('pembelian.*,master_supplier.nama as namasupplier,users.name'))
+        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+        ->leftjoin('users','users.id','=','pembelian.pembuat')
+        ->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua])
+        ->orderby('pembelian.id','desc')
+        ->get();
+
+        $transaksi_lain = DB::table('transaksi_lain')
+        ->select(DB::raw('transaksi_lain.*,users.name'))
+        ->leftjoin('users','users.id','=','transaksi_lain.created_by')
+        ->whereBetween('transaksi_lain.tgl_buat',[$tglsatu,$tgldua])
+        ->orderby('transaksi_lain.id','desc')
+        ->get();
+        return view('backend.laporan.laporanlabarugi',compact('pemasukan_penjualan','pengeluaran_pembelian','transaksi_lain'));
     }
 }

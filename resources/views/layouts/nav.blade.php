@@ -112,20 +112,47 @@
     </li>
     @endif
 
+    @if(auth()->user()->can('view-laporan-penjualan')
+    || auth()->user()->can('view-laporan-detail-penjualan')
+    || auth()->user()->can('view-laporan-pembelian')
+    || auth()->user()->can('view-laporan-detail-pembelian')
+    || auth()->user()->can('view-laporan-pemasukan-pengeluaran-lain')
+    || auth()->user()->can('view-laporan-laba-rugi'))
     <li class="nav-item dropdown">
         <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             class="nav-link dropdown-toggle">Laporan</a>
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
+            @if(auth()->user()->can('view-laporan-penjualan'))
             <li><a href="{{url('backend/laporan-penjualan')}}" class="dropdown-item">Laporan Penjualan</a></li>
-            <li><a href="{{url('backend/laporan-detail-penjualan')}}" class="dropdown-item">Laporan Detail Penjualan</a></li>
+            @endif
+
+            @if(auth()->user()->can('view-laporan-detail-penjualan'))
+            <li><a href="{{url('backend/laporan-detail-penjualan')}}" class="dropdown-item">Laporan Detail Penjualan</a>
+            </li>
             <div class="dropdown-divider"></div>
+            @endif
+
+            @if(auth()->user()->can('view-laporan-pembelian'))
             <li><a href="{{url('backend/laporan-pembelian')}}" class="dropdown-item">Laporan Pembelian</a></li>
-            <li><a href="{{url('backend/laporan-detail-pembelian')}}" class="dropdown-item">Laporan Detail Pembelian</a></li>
+            @endif
+
+            @if(auth()->user()->can('view-laporan-detail-pembelian'))
+            <li><a href="{{url('backend/laporan-detail-pembelian')}}" class="dropdown-item">Laporan Detail Pembelian</a>
+            </li>
             <div class="dropdown-divider"></div>
-            <li><a href="{{url('backend/laporan-pemasukan-pengeluaran-lain')}}" class="dropdown-item">Laporan Pengeluaran / Pemasukan Lainya</a></li>
-            <li><a href="#" class="dropdown-item">Laporan Laba Rugi</a></li>
+            @endif
+
+            @if(auth()->user()->can('view-laporan-pemasukan-pengeluaran-lain'))
+            <li><a href="{{url('backend/laporan-pemasukan-pengeluaran-lain')}}" class="dropdown-item">Laporan
+                    Pengeluaran / Pemasukan Lainya</a></li>
+            @endif
+
+            @if(auth()->user()->can('view-laporan-laba-rugi'))
+            <li><a href="{{url('backend/laporan-laba-rugi')}}" class="dropdown-item">Laporan Laba Rugi</a></li>
+            @endif
         </ul>
     </li>
+    @endif
 
     @if(auth()->user()->can('view-perbaikan-stok')
     || auth()->user()->can('create-perbaikan-stok')
@@ -153,7 +180,8 @@
             || auth()->user()->can('create-transaksi-lain')
             || auth()->user()->can('edit-transaksi-lain')
             || auth()->user()->can('delete-transaksi-lain'))
-            <li><a href="{{url('backend/transaksi-lain')}}" class="dropdown-item">Pengeluaran / Pemasukan Lainnya</a></li>
+            <li><a href="{{url('backend/transaksi-lain')}}" class="dropdown-item">Pengeluaran / Pemasukan Lainnya</a>
+            </li>
             @endif
 
             @if(auth()->user()->can('setting-web'))
