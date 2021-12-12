@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 04, 2021 at 02:30 PM
+-- Generation Time: Dec 12, 2021 at 06:37 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.3.13
 
@@ -286,7 +286,8 @@ INSERT INTO `pembayaran` (`id`, `kode_penjualan`, `customer`, `jumlah`, `tgl_bay
 (20, 'PNJ-112021-0003', NULL, 3000000, '2021-11-29', '2021-11-29 22:02:25', 1, 'Pembayaran Pertama & Pelunasan'),
 (21, 'PNJ-112021-0004', 'CUS-004', 30000, '2021-11-29', '2021-11-29 22:08:41', 1, 'Pembayaran Pertama & Pelunasan'),
 (22, 'PNJ-122021-0001', 'CUS-004', 0, '2021-12-04', '2021-12-04 01:15:15', 1, 'Pembayaran Pertama'),
-(23, 'PNJ-122021-0002', NULL, 3000000, '2021-12-04', '2021-12-04 01:15:36', 1, 'Pembayaran Pertama & Pelunasan');
+(23, 'PNJ-122021-0002', NULL, 3000000, '2021-12-04', '2021-12-04 01:15:36', 1, 'Pembayaran Pertama & Pelunasan'),
+(24, 'PNJ-122021-0001', NULL, 30000, '2021-12-05', '2021-12-05 09:51:26', 1, 'Pembayaran Hutang');
 
 -- --------------------------------------------------------
 
@@ -417,7 +418,7 @@ INSERT INTO `penjualan` (`id`, `kode`, `customer`, `subtotal`, `potongan`, `biay
 (31, 'PNJ-112021-0002', 'CUS-003', 2530000, 0, 0, 2530000, 0, 0, 0, 1, '2021-11-27', NULL, 'Telah Lunas', 'Draft', '2021-11-27 14:00:16', NULL, 1, NULL),
 (32, 'PNJ-112021-0003', NULL, 2700000, 0, 20000, 2720000, 3000000, 0, 280000, 1, '2021-11-30', NULL, 'Telah Lunas', 'Draft', '2021-11-29 22:02:25', NULL, 1, NULL),
 (33, 'PNJ-112021-0004', 'CUS-004', 30000, 0, 0, 30000, 30000, 0, 0, 1, '2021-11-30', NULL, 'Telah Lunas', 'Draft', '2021-11-29 22:08:42', NULL, 1, NULL),
-(34, 'PNJ-122021-0001', 'CUS-004', 30000, 0, 0, 30000, 0, 30000, 0, 1, '2021-12-04', NULL, 'Belum Lunas', 'Draft', '2021-12-04 01:15:15', NULL, 1, NULL),
+(34, 'PNJ-122021-0001', 'CUS-004', 30000, 0, 0, 30000, 60000, 0, 0, 1, '2021-12-04', NULL, 'Telah Lunas', 'Draft', '2021-12-04 01:15:15', NULL, 1, NULL),
 (35, 'PNJ-122021-0002', NULL, 2700000, 0, 0, 2700000, 3000000, 0, 300000, 1, '2021-12-04', NULL, 'Telah Lunas', 'Draft', '2021-12-04 01:15:36', NULL, 1, NULL);
 
 -- --------------------------------------------------------
@@ -544,7 +545,15 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (41, 'view-perbaikan-stok', 'web', NULL, NULL),
 (42, 'edit-perbaikan-stok', 'web', NULL, NULL),
 (43, 'delete-perbaikan-stok', 'web', NULL, NULL),
-(44, 'approve-perbaikan-stok', 'web', NULL, NULL);
+(44, 'approve-perbaikan-stok', 'web', NULL, NULL),
+(45, 'cetak-barcode-barang', 'web', NULL, NULL),
+(46, 'import-export-barang', 'web', NULL, NULL),
+(47, 'view-laporan-penjualan', 'web', NULL, NULL),
+(48, 'view-laporan-detail-penjualan', 'web', NULL, NULL),
+(49, 'view-laporan-pembelian', 'web', NULL, NULL),
+(50, 'view-laporan-detail-pembelian', 'web', NULL, NULL),
+(51, 'view-laporan-pemasukan-pengeluaran-lain', 'web', NULL, NULL),
+(52, 'view-laporan-laba-rugi', 'web', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -630,7 +639,15 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (41, 2),
 (42, 2),
 (43, 2),
-(44, 2);
+(44, 2),
+(45, 2),
+(46, 2),
+(47, 2),
+(48, 2),
+(49, 2),
+(50, 2),
+(51, 2),
+(52, 2);
 
 -- --------------------------------------------------------
 
@@ -705,7 +722,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `name`, `email`, `telp`, `level`, `gambar`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', '081209380909', 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'cppmUqduqYvxrt1RvxYZNsUEDHMMnPa83QJ2segeR5ZxL88ZPNSdE4wM7e8m', '2021-11-17 18:12:54', '2021-11-23 23:20:45'),
+(1, 'devasatrio', 'Deva Satrio', 'deva@example.com', '081209380909', 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'alaQvwT1gpukwa4KyApjvsXSP9egzlVQi4KNsNJNXSCfcErUGGjVeA9SLLJw', '2021-11-17 18:12:54', '2021-11-23 23:20:45'),
 (2, 'admin', 'admin', 'admin@gmail.com', '234902', 'admin', '1637324169-user.png', NULL, '$2y$10$9EKR5n/fmKonHExiQzW49..H29KrhaP/ZVgFwKOregDa/Bxjn1/zq', 'J4DyK5hisB9oro56CqUgP5rSRjtHKj5FO7JEoE20JCcZsRDLIgNCyDR1kEzl', '2021-11-19 05:16:10', '2021-11-23 23:19:59');
 
 --
@@ -882,7 +899,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `detail_perbaikan_stok`
@@ -936,7 +953,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `pembelian`
@@ -984,7 +1001,7 @@ ALTER TABLE `perbaikan_stok`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `roles`
