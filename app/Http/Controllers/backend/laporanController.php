@@ -11,6 +11,13 @@ class laporanController extends Controller
     function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('permission:view-laporan-penjualan', ['only' => ['laporanpenjualan']]);
+        $this->middleware('permission:view-laporan-detail-penjualan', ['only' => ['laporandetailpenjualan']]);
+        $this->middleware('permission:view-laporan-pembelian', ['only' => ['laporanpembelian']]);
+        $this->middleware('permission:view-laporan-detail-pembelian', ['only' => ['laporandetailpembelian']]);
+        $this->middleware('permission:view-laporan-pemasukan-pengeluaran-lain', ['only' => ['laporanlain']]);
+        $this->middleware('permission:view-laporan-laba-rugi', ['only' => ['laporanlabarugi']]);
+        $this->middleware('permission:view-laporan-modal', ['only' => ['laporanmodal']]);
     }
 
     //=================================================================
@@ -616,5 +623,27 @@ class laporanController extends Controller
         ->orderby('transaksi_lain.id','desc')
         ->get();
         return view('backend.laporan.laporanlabarugi',compact('pemasukan_penjualan','pengeluaran_pembelian','transaksi_lain'));
+    }
+
+    //==========================================================================
+    public function laporanmodal(Request $request)
+    {   
+        if($request->has('kategori_barang')){
+            $data_modal =DB::table('barang')
+            ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
+            ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
+            ->where('barang.kategori','=',$request->kategori_barang)
+            ->orderby('barang.id','desc')
+            ->get();
+        }else{
+            $data_modal =DB::table('barang')
+            ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
+            ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
+            ->orderby('barang.id','desc')
+            ->get();
+        }
+        
+        $kategori_barang = DB::table('kategori_barang')->orderby('id','desc')->get();
+        return view('backend.laporan.laporanmodal',compact('data_modal','kategori_barang'));
     }
 }

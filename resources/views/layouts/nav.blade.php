@@ -150,6 +150,12 @@
             @if(auth()->user()->can('view-laporan-laba-rugi'))
             <li><a href="{{url('backend/laporan-laba-rugi')}}" class="dropdown-item">Laporan Laba Rugi</a></li>
             @endif
+            @if(auth()->user()->can('view-laporan-modal'))
+            <div class="dropdown-divider"></div>
+            <li>
+                <a href="{{url('backend/laporan-modal')}}" class="dropdown-item">Laporan Modal</a>
+            </li>
+            @endif
         </ul>
     </li>
     @endif
