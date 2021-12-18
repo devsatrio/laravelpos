@@ -13,6 +13,7 @@
     @foreach($websetting as $row_websetting)
     <title>{{$row_websetting->singkatan_nama_program}}</title>
     @endforeach
+    <link rel="shortcut icon" type="image/jpg" href="{{asset('laptop.png')}}"/>
     <link rel="stylesheet" href="{{asset('assets/plugins/fontawesome-free/css/all.min.css')}}">
     @yield('customcss')
     <link rel="stylesheet" href="{{asset('assets/dist/css/adminlte.min.css')}}">

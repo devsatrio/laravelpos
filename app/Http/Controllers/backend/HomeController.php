@@ -147,15 +147,40 @@ class HomeController extends Controller
     //==================================================================
     public function updatewebsetting(Request $request)
     {
-        DB::table('settings')->where('id',$request->kode)
-        ->update([
-            'singkatan_nama_program'=>$request->singkatan_nama_program,
-            'nama_program'=>$request->nama_program,
-            'instansi'=>$request->instansi,
-            'alamat'=>$request->alamat,
-            'note'=>$request->note,
-            'deskripsi_program'=>$request->deskripsi,
-        ]);
+        if($request->hasFile('filenya')){
+            File::delete('img/setting/'.$request->logo_lama);
+
+            $nameland=$request->file('filenya')->getClientOriginalname();
+            $lower_file_name=strtolower($nameland);
+            $replace_space=str_replace(' ', '-', $lower_file_name);
+            $finalname=time().'-'.$replace_space;
+            $destination=public_path('img/setting');
+            $request->file('filenya')->move($destination,$finalname);
+            
+            DB::table('settings')->where('id',$request->kode)
+            ->update([
+                'singkatan_nama_program'=>$request->singkatan_nama_program,
+                'nama_program'=>$request->nama_program,
+                'instansi'=>$request->instansi,
+                'alamat'=>$request->alamat,
+                'note'=>$request->note,
+                'deskripsi_program'=>$request->deskripsi,
+                'note_program'=>$request->note_program,
+                'logo'=>$finalname,
+            ]);
+        }else{
+            DB::table('settings')->where('id',$request->kode)
+            ->update([
+                'singkatan_nama_program'=>$request->singkatan_nama_program,
+                'nama_program'=>$request->nama_program,
+                'instansi'=>$request->instansi,
+                'alamat'=>$request->alamat,
+                'note'=>$request->note,
+                'deskripsi_program'=>$request->deskripsi,
+                'note_program'=>$request->note_program,
+            ]);
+        }
+        
         return redirect('/backend/home')->with('status','Sukses memperbarui setting web');
     }
 }

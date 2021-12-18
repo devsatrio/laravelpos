@@ -23,33 +23,45 @@
                         <h3 class="card-title">Edit Setting Website</h3>
                     </div>
                     @foreach($data as $row)
-                    <form method="POST" role="form">
+                    <form method="POST" role="form" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Nama Program</label>
-                                        <input type="text" name="nama_program" class="form-control" value="{{$row->nama_program}}" required>
+                                        <input type="text" name="nama_program" class="form-control"
+                                            value="{{$row->nama_program}}" required>
                                         <input type="hidden" name="kode" value="{{$row->id}}">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Singkatan Nama Program</label>
-                                        <input type="text" name="singkatan_nama_program" class="form-control" value="{{$row->singkatan_nama_program}}" required>
+                                        <input type="text" name="singkatan_nama_program" class="form-control"
+                                            value="{{$row->singkatan_nama_program}}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Instansi</label>
-                                        <input type="text" name="instansi" class="form-control" value="{{$row->instansi}}" required>
+                                        <input type="text" name="instansi" class="form-control"
+                                            value="{{$row->instansi}}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Alamat Instansi</label>
-                                        <textarea name="alamat" class="form-control" rows="4">{{$row->alamat}}</textarea>
+                                        <textarea name="alamat" class="form-control"
+                                            rows="4">{{$row->alamat}}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Deskripsi Program</label>
+                                        <textarea name="deskripsi" class="form-control"
+                                            rows="4">{{$row->deskripsi_program}}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -58,10 +70,21 @@
                                         <textarea name="note" class="form-control" rows="4">{{$row->note}}</textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Deskripsi Program</label>
-                                        <textarea name="deskripsi" class="form-control" rows="4">{{$row->deskripsi_program}}</textarea>
+                                        <label for="exampleInputEmail1">Note Dashboard</label>
+                                        <textarea name="note_program" class="form-control"
+                                            rows="4">{{$row->note_program}}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    @if($row->logo!='')
+                                    <img src="{{asset('img/setting/'.$row->logo)}}" alt="" class="img-thumb" width="50%">
+                                    @endif
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Logo</label>
+                                        <input type="file" name="filenya" id="filenya" class="form-control" accept="image/*">
+                                        <input type="hidden" name="logo_lama" value="{{$row->logo}}">
                                     </div>
                                 </div>
                             </div>
@@ -81,4 +104,32 @@
 
 @push('customjs')
 <script src="{{asset('assets/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+@endpush
+
+@push('customscripts')
+<script>
+$(function() {
+    $('#filenya').on('change', function() {
+        var imageSizeArr = 0;
+        var imageSize = document.getElementById('filenya');
+        var jumlah = 0;
+        for (var i = 0; i < imageSize.files.length; i++) {
+            jumlah += 1;
+            var imageSiz = imageSize.files[i].size;
+            var imagename = imageSize.files[i].name;
+            if (imageSiz > 2000000) {
+                var imageSizeArr = 1;
+            }
+            if (imageSizeArr == 1) {
+                Swal.fire({
+                    title: 'Maaf',
+                    text: 'Maaf, File "' + imagename +
+                        '" terlalu besar / memiliki ukuran lebih dari 2MB'
+                })
+                $('#filenya').val('');
+            }
+        }
+    });
+});
+</script>
 @endpush
