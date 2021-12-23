@@ -5,6 +5,8 @@
 @endsection
 
 @section('customcss')
+<link rel="stylesheet" href="{{asset('assets/plugins/select2/css/select2.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
 <link rel="stylesheet" href="{{asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
 @endsection
@@ -97,7 +99,7 @@
                                         <form action="" method="get">
                                             <div class="col-md-6 mt-0">
                                                 <div class="input-group">
-                                                    <select name="kategori" id="kategori" class="form-control">
+                                                    <select name="kategori" id="kategori" sytle="width:100%;" class="form-control">
                                                         <option value="semua" @if(Request::has('kategori'))
                                                             @if(Request::get('kategori')=='semua' ) selected @endif
                                                             @endif>Semua Kategori</option>
@@ -231,8 +233,14 @@
 <script src="{{asset('assets/plugins/datatables/jquery.dataTables.js')}}"></script>
 <script src="{{asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('assets/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+<script src="{{asset('assets/plugins/select2/js/select2.full.min.js')}}"></script>
 @endpush
 
 @push('customscripts')
+<script>
+$(function() {
+    $('#kategori').select2();
+})
+</script>
 <script src="{{asset('customjs/backend/barang.js')}}"></script>
 @endpush
