@@ -3,11 +3,32 @@
 <div class="content-header">
     <div class="container">
         <div class="row mb-2">
-
-            <div class="col-sm-12">
+        @php
+            $websetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
+            @endphp
+            @foreach($websetting as $row_websetting)
+            @if($row_websetting->logo!='')
+            <div class="col-sm-3 text-center">
+                <img src="{{asset('img/setting/'.$row_websetting->logo)}}" alt="" width="100%"><br>
+                <span>You are loggin as {{Auth::user()->level}}</span>
+            </div>
+            <div class="col-md-9"></div>
+            @else
+            <div class="col-sm-3">
                 <h1 class="m-0 text-dark"> Dashboard</h1>
                 <span>You are loggin as {{Auth::user()->level}}</span>
             </div>
+            <div class="col-md-9"></div>
+            @endif
+            @if($row_websetting->note_program!='')
+            <div class="col-md-12">
+                <div class="callout callout-info mt-4 mb-0">
+                    <h5>Pengumuman & Informasi!</h5>
+                    <p>{{$row_websetting->note_program}}</p>
+                </div>
+            </div>
+            @endif
+            @endforeach
         </div>
     </div>
 </div>
