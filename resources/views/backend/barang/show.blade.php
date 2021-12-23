@@ -97,11 +97,13 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-4">
                 <div class="card card-info">
                     <div class="card-header">
                         <h3 class="card-title">BarCode Barang</h3>
                     </div>
+                    @if($row->kode_qr!='')
                     <div class="card-body text-center">
                         @php
                         $redColor = [255, 0, 0];
@@ -114,10 +116,13 @@
                     <div class="card-footer">
                         <button type="button" onclick="cetakbarcode()" class="btn btn-info">Cetak</button>
                     </div>
+                    @endif
                 </div>
             </div>
+                    @if($row->kode_qr!='')
             <div id="print_div" style="display:none;">
-                <div style="border-style: solid;padding-top:15px;padding-right:8px;padding-left:8px;width:300px;" align="center">
+                <div style="border-style: solid;padding-top:15px;padding-right:8px;padding-left:8px;width:300px;"
+                    align="center">
                     @php
                     $redColor = [255, 0, 0];
                     $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
@@ -128,6 +133,7 @@
                     <span>{{$row->kode_qr}}</span>
                 </div>
             </div>
+            @endif
             @endforeach
         </div>
     </div>

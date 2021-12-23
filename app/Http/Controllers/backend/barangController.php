@@ -27,7 +27,8 @@ class barangController extends Controller
     //=================================================================
     public function index()
     {
-        return view('backend.barang.index');
+        $kategoribarang = DB::table('kategori_barang')->orderby('id','desc')->get();
+        return view('backend.barang.index',compact('kategoribarang'));
     }
 
     //==================================================================
@@ -79,14 +80,26 @@ class barangController extends Controller
     }
 
     //=================================================================
-    public function listdata(){
-        return Datatables::of(
-            DB::table('barang')
-            ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
-            ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
-            ->orderby('barang.id','desc')
-            ->get()
-            )->make(true);
+    public function listdata($kategori){
+        if($kategori=='semua'){
+            return Datatables::of(
+                DB::table('barang')
+                ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
+                ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
+                ->orderby('barang.id','desc')
+                ->get()
+                )->make(true);
+        }else{
+            return Datatables::of(
+                DB::table('barang')
+                ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
+                ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
+                ->where('barang.kategori',$kategori)
+                ->orderby('barang.id','desc')
+                ->get()
+                )->make(true);
+        }
+        
     }
 
     //=================================================================

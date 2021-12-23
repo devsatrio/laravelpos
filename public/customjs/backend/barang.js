@@ -5,7 +5,7 @@ $(function () {
         serverSide: true,
         order: [[0, "desc"]],
         //ajax: '/backend/data-barang',
-        ajax: '/laravelpos/backend/data-barang',
+        ajax: '/laravelpos/backend/data-barang/'+$('#kat_barang').val(),
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
@@ -38,7 +38,7 @@ $(function () {
             },
             {
                 render: function (data, type, row) {
-                    return '<a href="/laravelpos/backend/barang/' + row['id'] + '" class="btn btn-warning m-1"><i class="fa fa-eye"></i></a><a href="/laravelpos/backend/barang/' + row['id'] + '/edit" class="btn btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn btn-danger m-1" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
+                    return '<a href="/laravelpos/backend/barang/' + row['id'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a><a href="/laravelpos/backend/barang/' + row['id'] + '/edit" class="btn btn-sm btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn btn-sm btn-danger m-1" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
                 },
                 "className": 'text-center',
                 "orderable": false,

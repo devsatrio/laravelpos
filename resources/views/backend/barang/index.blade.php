@@ -82,6 +82,51 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <div id="accordion">
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h4 class="card-title w-100">
+                                        <a class="d-block w-100 collapsed" data-toggle="collapse" href="#collapseThree"
+                                            aria-expanded="false">
+                                            Cari Data Berdasarkan
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
+                                    <div class="card-body">
+                                        <form action="" method="get">
+                                            <div class="col-md-6 mt-0">
+                                                <div class="input-group">
+                                                    <select name="kategori" id="kategori" class="form-control">
+                                                        <option value="semua" @if(Request::has('kategori'))
+                                                            @if(Request::get('kategori')=='semua' ) selected @endif
+                                                            @endif>Semua Kategori</option>
+                                                        @foreach($kategoribarang as $row_kategoribarang)
+                                                        <option value="{{$row_kategoribarang->id}}"
+                                                            @if(Request::has('kategori'))
+                                                            @if(Request::get('kategori')==$row_kategoribarang->id)
+                                                            selected @endif
+                                                            @endif>
+                                                            {{$row_kategoribarang->nama}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-secondary" type="submit"><i
+                                                                class="fa fa-search"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        @if(Request::has('kategori'))
+                        <input type="hidden" id="kat_barang" value="{{Request::get('kategori')}}">
+                        @else
+                        <input type="hidden" id="kat_barang" value="semua">
+                        @endif
                         <div class="table-responsive">
                             <table id="list-data" class="table table-bordered table-striped">
                                 <thead>
@@ -117,7 +162,7 @@
                 </div>
             </div>
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </div>
 <div class="modal fade bd-example-modal-lg" id="importmodal" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
