@@ -15,14 +15,14 @@
 <div class="content-header">
     <div class="container">
         <div class="row mb-2">
-            <div class="col-sm-12">
+            <div class="col-sm-12 text-center">
                 <h1 class="m-0 text-dark"> Barang</h1>
             </div>
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
 </div>
-<div class="content">
-    <div class="container">
+<div class="content pl-5 pr-5">
+    <div class="container-fluit">
         @if (session('status'))
         <div class="alert alert-success alert-dismissible">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
