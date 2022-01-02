@@ -45,7 +45,7 @@ Route::prefix('backend')->group(function () {
     Route::resource('/supplier','backend\supplierController');
 
     //-------------------------------------------------------------------------------------------
-    Route::get('/data-barang/{kategori}','backend\barangController@listdata');
+    Route::get('/list-data-barang/{kategori}','backend\barangController@listdata');
     Route::get('/data-barang/detail','backend\barangController@caridetailbarang');
     Route::get('/data-barang/cari-detail/{kode}','backend\barangController@pilihdetailbarang');
     Route::get('/barang/cetak-barcode','backend\barangController@cetakbarcodebarang');

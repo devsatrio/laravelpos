@@ -5,7 +5,7 @@ $(function () {
         serverSide: true,
         order: [[0, "desc"]],
         //ajax: '/backend/data-barang',
-        ajax: '/laravelpos/backend/data-barang/'+$('#kat_barang').val(),
+        ajax: '/laravelpos/backend/list-data-barang/'+$('#kat_barang').val(),
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
