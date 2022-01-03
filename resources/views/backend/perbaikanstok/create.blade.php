@@ -80,9 +80,9 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="button" id="tambahbtn" class="btn btn-primary">Tambah</button>
                                 <button type="reset" onclick="history.go(-1)"
-                                    class="btn btn-danger float-right">Kembali</button>
+                                    class="btn btn-danger">Kembali</button>
+                                <button type="button" id="tambahbtn" class="btn btn-primary float-right">Tambah</button>
                             </div>
                         </div>
                     </div>
@@ -118,11 +118,12 @@
                                     <table class="table table-bordered table-striped mt-3 mb-5">
                                         <thead>
                                             <tr>
-                                                <th class="text-center">#</th>
+                                                <th class="text-center">No</th>
                                                 <th>Barang</th>
                                                 <th class="text-center">Stok Sekarang</th>
                                                 <th class="text-center">Stok Baru</th>
                                                 <th>Keterangan</th>
+                                                <th class="text-center">#</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tubuhnya">

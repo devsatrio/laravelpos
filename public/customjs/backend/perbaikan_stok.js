@@ -104,13 +104,19 @@ function getdata() {
             var rows = '';
             var no = 0;
             $.each(data, function (key, value) {
+                if(value.keterangan==null||value.keterangan==''){
+                    var keterangan='';
+                }else{
+                    var keterangan=value.keterangan;
+                }
                 no += 1;
                 rows = rows + '<tr>';
-                rows = rows + '<td class="text-center"><button type="button" onclick="hapusdetail(' + value.id + ')" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></button></td>';
+                rows = rows + '<td class="text-center">'+no+'</td>';
                 rows = rows + '<td>' + value.kode_barang + ' - ' + value.namabarang + '</td>';
                 rows = rows + '<td class="text-center">' + value.stok_lama + ' Pcs</td>';
                 rows = rows + '<td class="text-center">' + value.stok_baru + ' Pcs</td>';
-                rows = rows + '<td>' + value.keterangan + '</td>';
+                rows = rows + '<td>' + keterangan + '</td>';
+                rows = rows + '<td class="text-center"><button type="button" onclick="hapusdetail(' + value.id + ')" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></button></td>';
                 rows = rows + '</tr>';
             });
             $('#tubuhnya').html(rows);
