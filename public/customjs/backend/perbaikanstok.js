@@ -59,10 +59,10 @@ function updatestatus(kode) {
     })
     swalWithBootstrapButtons.fire({
         title: 'Ubah Status ?',
-        text: "Ubah status data dari draft menjadi approve dan update stok baran",
+        text: "Ubah status data dari draft menjadi approve dan update stok barang",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus!',
+        confirmButtonText: 'Ya, Yakin!',
         cancelButtonText: 'Tidak',
         reverseButtons: true
     }).then((result) => {
