@@ -333,7 +333,7 @@ class laporanController extends Controller
                 if($request->pembuat!='Semua'){
                     if($request->barang!='Semua'){
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -346,7 +346,7 @@ class laporanController extends Controller
                         ->get();
                     }else{
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -360,7 +360,7 @@ class laporanController extends Controller
                 }else{
                     if($request->barang!='Semua'){
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -372,7 +372,7 @@ class laporanController extends Controller
                         ->get();
                     }else{
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -387,7 +387,7 @@ class laporanController extends Controller
                 if($request->pembuat!='Semua'){
                     if($request->barang!='Semua'){
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -399,7 +399,7 @@ class laporanController extends Controller
                         ->get();
                     }else{
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -412,7 +412,7 @@ class laporanController extends Controller
                 }else{
                     if($request->barang!='Semua'){
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -423,7 +423,7 @@ class laporanController extends Controller
                         ->get();
                     }else{
                         $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
                         ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
                         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
                         ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
@@ -436,7 +436,7 @@ class laporanController extends Controller
             }
         }else{
             $data = DB::table('penjualan_detail')
-            ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama'))
+            ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
             ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
             ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
             ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')

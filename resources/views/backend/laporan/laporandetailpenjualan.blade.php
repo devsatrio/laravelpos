@@ -149,12 +149,18 @@
                                         <th>Barang</th>
                                         <th>Jumlah</th>
                                         <th>Diskon</th>
-                                        <th class="text-right">Harga</th>
-                                        <th class="text-right">Total</th>
+                                        <th class="text-right">Harga Beli</th>
+                                        <th class="text-right">Harga Jual</th>
+                                        <th class="text-right">Total Beli</th>
+                                        <th class="text-right">Total Jual</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $i=1; @endphp
+                                    @php
+                                    $i=1;
+                                    $total_jual=0;
+                                    $total_beli=0;
+                                    @endphp
                                     @foreach($data as $row)
                                     <tr>
                                         <td>{{$i}}</td>
@@ -165,24 +171,32 @@
                                         <td>{{$row->kode_barang}} - {{$row->nama}}</td>
                                         <td>{{$row->jumlah}} Pcs</td>
                                         <td>{{$row->diskon}} %</td>
+                                        <td class="text-right">Rp. {{number_format($row->harga_beli,0,',','.')}}</td>
                                         <td class="text-right">Rp. {{number_format($row->harga,0,',','.')}}</td>
+                                        <td class="text-right">Rp.
+                                            {{number_format($row->harga_beli*$row->jumlah,0,',','.')}}</td>
                                         <td class="text-right">Rp. {{number_format($row->total,0,',','.')}}</td>
                                     </tr>
-                                    @php $i++; @endphp
+                                    @php
+                                    $i++;
+                                    $total_jual+=$row->total;
+                                    $total_beli+=$row->harga_beli*$row->jumlah;
+                                    @endphp
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Kode Penjualan</th>
-                                        <th>Tgl Buat</th>
-                                        <th>Pembuat</th>
-                                        <th>Customer</th>
-                                        <th>Barang</th>
-                                        <th>Jumlah</th>
-                                        <th>Diskon</th>
-                                        <th class="text-right">Harga</th>
-                                        <th class="text-right">Total</th>
+                                        <td colspan="11" class="text-right"><b>Total Beli</b></td>
+                                        <td class="text-right"><b>Rp. {{number_format($total_beli,0,',','.')}}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" class="text-right"><b>Total Jual</b></td>
+                                        <td class="text-right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" class="text-right"><b>Total Laba</b></td>
+                                        <td class="text-right"><b>Rp.
+                                                {{number_format($total_jual - $total_beli,0,',','.')}}</b></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -267,6 +281,20 @@
             @php $no++; @endphp
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="9" style="padding:3px;" align="right"><b>Total Beli</b></td>
+                <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_beli,0,',','.')}}</b></td>
+            </tr>
+            <tr>
+                <td colspan="9" style="padding:3px;" align="right"><b>Total Jual</b></td>
+                <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
+            </tr>
+            <tr>
+                <td colspan="9" style="padding:3px;" align="right"><b>Total Laba</b></td>
+                <td  style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual - $total_beli,0,',','.')}}</b></td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 @endsection
