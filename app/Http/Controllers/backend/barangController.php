@@ -183,7 +183,6 @@ class barangController extends Controller
             'harga_jual_customer'=>str_replace('.','',$request->harga_grosir),
             'diskon'=>$request->diskon,
             'diskon_customer'=>$request->diskon_grosir,
-            'stok'=>0,
             'keterangan'=>$request->keterangan,
         ]);
         return redirect('/backend/barang')->with('status','Sukses memeperbarui data');
