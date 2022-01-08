@@ -119,9 +119,9 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="button" id="tambahbtn" class="btn btn-primary">Tambah</button>
                                     <button type="reset" onclick="history.go(-1)"
-                                        class="btn btn-danger float-right">Kembali</button>
+                                        class="btn btn-danger">Kembali</button>
+                                    <button type="button" id="tambahbtn" class="btn btn-primary float-right">Tambah</button>
                                 </div>
                             </form>
                         </div>
@@ -131,13 +131,13 @@
                     <div class="loading-div" id="paneldua">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Pembelian</h3>
+                                <h3 class="card-title">Detail Penjualan</h3>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1">Kode Pembelian</label>
+                                            <label for="exampleInputEmail1">Kode Penjualan</label>
                                             <input type="text" class="form-control" name="kode" id="kode"
                                                 value="{{$kode}}" required readonly>
                                         </div>

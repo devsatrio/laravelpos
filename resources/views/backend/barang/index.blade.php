@@ -97,24 +97,27 @@
                                 <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
                                     <div class="card-body">
                                         <form action="" method="get">
-                                            <div class="col-md-6 mt-0">
-                                                <div class="input-group">
-                                                    <select name="kategori" id="kategori" sytle="width:100%;" class="form-control">
-                                                        <option value="semua" @if(Request::has('kategori'))
-                                                            @if(Request::get('kategori')=='semua' ) selected @endif
-                                                            @endif>Semua Kategori</option>
-                                                        @foreach($kategoribarang as $row_kategoribarang)
-                                                        <option value="{{$row_kategoribarang->id}}"
-                                                            @if(Request::has('kategori'))
-                                                            @if(Request::get('kategori')==$row_kategoribarang->id)
-                                                            selected @endif
-                                                            @endif>
-                                                            {{$row_kategoribarang->nama}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-secondary" type="submit"><i
-                                                                class="fa fa-search"></i></button>
+                                            <div class="row">
+                                                <div class="col-md-6 mt-0">
+                                                    <div class="input-group">
+                                                        <select name="kategori" id="kategori" style="width:80%;"
+                                                            class="form-control">
+                                                            <option value="semua" @if(Request::has('kategori'))
+                                                                @if(Request::get('kategori')=='semua' ) selected @endif
+                                                                @endif>Semua Kategori</option>
+                                                            @foreach($kategoribarang as $row_kategoribarang)
+                                                            <option value="{{$row_kategoribarang->id}}"
+                                                                @if(Request::has('kategori'))
+                                                                @if(Request::get('kategori')==$row_kategoribarang->id)
+                                                                selected @endif
+                                                                @endif>
+                                                                {{$row_kategoribarang->nama}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="submit"><i
+                                                                    class="fa fa-search"></i></button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

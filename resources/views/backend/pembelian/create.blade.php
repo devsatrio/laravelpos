@@ -95,10 +95,10 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="button" id="tambahbtn"
-                                        class="btn btn-primary">Tambah</button>
                                     <button type="reset" onclick="history.go(-1)"
-                                        class="btn btn-danger float-right">Kembali</button>
+                                        class="btn btn-danger">Kembali</button>
+                                    <button type="button" id="tambahbtn"
+                                        class="btn btn-primary float-right">Tambah</button>
                                 </div>
                             </form>
                         </div>
