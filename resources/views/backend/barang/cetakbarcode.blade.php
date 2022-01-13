@@ -110,8 +110,8 @@ $nomorrow=1;
                     src="data:image/png;base64,' . base64_encode($generator->getBarcode($row_databarang->kode_qr, $generator::TYPE_CODE_128)) . '">';
                 @endphp
                 <br>
-                <p>{{$row_databarang->kode_qr}}</p>
-
+                <span>Rp. {{number_format($row_databarang->harga_jual,0,',','.')}}</span><br>
+                <span>{{$row_databarang->nama}}</span>
 
                 @endforeach
 
@@ -144,7 +144,9 @@ $nomorrow=1;
                 echo '<img class="img-thumbnail"
                     src="data:image/png;base64,' . base64_encode($generator->getBarcode($row_databarang->kode_qr, $generator::TYPE_CODE_128)) . '">';
                 @endphp
-                <span>{{$row_databarang->kode_qr}}</span>
+                <br>
+                <span>Rp. {{number_format($row_databarang->harga_jual,0,',','.')}}</span><br>
+                <span>{{$row_databarang->nama}}</span>
             </td>
         </tr>
     </table>
