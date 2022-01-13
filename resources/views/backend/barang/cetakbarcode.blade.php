@@ -78,7 +78,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="button" onclick="cetakbarcode()" class="btn btn-info float-right">Cetak</button>
+                        <button type="button" onclick="cetakbarcode()" class="btn btn-info float-right m-1">Cetak Versi 1</button>
+                        <button type="button" onclick="cetakbarcodedua()" class="btn btn-info float-right m-1">Cetak Versi 2</button>
                     </div>
                 </div>
             </div>
@@ -109,7 +110,7 @@ $nomorrow=1;
                     src="data:image/png;base64,' . base64_encode($generator->getBarcode($row_databarang->kode_qr, $generator::TYPE_CODE_128)) . '">';
                 @endphp
                 <br>
-                <p>{{$row_databarang->nama}} - {{$row_databarang->kode_qr}}</p>
+                <p>{{$row_databarang->kode_qr}}</p>
 
 
                 @endforeach
@@ -127,6 +128,30 @@ $nomorrow=1;
             @endforeach
     </table>
 </div>
+
+<div id="print_div_dua" style="display:none;">
+    @foreach(Request::get('barang') as $kode_barang)
+    @php
+    $databarang = DB::table('barang')->where('kode',$kode_barang)->get();
+    @endphp
+    @foreach($databarang as $row_databarang)
+    <table width="100%" border="0">
+        <tr>
+            <td width="25%" align="center" style="padding-top:10px;">
+                @php
+                $redColor = [255, 0, 0];
+                $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+                echo '<img class="img-thumbnail"
+                    src="data:image/png;base64,' . base64_encode($generator->getBarcode($row_databarang->kode_qr, $generator::TYPE_CODE_128)) . '">';
+                @endphp
+                <span>{{$row_databarang->kode_qr}}</span>
+            </td>
+        </tr>
+    </table>
+    <div style='break-after:always'></div>
+    @endforeach
+    @endforeach
+</div>
 @endif
 @endsection
 @push('customjs')
@@ -139,8 +164,18 @@ $nomorrow=1;
 $(function() {
     $('#barang').select2();
 });
+
 function cetakbarcode() {
     var divToPrint = document.getElementById('print_div');
+    var newWin = window.open('', 'Print-Window');
+    newWin.document.open();
+    newWin.document.write('<html><body onload="window.print();window.close()">' + divToPrint.innerHTML +
+        '</body></html>');
+    newWin.document.close();
+}
+
+function cetakbarcodedua() {
+    var divToPrint = document.getElementById('print_div_dua');
     var newWin = window.open('', 'Print-Window');
     newWin.document.open();
     newWin.document.write('<html><body onload="window.print();window.close()">' + divToPrint.innerHTML +

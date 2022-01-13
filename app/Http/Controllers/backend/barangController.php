@@ -165,7 +165,7 @@ class barangController extends Controller
     //=================================================================
     public function cetakbarcodebarang()
     {
-        $barang=DB::table('barang')->orderby('id','desc')->get();
+        $barang=DB::table('barang')->where('kode_qr','!=','')->orderby('id','desc')->get();
         return view('backend.barang.cetakbarcode',compact('barang'));
     }
 
