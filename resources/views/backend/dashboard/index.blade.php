@@ -9,7 +9,7 @@
             @foreach($websetting as $row_websetting)
             @if($row_websetting->logo!='')
             <div class="col-sm-3 text-center">
-                <img src="{{asset('img/setting/'.$row_websetting->logo)}}" alt="" width="100%"><br>
+                <!-- <img src="{{asset('img/setting/'.$row_websetting->logo)}}" alt="" width="100%"><br> -->
                 <span>You are loggin as {{Auth::user()->level}}</span>
             </div>
             <div class="col-md-9"></div>

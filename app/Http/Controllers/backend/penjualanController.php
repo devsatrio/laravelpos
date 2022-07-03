@@ -418,30 +418,65 @@ class penjualanController extends Controller
     }
 
     //=================================================================
+    // public function updatehutang(Request $request)
+    // {
+    //     $terbayar = str_replace('.','',$request->hutang)+str_replace('.','',$request->dibayar);
+    //     $kekurangan = str_replace('.','',$request->kekurangan);
+    //     if($kekurangan>0){
+    //         $status = "Belum Lunas";
+    //     }else{
+    //         $status = "Telah Lunas";
+    //     }
+    //     DB::table('penjualan')
+    //     ->where('kode',$request->kode)
+    //     ->update([
+    //         'status'=>$status,
+    //         'terbayar'=>$terbayar,
+    //         'kekurangan'=>$kekurangan
+    //     ]);
+    //     DB::table('pembayaran')
+    //     ->insert([
+    //         'kode_penjualan'=>$request->kode,
+    //         'jumlah'=>str_replace('.','',$request->dibayar),
+    //         'tgl_bayar'=>$request->tgl_bayar,
+    //         'created_at'=>date('Y-m-d H:i:s'),
+    //         'created_by'=>Auth::user()->id,
+    //         'keterangan'=>'Pembayaran Hutang',
+    //     ]);
+    // }
+
+    //=================================================================
     public function updatehutang(Request $request)
     {
-        $terbayar = str_replace('.','',$request->hutang)+str_replace('.','',$request->dibayar);
-        $kekurangan = str_replace('.','',$request->kekurangan);
-        if($kekurangan>0){
-            $status = "Belum Lunas";
-        }else{
-            $status = "Telah Lunas";
-        }
-        DB::table('penjualan')
+        $datapenjualan = DB::table('penjualan')
         ->where('kode',$request->kode)
-        ->update([
-            'status'=>$status,
-            'terbayar'=>$terbayar,
-            'kekurangan'=>$kekurangan
-        ]);
-        DB::table('pembayaran')
-        ->insert([
-            'kode_penjualan'=>$request->kode,
-            'jumlah'=>str_replace('.','',$request->dibayar),
-            'tgl_bayar'=>$request->tgl_bayar,
-            'created_at'=>date('Y-m-d H:i:s'),
-            'created_by'=>Auth::user()->id,
-            'keterangan'=>'Pembayaran Hutang',
-        ]);
+        ->get();
+        foreach ($datapenjualan as $row_datapenjualan) {
+            $telah_dibayar = $row_datapenjualan->terbayar;
+            $terbayar = $telah_dibayar+str_replace('.','',$request->dibayar);
+            $kekurangan = str_replace('.','',$request->kekurangan);
+            if($kekurangan>0){
+                $status = "Belum Lunas";
+            }else{
+                $status = "Telah Lunas";
+            }
+            DB::table('penjualan')
+            ->where('kode',$request->kode)
+            ->update([
+                'status'=>$status,
+                'terbayar'=>$terbayar,
+                'kekurangan'=>$kekurangan
+            ]);
+            DB::table('pembayaran')
+            ->insert([
+                'kode_penjualan'=>$request->kode,
+                'jumlah'=>str_replace('.','',$request->dibayar),
+                'tgl_bayar'=>$request->tgl_bayar,
+                'created_at'=>date('Y-m-d H:i:s'),
+                'created_by'=>Auth::user()->id,
+                'keterangan'=>'Pembayaran Hutang',
+            ]);
+        }
+        
     }
 }

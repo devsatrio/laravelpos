@@ -271,6 +271,7 @@ function bayarhutang(kode) {
     $('#edit_customer').val('');
     $('#edit_hutang').val('');
     $('#edit_kekurangan').val('');
+    $('#edit_dibayar').val('');
     $('#bayarhutangmodal').modal('show');
     var url = '/laravelpos/backend/data-penjualan/cetak-ulang/' + kode;
     $.ajax({

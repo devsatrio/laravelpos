@@ -646,4 +646,21 @@ class laporanController extends Controller
         $kategori_barang = DB::table('kategori_barang')->orderby('id','desc')->get();
         return view('backend.laporan.laporanmodal',compact('data_modal','kategori_barang'));
     }
+
+    public function laporanpenjualanbarang()
+    {
+        $data = DB::table('penjualan_detail')
+        ->select(DB::raw('penjualan_detail.*,sum(penjualan_detail.jumlah) as total_jumlah_penjualan,sum(penjualan_detail.total) as total_penjualan,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
+        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
+        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
+        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
+        ->leftjoin('users','users.id','=','penjualan.pembuat')
+        ->orderby('penjualan_detail.kode_penjualan','desc')
+        ->groupby('penjualan_detail.kode_barang')
+        ->get();
+        $datacustomer = DB::table('master_customer')->orderby('id','desc')->get();
+        $dataadmin = DB::table('users')->orderby('id','desc')->get();
+        $databarang= DB::table('barang')->orderby('id','desc')->get();
+        return view('backend.laporan.laporanpenjualanbarang',compact('datacustomer','dataadmin','data','databarang'));
+    }
 }

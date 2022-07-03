@@ -114,6 +114,7 @@
 
     @if(auth()->user()->can('view-laporan-penjualan')
     || auth()->user()->can('view-laporan-detail-penjualan')
+    || auth()->user()->can('view-laporan-penjualan-barang')
     || auth()->user()->can('view-laporan-pembelian')
     || auth()->user()->can('view-laporan-detail-pembelian')
     || auth()->user()->can('view-laporan-pemasukan-pengeluaran-lain')
@@ -124,6 +125,11 @@
         <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
             @if(auth()->user()->can('view-laporan-penjualan'))
             <li><a href="{{url('backend/laporan-penjualan')}}" class="dropdown-item">Laporan Penjualan</a></li>
+            @endif
+
+            @if(auth()->user()->can('view-laporan-penjualan-barang'))
+            <li><a href="{{url('backend/laporan-penjualan-barang')}}" class="dropdown-item">Laporan Penjualan Barang</a>
+            </li>
             @endif
 
             @if(auth()->user()->can('view-laporan-detail-penjualan'))
