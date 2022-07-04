@@ -17,7 +17,7 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12 text-center">
-                <h1 class="m-0 text-dark"> Laporan Detail Penjualan</h1>
+                <h1 class="m-0 text-dark"> Laporan Penjualan Barang</h1>
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@
                                         <div class="input-group-append">
                                             <button class="btn btn-secondary" type="submit"><i
                                                     class="fa fa-search"></i></button>
-                                            <a href="{{url('/backend/laporan-detail-penjualan')}}"
+                                            <a href="{{url('/backend/laporan-penjualan-barang')}}"
                                                 class="btn btn-secondary"><i class="fas fa-sync"></i></a>
                                             <button class="btn btn-secondary" onclick="cetak()" type="button"><i
                                                     class="fa fa-print"></i></button>
@@ -71,28 +71,6 @@
                         <hr>
                         @if(Request::has('tanggal'))
                         Hasil Pencarian @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
-
-                        @if(Request::has('pembuat'))
-                        @if(Request::get('pembuat')!='Semua')
-                        @php
-                        $pembuat_data = DB::table('users')->where('id',Request::get('pembuat'))->get();
-                        @endphp
-                        @foreach($pembuat_data as $row_pembuat_data)
-                        Pembuat <b>{{$row_pembuat_data->name}}</b>
-                        @endforeach
-                        @endif
-                        @endif
-
-                        @if(Request::has('customer'))
-                        @if(Request::get('customer')!='Semua')
-                        @php
-                        $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
-                        @endphp
-                        @foreach($customer_data as $row_customer_data)
-                        Customer <b>{{$row_customer_data->nama}}</b>
-                        @endforeach
-                        @endif
-                        @endif
 
                         @if(Request::has('barang'))
                         @if(Request::get('barang')!='Semua')
@@ -115,7 +93,6 @@
                                         <th>No</th>
                                         <th>Barang</th>
                                         <th>Diskon</th>
-                                        <th class="text-right">Harga Beli</th>
                                         <th class="text-right">Harga Jual</th>
                                         <th>Jumlah</th>
                                         <th class="text-right">Estimasi Total Jual</th>
@@ -125,27 +102,29 @@
                                     @php
                                     $i=1;
                                     $total_jual=0;
-                                    $total_beli=0;
+                                    $total_jumlah=0;
                                     @endphp
                                     @foreach($data as $row)
                                     <tr>
                                         <td>{{$i}}</td>
                                         <td>{{$row->kode_barang}} - {{$row->nama}}</td>
                                         <td>{{$row->diskon}} %</td>
-                                        <td class="text-right">Rp. {{number_format($row->harga_beli,0,',','.')}}</td>
                                         <td class="text-right">Rp. {{number_format($row->harga,0,',','.')}}</td>
                                         <td>{{$row->total_jumlah_penjualan}} Pcs</td>
-                                        <td class="text-right">Rp. {{number_format($row->total_penjualan,0,',','.')}}</td>
+                                        <td class="text-right">Rp. {{number_format($row->total_penjualan,0,',','.')}}
+                                        </td>
                                     </tr>
                                     @php
                                     $i++;
                                     $total_jual+=$row->total_penjualan;
+                                    $total_jumlah+=$row->total_jumlah_penjualan;
                                     @endphp
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="6" class="text-right"><b>Estimasi Total Jual</b></td>
+                                        <td colspan="4" class="text-right"></td>
+                                        <td><b>{{$total_jumlah}} Pcs</b></td>
                                         <td class="text-right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
                                     </tr>
                                 </tfoot>
@@ -157,32 +136,9 @@
         </div>
     </div>
 </div>
-
 <div id="print_div" style="display:none;">
     @if(Request::has('tanggal'))
-    Laporan Detail Penjualan @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
-
-    @if(Request::has('pembuat'))
-    @if(Request::get('pembuat')!='Semua')
-    @php
-    $pembuat_data = DB::table('users')->where('id',Request::get('pembuat'))->get();
-    @endphp
-    @foreach($pembuat_data as $row_pembuat_data)
-    Pembuat <b>{{$row_pembuat_data->name}}</b>
-    @endforeach
-    @endif
-    @endif
-
-    @if(Request::has('customer'))
-    @if(Request::get('customer')!='Semua')
-    @php
-    $customer_data = DB::table('master_customer')->where('kode',Request::get('customer'))->get();
-    @endphp
-    @foreach($customer_data as $row_customer_data)
-    Customer <b>{{$row_customer_data->nama}}</b>
-    @endforeach
-    @endif
-    @endif
+    Laporan Penjualan Barang @if(Request::has('tanggal')) Tanggal <b>{{Request::get('tanggal')}}</b> @endif
 
     @if(Request::has('barang'))
     @if(Request::get('barang')!='Semua')
@@ -196,16 +152,16 @@
     @endif
 
     @else
-    Laporan Detail Penjualan <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
+    Laporan Penjualan Barang <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
     @endif
     <table width="100%" border="1" cellpadding="0" cellspacing="0" id="data_penjualan">
         <thead>
             <tr>
                 <th style="padding:3px;">No</th>
                 <th style="padding:3px;">Barang</th>
-                <th style="padding:3px;">Jumlah</th>
                 <th style="padding:3px;">Diskon</th>
                 <th style="padding:3px;" align="right">Harga</th>
+                <th style="padding:3px;">Jumlah</th>
                 <th style="padding:3px;" align="right">Total</th>
             </tr>
         </thead>
@@ -215,26 +171,19 @@
             <tr>
                 <td style="padding:3px;">{{$no}}</td>
                 <td style="padding:3px;">{{$row->kode_barang}} - {{$row->nama}}</td>
-                <td style="padding:3px;">{{$row->jumlah}} Pcs</td>
                 <td style="padding:3px;">{{$row->diskon}} %</td>
                 <td style="padding:3px;" align="right">Rp. {{number_format($row->harga,0,',','.')}}</td>
-                <td style="padding:3px;" align="right">Rp. {{number_format($row->total,0,',','.')}}</td>
+                <td style="padding:3px;">{{$row->total_jumlah_penjualan}} Pcs</td>
+                <td style="padding:3px;" align="right">Rp. {{number_format($row->total_penjualan,0,',','.')}}</td>
             </tr>
             @php $no++; @endphp
             @endforeach
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="9" style="padding:3px;" align="right"><b>Total Beli</b></td>
-                <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_beli,0,',','.')}}</b></td>
-            </tr>
-            <tr>
-                <td colspan="9" style="padding:3px;" align="right"><b>Total Jual</b></td>
+                <td style="padding:3px;" colspan="4" class="text-right"></td>
+                <td style="padding:3px;"><b>{{$total_jumlah}} Pcs</b></td>
                 <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
-            </tr>
-            <tr>
-                <td colspan="9" style="padding:3px;" align="right"><b>Total Laba</b></td>
-                <td  style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual - $total_beli,0,',','.')}}</b></td>
             </tr>
         </tfoot>
     </table>
