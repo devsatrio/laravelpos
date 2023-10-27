@@ -117,7 +117,7 @@ class AdminController extends Controller
                 ]);
 
                 $usr = User::find($id);
-                $usr->assignRole($request->level);
+                $usr->syncRoles($request->level);
 
             }else{
                 User::find($id)
@@ -132,7 +132,7 @@ class AdminController extends Controller
                 ]);
 
                 $usr = User::find($id);
-                $usr->assignRole($request->level);
+                $usr->syncRoles($request->level);
             }
         }else{
             if($request->password==''){
@@ -145,7 +145,7 @@ class AdminController extends Controller
                     'level'=>$request->level,
                 ]);
                 $usr = User::find($id);
-                $usr->assignRole($request->level);
+                $usr->syncRoles($request->level);
             }else{
                 User::find($id)
                 ->update([
@@ -157,7 +157,7 @@ class AdminController extends Controller
                     'password'=>Hash::make($request->password),
                 ]);
                 $usr = User::find($id);
-                $usr->assignRole($request->level);
+                $usr->syncRoles($request->level);
             }
         }
 
