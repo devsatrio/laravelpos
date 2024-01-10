@@ -74,8 +74,8 @@ $(function () {
                 "data": null,
             },
         ],
-        pageLength: 10,
-        lengthMenu: [[5, 10, 20], [5, 10, 20]]
+        pageLength: 20,
+        lengthMenu: [[20,50,100, 150, 200], [20,50,100, 150, 200]]
     });
 
 });

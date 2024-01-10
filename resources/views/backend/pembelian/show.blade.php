@@ -157,7 +157,6 @@
                             </div>
                             <div class="card-footer">
                                 <button type="reset" onclick="history.go(-1)" class="btn btn-danger">Kembali</button>
-                                <button type="button" id="simpanbtn" class="btn btn-success float-right">Simpan</button>
                             </div>
                         </div>
                     </div>

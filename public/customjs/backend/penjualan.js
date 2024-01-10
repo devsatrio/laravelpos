@@ -78,8 +78,8 @@ $(function () {
                 "data": null,
             },
         ],
-        pageLength: 100,
-        lengthMenu: [[100, 300, 500, 900], [100, 300, 500, 900]]
+        pageLength: 50,
+        lengthMenu: [[50,100, 150, 200], [50,100, 150, 200]]
     });
 
 });
