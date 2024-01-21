@@ -96,6 +96,7 @@ Route::prefix('backend')->group(function () {
     Route::get('/laporan-detail-penjualan','backend\laporanController@laporandetailpenjualan');
     Route::get('/laporan-detail-pembelian','backend\laporanController@laporandetailpembelian');
     Route::get('/laporan-pemasukan-pengeluaran-lain','backend\laporanController@laporanlain');
+    Route::get('/laporan-nilai-barang','backend\laporanController@laporannilaibarang');
     Route::get('/laporan-laba-rugi','backend\laporanController@laporanlabarugi');
     Route::get('/laporan-modal','backend\laporanController@laporanmodal');
 });

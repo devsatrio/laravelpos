@@ -162,6 +162,12 @@
                 <a href="{{url('backend/laporan-modal')}}" class="dropdown-item">Laporan Modal</a>
             </li>
             @endif
+            @if(auth()->user()->can('view-laporan-nilai-barang'))
+            <div class="dropdown-divider"></div>
+            <li>
+                <a href="{{url('backend/laporan-nilai-barang')}}" class="dropdown-item">Laporan Nilai Barang</a>
+            </li>
+            @endif
         </ul>
     </li>
     @endif

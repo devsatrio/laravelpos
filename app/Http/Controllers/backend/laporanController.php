@@ -18,6 +18,7 @@ class laporanController extends Controller
         $this->middleware('permission:view-laporan-pemasukan-pengeluaran-lain', ['only' => ['laporanlain']]);
         $this->middleware('permission:view-laporan-laba-rugi', ['only' => ['laporanlabarugi']]);
         $this->middleware('permission:view-laporan-modal', ['only' => ['laporanmodal']]);
+        $this->middleware('permission:view-laporan-nilai-barang', ['only' => ['laporannilaibarang']]);
     }
 
     //=================================================================
@@ -694,5 +695,22 @@ class laporanController extends Controller
         $dataadmin = DB::table('users')->orderby('id','desc')->get();
         $databarang= DB::table('barang')->orderby('id','desc')->get();
         return view('backend.laporan.laporanpenjualanbarang',compact('datacustomer','dataadmin','data','databarang'));
+    }
+
+    //==========================================================================
+    public function laporannilaibarang(Request $request) {
+        $kategoribarang = DB::table('kategori_barang')->orderby('id','desc')->get();
+        $data = DB::table('barang')
+        ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
+        ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori');
+
+        if ($request->has('kategori')){
+            if($request->kategori!='semua'){
+                $data=$data->where('barang.kategori',$request->kategori);
+            }
+        }
+        $data=$data->orderby('barang.id','desc')->get();
+
+        return view('backend.laporan.laporannilaibarang',compact('data','kategoribarang'));
     }
 }
