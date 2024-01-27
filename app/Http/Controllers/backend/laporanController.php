@@ -446,10 +446,21 @@ class laporanController extends Controller
             ->orderby('penjualan_detail.kode_penjualan','desc')
             ->get();
         }
+
+        $data_kode=[];
+        foreach ($data as $row) {
+            $data_kode[]= $row->kode_penjualan;
+        }
+        $data_penjualan = DB::table('penjualan')
+        ->select(DB::raw('penjualan.potongan,penjualan.kode'))
+        ->whereIn('kode',$data_kode)
+        ->groupby('kode')
+        ->get();
+        
         $datacustomer = DB::table('master_customer')->orderby('id','desc')->get();
         $dataadmin = DB::table('users')->orderby('id','desc')->get();
         $databarang= DB::table('barang')->orderby('id','desc')->get();
-        return view('backend.laporan.laporandetailpenjualan',compact('datacustomer','dataadmin','data','databarang'));
+        return view('backend.laporan.laporandetailpenjualan',compact('datacustomer','dataadmin','data','databarang','data_penjualan'));
     }
 
     //==========================================================================

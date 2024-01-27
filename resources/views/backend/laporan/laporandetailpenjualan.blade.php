@@ -185,6 +185,14 @@
                                     @endforeach
                                 </tbody>
                                 <tfoot>
+                                    @php
+                                        $total_potongan=0;
+                                    @endphp
+                                    @foreach ($data_penjualan as $row_data_penjualan)
+                                    @php
+                                    $total_potongan+=$row_data_penjualan->potongan;
+                                    @endphp
+                                    @endforeach
                                     <tr>
                                         <td colspan="11" class="text-right"><b>Total Beli</b></td>
                                         <td class="text-right"><b>Rp. {{number_format($total_beli,0,',','.')}}</b></td>
@@ -194,9 +202,13 @@
                                         <td class="text-right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
                                     </tr>
                                     <tr>
+                                        <td colspan="11" class="text-right text-danger"><b>Total Potongan</b></td>
+                                        <td class="text-right text-danger"><b>Rp. {{number_format($total_potongan,0,',','.')}}</b></td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="11" class="text-right"><b>Total Laba</b></td>
                                         <td class="text-right"><b>Rp.
-                                                {{number_format($total_jual - $total_beli,0,',','.')}}</b></td>
+                                                {{number_format($total_jual - $total_beli-$total_potongan,0,',','.')}}</b></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -291,8 +303,12 @@
                 <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
             </tr>
             <tr>
+                <td colspan="9" style="padding:3px;" align="right"><b>Total Potongan</b></td>
+                <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_potongan,0,',','.')}}</b></td>
+            </tr>
+            <tr>
                 <td colspan="9" style="padding:3px;" align="right"><b>Total Laba</b></td>
-                <td  style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual - $total_beli,0,',','.')}}</b></td>
+                <td  style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual - $total_beli-$total_potongan,0,',','.')}}</b></td>
             </tr>
         </tfoot>
     </table>
