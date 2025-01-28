@@ -44,7 +44,8 @@ class penjualanController extends Controller
         DB::table('penjualan_thumb_detail')
         ->where('pembuat',Auth::user()->id)
         ->delete();
-        return view('backend.penjualan.create',compact('kode'));
+        $web_set = DB::table('settings')->orderby('id','desc')->get();
+        return view('backend.penjualan.create',compact('kode','web_set'));
     }
 
     //=================================================================
@@ -118,7 +119,7 @@ class penjualanController extends Controller
     public function detailpenjualan($kode)
     {
         $data = DB::table('penjualan_thumb_detail')
-        ->select(DB::raw('penjualan_thumb_detail.*,barang.nama as namabarang,barang.stok'))
+        ->select(DB::raw('penjualan_thumb_detail.*,barang.hitung_stok,barang.nama as namabarang,barang.stok'))
         ->leftjoin('barang','barang.kode','=','penjualan_thumb_detail.kode_barang')
         ->where('penjualan_thumb_detail.id',$kode)
         ->get();
@@ -159,12 +160,14 @@ class penjualanController extends Controller
 
             $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
             foreach($caribarang as $row_caribarang){
-                $newstok = $row_caribarang->stok - $row->jumlah;
-                DB::table('barang')
-                ->where('kode',$row->kode_barang)
-                ->update([
-                    'stok'=>$newstok
-                ]);
+                if($row_caribarang->hitung_stok=='y'){
+                    $newstok = $row_caribarang->stok - $row->jumlah;
+                    DB::table('barang')
+                    ->where('kode',$row->kode_barang)
+                    ->update([
+                        'stok'=>$newstok
+                    ]);
+                }
             }
         }
 
@@ -297,6 +300,7 @@ class penjualanController extends Controller
                     $jumlahdiskon = $harga*$diskon/100;
                     $jumlah=$row->jumlah + 1;
                     $total = $jumlah*($harga-$jumlahdiskon);
+                    //perlu tambah validasi barang apakah menggunakan scanner
                     if($jumlah>$stok){
                         $status = false;
                     }else{
@@ -312,6 +316,7 @@ class penjualanController extends Controller
                     }
                 }
             }else{
+                //perlu tambah validasi barang apakah menggunakan scanner
                 $jumlahdiskon = $harga*$diskon/100;
                 $jumlah=1;
                 $total = $jumlah*($harga-$jumlahdiskon);

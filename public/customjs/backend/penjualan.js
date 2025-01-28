@@ -64,11 +64,11 @@ $(function () {
                     if (row['status'] == 'Belum Lunas') {
                         return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
                             `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang('` + row['kode'] + `')"><i class="fa fa-edit"></i></button>` +
-                            `<button class="btn btn-sm m-1 btn-success" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
+                            `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
                             `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
                     } else {
                         return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-                            `<button class="btn btn-sm m-1 btn-success" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
+                            `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
                             `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
                     }
 

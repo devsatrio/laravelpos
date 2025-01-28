@@ -25,10 +25,29 @@ class barangController extends Controller
     }
 
     //=================================================================
-    public function index()
+    public function index(Request $request)
     {
         $kategoribarang = DB::table('kategori_barang')->orderby('id','desc')->get();
-        return view('backend.barang.index',compact('kategoribarang'));
+        $data = DB::table('barang')
+        ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
+        ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori');
+
+        if($request->has('kategori')){
+            if($request->kategori!='semua'){
+                $data=$data->where('barang.kategori',$request->kategori);
+            }
+        }
+
+        if($request->has('nama')){
+            if($request->nama!=null){
+                $data=$data->where('barang.nama','like','%'.$request->nama.'%')
+                ->orwhere('barang.kode','like','%'.$request->nama.'%');
+            }
+        }
+
+        $data=$data->orderby('barang.id','desc')
+        ->paginate(50);
+        return view('backend.barang.index',compact('kategoribarang','data'));
     }
 
     //==================================================================
@@ -124,6 +143,7 @@ class barangController extends Controller
             'harga_jual_customer'=>str_replace('.','',$request->harga_grosir),
             'diskon'=>$request->diskon,
             'diskon_customer'=>$request->diskon_grosir,
+            'hitung_stok'=>$request->hitung_stok,
             'stok'=>0,
             'keterangan'=>$request->keterangan,
         ]);
@@ -182,6 +202,7 @@ class barangController extends Controller
             'harga_jual'=>str_replace('.','',$request->harga_jual),
             'harga_jual_customer'=>str_replace('.','',$request->harga_grosir),
             'diskon'=>$request->diskon,
+            'hitung_stok'=>$request->hitung_stok,
             'diskon_customer'=>$request->diskon_grosir,
             'keterangan'=>$request->keterangan,
         ]);

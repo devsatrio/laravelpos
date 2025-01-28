@@ -2,6 +2,8 @@
 
 @section('customcss')
 <link rel="stylesheet" href="{{asset('assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/plugins/select2/css/select2.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
 @endsection
 
 @section('content')
@@ -54,7 +56,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Kategori</label>
-                                        <select name="kategori" class="form-control">
+                                        <select name="kategori" id="kategori" class="form-control">
                                             @foreach($kategori as $row_kategori)
                                             <option value="{{$row_kategori->id}}" @if($row->kategori==$row_kategori->id)
                                                 selected @endif>{{$row_kategori->nama}}</option>
@@ -93,6 +95,27 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Diskon</label>
+                                        <div class="input-group">
+                                            <input type="number" min="0" max="99" name="diskon" value="{{$row->diskon}}"
+                                                required class="form-control">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Hitung Stok</label>
+                                        <select name="hitung_stok" id="hitung_stok" class="form-control">
+                                            <option value="y" @if($row->hitung_stok=='y') selected @endif>Ya, Hitung Stok</option>
+                                            <option value="n" @if($row->hitung_stok=='n') selected @endif>Tidak, Jangan Hitung</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div @if(auth()->user()->can('view-harga-beli-barang')) class="col-md-4" @else
                                     class="col-md-6" @endif>
                                     <div class="form-group">
@@ -107,19 +130,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Diskon</label>
-                                        <div class="input-group">
-                                            <input type="number" min="0" max="99" name="diskon" value="{{$row->diskon}}"
-                                                required class="form-control">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Diskon Grosir (Khusus untuk
                                             customer)</label>
@@ -157,6 +168,7 @@
 @endsection
 @push('customjs')
 <script src="{{asset('assets/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+<script src="{{asset('assets/plugins/select2/js/select2.full.min.js')}}"></script>
 @endpush
 
 @push('customscripts')

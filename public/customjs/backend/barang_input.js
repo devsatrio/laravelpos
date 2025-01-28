@@ -11,7 +11,9 @@ harga_jual.addEventListener("keyup", function(e) {
 harga_grosir.addEventListener("keyup", function(e) {
     harga_grosir.value = formatRupiah(this.value);
 });
-
+$(function () {
+    $('#kategori').select2();
+})
 function formatRupiah(angka) {
     var number_string = angka.replace(/[^,\d]/g, "").toString(),
         split = number_string.split(","),

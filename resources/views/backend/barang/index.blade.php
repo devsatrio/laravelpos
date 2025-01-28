@@ -55,6 +55,57 @@
         @endif
         <div class="row">
             <div class="col-12">
+                
+                <div id="accordion">
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h4 class="card-title w-100">
+                                <a class="d-block w-100 collapsed" data-toggle="collapse" href="#collapseThree"
+                                    aria-expanded="false">
+                                    Cari Data
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" @if (Request::has('nama') || Request::has('kategori')) class="collapse show" @else class="collapse" @endif data-parent="#accordion" style="">
+                            <div class="card-body">
+                                <form action="" method="get">
+                                    <div class="row">
+                                        <div class="col-md-4 mt-0">
+                                            <label>Nama atau Kode</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="nama" @if(Request::has('nama')) value="{{Request::get('nama')}}" @endif>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mt-0">
+                                            <label>Kategori</label>
+                                            <div class="input-group">
+                                                <select name="kategori" id="kategori" style="width:80%;"
+                                                    class="form-control">
+                                                    <option value="semua" @if(Request::has('kategori'))
+                                                        @if(Request::get('kategori')=='semua' ) selected @endif
+                                                        @endif>Semua Kategori</option>
+                                                    @foreach($kategoribarang as $row_kategoribarang)
+                                                    <option value="{{$row_kategoribarang->id}}"
+                                                        @if(Request::has('kategori'))
+                                                        @if(Request::get('kategori')==$row_kategoribarang->id)
+                                                        selected @endif
+                                                        @endif>
+                                                        {{$row_kategoribarang->nama}}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-secondary" type="submit"><i
+                                                            class="fa fa-search"></i></button>
+                                                    <a href="{{url('/backend/barang')}}" class="btn btn-secondary"><i class="fa fa-sync"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">List Data</h3>
@@ -84,54 +135,12 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="accordion">
-                            <div class="card card-info">
-                                <div class="card-header">
-                                    <h4 class="card-title w-100">
-                                        <a class="d-block w-100 collapsed" data-toggle="collapse" href="#collapseThree"
-                                            aria-expanded="false">
-                                            Cari Data Berdasarkan
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
-                                    <div class="card-body">
-                                        <form action="" method="get">
-                                            <div class="row">
-                                                <div class="col-md-6 mt-0">
-                                                    <div class="input-group">
-                                                        <select name="kategori" id="kategori" style="width:80%;"
-                                                            class="form-control">
-                                                            <option value="semua" @if(Request::has('kategori'))
-                                                                @if(Request::get('kategori')=='semua' ) selected @endif
-                                                                @endif>Semua Kategori</option>
-                                                            @foreach($kategoribarang as $row_kategoribarang)
-                                                            <option value="{{$row_kategoribarang->id}}"
-                                                                @if(Request::has('kategori'))
-                                                                @if(Request::get('kategori')==$row_kategoribarang->id)
-                                                                selected @endif
-                                                                @endif>
-                                                                {{$row_kategoribarang->nama}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div class="input-group-append">
-                                                            <button class="btn btn-secondary" type="submit"><i
-                                                                    class="fa fa-search"></i></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
                         @if(Request::has('kategori'))
                         <input type="hidden" id="kat_barang" value="{{Request::get('kategori')}}">
                         @else
                         <input type="hidden" id="kat_barang" value="semua">
                         @endif
+                        {{ $data->appends($_GET)->links() }}
                         <div class="table-responsive">
                             <table id="list-data" class="table table-bordered table-striped">
                                 <thead>
@@ -143,11 +152,33 @@
                                         <th>Harga Jual</th>
                                         <th>Harga Grosir</th>
                                         <th>Stok</th>
+                                        <th>Hitung Stok</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @php
+                                        $i = ($data->currentpage() - 1) * $data->perpage() + 1;
+                                    @endphp
+                                    @foreach ($data as $row)
+                                        <tr>
+                                            <td>{{$i++}}</td>
+                                            <td>{{$row->kode}}</td>
+                                            <td>{{$row->nama}}</td>
+                                            <td>{{$row->namakategori}}</td>
+                                            <td class="text-right">{{ 'Rp ' . number_format(round($row->harga_jual), 0, ',', '.') }}</td>
+                                            <td class="text-right">{{ 'Rp ' . number_format(round($row->harga_jual_customer), 0, ',', '.') }}</td>
+                                            <td class="text-right">{{$row->stok}} Pcs</td>
+                                            <td class="text-center">
+                                                @if ($row->hitung_stok=='y')
+                                                <span class="badge bg-success">Ya</span>
+                                                @else
+                                                <span class="badge bg-danger">Tidak</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center"><a href="{{url('/backend/barang/'.$row->id)}}" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a><a href="{{url('/backend/barang/'.$row->id.'/edit')}}" class="btn btn-sm btn-success m-1"><i class="fa fa-wrench"></i></a><button class="btn btn-sm btn-danger m-1" onclick="hapusdata('{{$row->id}}')"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -158,11 +189,20 @@
                                         <th>Harga Jual</th>
                                         <th>Harga Grosir</th>
                                         <th>Stok</th>
+                                        <th>Hitung Stok</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
+                        {{ $data->appends($_GET)->links() }}
+                        Menampilkan Data {{ ($data->currentpage() - 1) * $data->perpage() + 1 }} -
+                        @if (($data->currentpage() - 1) * $data->perpage() + $data->perpage() > $data->total())
+                            {{ $data->total() }}
+                        @else
+                            {{ ($data->currentpage() - 1) * $data->perpage() + $data->perpage() }}
+                        @endif
+                        Dari {{ $data->total() }} Data
                     </div>
                 </div>
             </div>
@@ -198,6 +238,7 @@
                                 <li><b>diskon & diskon_customer</b> harus diisi dengan format numerik atau angka tanpa
                                     titik atau koma dengan range 0 - 99, contoh <b>10</b>.</li>
                                 <li><b>nama</b> dapat dikosongi atau diisi dengan format string atau text.</li>
+                                <li><b>hitung_stok</b> harus diisi dengan format string, huruf kecil dan harus memilih antara <b>y</b> atau <b>n</b>.</li>
                             </ol>
                             <a href="{{asset('/assets/template_import_barang.xlsx')}}">
                                 <button type="button" class="btn btn-sm btn-info btn-sm"><i class="fas fa-file"></i>
@@ -240,10 +281,5 @@
 @endpush
 
 @push('customscripts')
-<script>
-$(function() {
-    $('#kategori').select2();
-})
-</script>
 <script src="{{asset('customjs/backend/barang.js')}}"></script>
 @endpush

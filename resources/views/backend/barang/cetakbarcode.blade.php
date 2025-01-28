@@ -43,7 +43,7 @@
                         </div>
                         <div class="card-footer">
                             <button type="reset" onclick="history.go(-1)" class="btn btn-danger">Kembali</button>
-                            <button type="submit" class="btn btn-primary float-right">Simpan</button>
+                            <button type="submit" class="btn btn-primary float-right">Pilih</button>
                         </div>
                     </form>
                 </div>

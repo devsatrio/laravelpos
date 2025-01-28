@@ -49,6 +49,18 @@
                                     <p>{{$row->namakategori}}</p>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Hitung Stok</label>
+                                    <p>
+                                        @if ($row->hitung_stok=='y')
+                                            Ya, Stok akan dihitung
+                                        @else
+                                            Tidak, Stok akan diabaikan
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
                             @if(auth()->user()->can('view-harga-beli-barang'))
                             <div class="col-md-6">
                                 <div class="form-group">

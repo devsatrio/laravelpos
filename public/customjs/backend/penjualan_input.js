@@ -144,7 +144,9 @@ function tambahadetailbyqr(kodebarang) {
             $('#stok_barang').val('');
             $('#barang').val(null).trigger('change');
             $('#cari_barang_qr').val('');
-            $('#cari_barang_qr').trigger("focus");
+            if($('#is_use_scan').val()=='y'){
+                $('#cari_barang_qr').trigger("focus");
+            }
             //$('#panelsatu').loading('stop');
         }
     });
@@ -247,6 +249,7 @@ $('#barang').on('select2:select', function (e) {
                 $('#jumlah_barang').val('1');
                 $('#diskon_barang').val(diskon);
                 $('#stok_barang').val(value.stok);
+                $('#hitung_stok_barang').val(value.hitung_stok);
             });
         }, complete: function () {
             document.getElementById("jumlah_barang").focus();
@@ -335,52 +338,66 @@ $('#tambahbtn').on('click', function (e) {
             confirmButtonText: 'OK'
         });
     } else {
-        if (parseInt($('#jumlah_barang').val()) > parseInt($('#stok_barang').val())) {
-            swalWithBootstrapButtons.fire({
-                title: 'Oops',
-                text: 'Stok tidak mencukupi',
-                confirmButtonText: 'OK'
-            });
-            $('#jumlah_barang').val('');
-        } else {
-            $('#panelsatu').loading('toggle');
-            $.ajax({
-                type: 'POST',
-                url: '/laravelpos/backend/data-penjualan/add-detail-penjualan',
-                data: {
-                    '_token': $('input[name=_token]').val(),
-                    'kode': $('#kode').val(),
-                    'kode_barang': $('#barang').val(),
-                    'harga_barang': $('#harga_barang').val(),
-                    'diskon': $('#diskon_barang').val(),
-                    'stok': $('#stok_barang').val(),
-                    'jumlah_barang': $('#jumlah_barang').val(),
-                    'total_harga_barang': $('#total_harga_barang').val(),
-                },
-                success: function (data) {
-                    if (data == false) {
-                        swalWithBootstrapButtons.fire({
-                            title: 'Oops',
-                            text: 'Stok tidak mencukupi',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                }, complete: function () {
-                    getdata();
-                    $('#harga_barang').val('');
-                    $('#jumlah_barang').val('');
-                    $('#diskon_barang').val('');
-                    $('#stok_barang').val('');
-                    $('#total_harga_barang').val('');
-                    $('#barang').val(null).trigger('change');
-                    $('#cari_barang_qr').val('');
-                    $('#cari_barang_qr').trigger("focus");
-                    $('#panelsatu').loading('stop');
-                }
-            });
+        if($('#hitung_stok_barang').val()=='y'){
+            if (parseInt($('#jumlah_barang').val()) > parseInt($('#stok_barang').val())) {
+                swalWithBootstrapButtons.fire({
+                    title: 'Oops',
+                    text: 'Stok tidak mencukupi',
+                    confirmButtonText: 'OK'
+                });
+                $('#jumlah_barang').val('');
+            } else {
+                simpan_detail()
+            }
+        }else{
+            simpan_detail()
         }
     }
 });
+
+//===============================================================================================
+function simpan_detail(){
+    $('#panelsatu').loading('toggle');
+    $.ajax({
+        type: 'POST',
+        url: '/laravelpos/backend/data-penjualan/add-detail-penjualan',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'kode': $('#kode').val(),
+            'kode_barang': $('#barang').val(),
+            'harga_barang': $('#harga_barang').val(),
+            'diskon': $('#diskon_barang').val(),
+            'stok': $('#stok_barang').val(),
+            'jumlah_barang': $('#jumlah_barang').val(),
+            'total_harga_barang': $('#total_harga_barang').val(),
+        },
+        success: function (data) {
+            if (data == false) {
+                swalWithBootstrapButtons.fire({
+                    title: 'Oops',
+                    text: 'Stok tidak mencukupi',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }, complete: function () {
+            getdata();
+            $('#harga_barang').val('');
+            $('#jumlah_barang').val('');
+            $('#diskon_barang').val('');
+            $('#stok_barang').val('');
+            $('#total_harga_barang').val('');
+            $('#barang').val(null).trigger('change');
+            $('#cari_barang_qr').val('');
+            if($('#is_use_scan').val()=='y'){
+                $('#cari_barang_qr').trigger("focus");
+            }else{
+                $('#barang').select2('open');
+            }
+            $('#panelsatu').loading('stop');
+            $('#hitung_stok_barang').val('');
+        }
+    });
+}
 
 //===============================================================================================
 function getdata() {
@@ -499,7 +516,9 @@ function hapusdetail(id) {
         success: function () {
             getdata();
         }, complete: function () {
-            $('#cari_barang_qr').trigger("focus");
+            if($('#is_use_scan').val()=='y'){
+                $('#cari_barang_qr').trigger("focus");
+            }
             $('#paneldua').loading('stop');
         }
     });
@@ -511,6 +530,7 @@ function editdetail(id) {
     $('#edit_kode_barang').val('');
     $('#edit_nama_barang').val('');
     $('#edit_jumlah_barang').val('');
+    $('#edit_hitung_stok_barang').val('');
     $('#edit_id').val('');
     var url = '/laravelpos/backend/data-penjualan/detail-penjualan/' + id;
     $.ajax({
@@ -525,6 +545,7 @@ function editdetail(id) {
                 $('#edit_id').val(value.id);
                 $('#edit_diskon_barang').val(value.diskon);
                 $('#edit_stok_barang').val(value.stok);
+                $('#edit_hitung_stok_barang').val(value.hitung_stok);
             });
             $('#editdetailmodal').modal('show');
         }, complete: function () {
@@ -535,40 +556,58 @@ function editdetail(id) {
 
 //===============================================================================================
 $('#editjumlahdetail').on('click', function (e) {
-    if (parseInt($('#edit_jumlah_barang').val()) > parseInt($('#edit_stok_barang').val())) {
-        swalWithBootstrapButtons.fire({
-            title: 'Oops',
-            text: 'Stok tidak mencukupi',
-            confirmButtonText: 'OK'
-        });
-        $('#jumlah_barang').val('');
-    } else {
-        $('#editdetailmodal').modal('hide');
-        $('#paneldua').loading('toggle');
-        $.ajax({
-            type: 'POST',
-            url: '/laravelpos/backend/data-penjualan/edit-detail-penjualan',
-            data: {
-                '_token': $('input[name=_token]').val(),
-                'edit_id': $('#edit_id').val(),
-                'edit_kode_barang': $('#edit_kode_barang').val(),
-                'edit_jumlah_barang': $('#edit_jumlah_barang').val(),
-                'edit_harga_barang': $('#edit_harga_barang').val(),
-            },
-            success: function () {
-            }, complete: function () {
-                getdata();
-                $('#edit_kode_barang').val('');
-                $('#edit_nama_barang').val('');
-                $('#edit_jumlah_barang').val('');
-                $('#edit_id').val('');
-                $('#cari_barang_qr').val('');
-                $('#cari_barang_qr').trigger("focus");
-                $('#paneldua').loading('stop');
-            }
-        });
+    if($('#edit_hitung_stok_barang').val()=='y'){
+        if (parseInt($('#edit_jumlah_barang').val()) > parseInt($('#edit_stok_barang').val())) {
+            swalWithBootstrapButtons.fire({
+                title: 'Oops',
+                text: 'Stok tidak mencukupi',
+                confirmButtonText: 'OK'
+            });
+            $('#jumlah_barang').val('');
+        } else {
+            edit_detail();
+        }
+    }else{
+        edit_detail();
     }
 });
+
+//===============================================================================================
+function edit_detail() {
+    $('#editdetailmodal').modal('hide');
+    $('#paneldua').loading('toggle');
+    $.ajax({
+        type: 'POST',
+        url: '/laravelpos/backend/data-penjualan/edit-detail-penjualan',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'edit_id': $('#edit_id').val(),
+            'edit_kode_barang': $('#edit_kode_barang').val(),
+            'edit_jumlah_barang': $('#edit_jumlah_barang').val(),
+            'edit_harga_barang': $('#edit_harga_barang').val(),
+        },
+        success: function () {
+        }, complete: function () {
+            getdata();
+            $('#edit_kode_barang').val('');
+            $('#edit_nama_barang').val('');
+            $('#edit_hitung_stok_barang').val('');
+            $('#edit_jumlah_barang').val('');
+            $('#edit_id').val('');
+            $('#cari_barang_qr').val('');
+            if($('#is_use_scan').val()=='y'){
+                $('#cari_barang_qr').trigger("focus");
+            }
+            $('#paneldua').loading('stop');
+        }
+    });
+}
+
+//===============================================================================================
+function dibayar_lunas() {
+    $('#dibayar').val($('#total').val());
+    carikekurangan();
+}
 
 //===============================================================================================
 $('#simpanbtn').on('click', function (e) {

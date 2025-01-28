@@ -19,6 +19,17 @@
             </div>
         </div>
     </div>
+    @php
+        $view_input_scan=false;
+    @endphp
+    @foreach ($web_set as $row_web_set)
+        <input type="text" id="is_use_scan" value="{{$row_web_set->gunakan_scanner}}">
+        @php
+            if($row_web_set->gunakan_scanner=='y'){
+                $view_input_scan=true;
+            }
+        @endphp
+    @endforeach
     <div class="content">
         <div class="container-fluit">
             <div class="row pl-5 pr-5">
@@ -42,11 +53,11 @@
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div @if ($view_input_scan) class="col-md-12" @else class="col-md-12 d-none" @endif >
                                             <div class="form-group">
                                                 <label for="exampleInputEmail1">Cari Barang By Barcode</label>
                                                 <input type="text" class="form-control" name="cari_barang_qr"
-                                                    id="cari_barang_qr" autofocus required>
+                                                    id="cari_barang_qr" @if ($view_input_scan) autofocus @endif required>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -91,6 +102,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <input type="text" name="hitung_stok_barang"
+                                                id="hitung_stok_barang" readonly required>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -119,9 +132,7 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="reset" onclick="history.go(-1)"
-                                        class="btn btn-danger">Kembali</button>
-                                    <button type="button" id="tambahbtn" class="btn btn-primary float-right">Tambah</button>
+                                    <button type="button" id="tambahbtn" class="btn btn-block btn-primary">Tambah</button>
                                 </div>
                             </form>
                         </div>
@@ -241,7 +252,13 @@
                                                 </div>
                                                 <input type="text" class="form-control text-right" name="dibayar"
                                                     id="dibayar" value="0" required>
+                                                
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-info" type="button"
+                                                        onclick="dibayar_lunas()"><i class="fas fa-check"></i></button>
+                                                </div>
                                             </div>
+                                            
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -278,6 +295,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
+                                <button type="reset" onclick="history.go(-1)" class="btn btn-danger">Kembali</button>
                                 <button type="button" id="simpanbtn" class="btn btn-success float-right">Simpan</button>
                             </div>
                         </div>
@@ -325,7 +343,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <div class="col-md-8">
                         <div class="form-group">
@@ -354,6 +371,7 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="text" name="edit_hitung_stok_barang" id="edit_hitung_stok_barang">
                     </div>
                     <div class="col-md-8">
                         <div class="form-group">

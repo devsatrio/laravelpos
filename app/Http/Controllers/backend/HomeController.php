@@ -166,6 +166,7 @@ class HomeController extends Controller
                 'note'=>$request->note,
                 'deskripsi_program'=>$request->deskripsi,
                 'note_program'=>$request->note_program,
+                'gunakan_scanner'=>$request->menggunakan_scan,
                 'logo'=>$finalname,
             ]);
         }else{
@@ -178,6 +179,7 @@ class HomeController extends Controller
                 'note'=>$request->note,
                 'deskripsi_program'=>$request->deskripsi,
                 'note_program'=>$request->note_program,
+                'gunakan_scanner'=>$request->menggunakan_scan,
             ]);
         }
         

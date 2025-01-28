@@ -31,6 +31,7 @@ class BarangImport implements ToModel, WithHeadingRow,WithValidation
             'diskon_customer'=>$row['diskon_customer'],
             'stok'=>0,
             'keterangan'=>$row['keterangan'],
+            'hitung_stok'=>$row['hitung_stok'],
         ]);
     }
 
@@ -45,6 +46,7 @@ class BarangImport implements ToModel, WithHeadingRow,WithValidation
             'harga_jual_customer'=>'required|numeric',
             'diskon'=>'required|numeric',
             'diskon_customer'=>'required|numeric',
+            'hitung_stok' => 'in:y,n'
         ];
     }
 

@@ -27,7 +27,7 @@
                         @csrf
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Nama Program</label>
                                         <input type="text" name="nama_program" class="form-control"
@@ -35,18 +35,27 @@
                                         <input type="hidden" name="kode" value="{{$row->id}}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Singkatan Nama Program</label>
                                         <input type="text" name="singkatan_nama_program" class="form-control"
                                             value="{{$row->singkatan_nama_program}}" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Instansi</label>
                                         <input type="text" name="instansi" class="form-control"
                                             value="{{$row->instansi}}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Menggunakan Scanner</label>
+                                        <select name="menggunakan_scan" id="menggunakan_scan" class="form-control">
+                                            <option value="y" @if($row->gunakan_scanner=='y') selected @endif>Ya</option>
+                                            <option value="n" @if($row->gunakan_scanner=='n') selected @endif>Tidak</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
