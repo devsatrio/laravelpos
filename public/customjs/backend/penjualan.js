@@ -1,5 +1,11 @@
 var edit_dibayar = document.getElementById("edit_dibayar");
 $(function () {
+    $('#tgl_buat').daterangepicker({
+        singleDatePicker: false,
+        locale: {
+            format: 'YYYY-MM-DD'
+        }
+    });
     $('#tgl_bayar').daterangepicker({
         singleDatePicker: true,
         locale: {
@@ -7,134 +13,90 @@ $(function () {
         }
     });
     $('#list-data').DataTable({
-        processing: true,
-        serverSide: true,
-        order: [[0, "desc"]],
-        //ajax: '/backend/data-pembelian',
-        ajax: '/laravelpos/backend/data-penjualan',
-        columns: [
-            {
-                data: 'id', render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            { data: 'kode', name: 'kode' },
-            { data: 'namacustomer', name: 'namacustomer' },
-            { data: 'name', name: 'name' },
-            { data: 'tgl_buat', name: 'tgl_buat' },
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['total'])
-                },
-                "className": 'text-right',
-                "data": 'total',
-            },
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['terbayar'])
-                },
-                "className": 'text-right',
-                "data": 'terbayar',
-            },
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['kekurangan'])
-                },
-                "className": 'text-right',
-                "data": 'kekurangan',
-            },
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['kembalian'])
-                },
-                "className": 'text-right',
-                "data": 'kembalian',
-            },
-            {
-                render: function (data, type, row) {
-                    if (row['status'] == 'Belum Lunas') {
-                        return '<span class="badge bg-danger">' + row['status'] + '</span>';
-                    } else {
-                        return '<span class="badge bg-success">' + row['status'] + '</span>';
-                    }
-                }, data: 'status', name: 'status', className: 'text-center'
-            },
-            {
-                render: function (data, type, row) {
-                    if (row['status'] == 'Belum Lunas') {
-                        return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-                            `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang('` + row['kode'] + `')"><i class="fa fa-edit"></i></button>` +
-                            `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
-                            `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
-                    } else {
-                        return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-                            `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
-                            `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
-                    }
-
-                },
-                "className": 'text-center',
-                "orderable": false,
-                "data": null,
-            },
-        ],
-        pageLength: 50,
-        lengthMenu: [[50,100, 150, 200], [50,100, 150, 200]]
+        "paging": false,
+        "bPaginate": false,
+        "info":false,
+        "language": {
+            "sSearch": "Cari Dihalaman ini:",
+        }
     });
+    // $('#list-data').DataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     order: [[0, "desc"]],
+    //     //ajax: '/backend/data-pembelian',
+    //     ajax: '/laravelpos/backend/data-penjualan',
+    //     columns: [
+    //         {
+    //             data: 'id', render: function (data, type, row, meta) {
+    //                 return meta.row + meta.settings._iDisplayStart + 1;
+    //             }
+    //         },
+    //         { data: 'kode', name: 'kode' },
+    //         { data: 'namacustomer', name: 'namacustomer' },
+    //         { data: 'name', name: 'name' },
+    //         { data: 'tgl_buat', name: 'tgl_buat' },
+    //         {
+    //             render: function (data, type, row) {
+    //                 return 'Rp.' + rupiah(row['total'])
+    //             },
+    //             "className": 'text-right',
+    //             "data": 'total',
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 return 'Rp.' + rupiah(row['terbayar'])
+    //             },
+    //             "className": 'text-right',
+    //             "data": 'terbayar',
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 return 'Rp.' + rupiah(row['kekurangan'])
+    //             },
+    //             "className": 'text-right',
+    //             "data": 'kekurangan',
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 return 'Rp.' + rupiah(row['kembalian'])
+    //             },
+    //             "className": 'text-right',
+    //             "data": 'kembalian',
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 if (row['status'] == 'Belum Lunas') {
+    //                     return '<span class="badge bg-danger">' + row['status'] + '</span>';
+    //                 } else {
+    //                     return '<span class="badge bg-success">' + row['status'] + '</span>';
+    //                 }
+    //             }, data: 'status', name: 'status', className: 'text-center'
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 if (row['status'] == 'Belum Lunas') {
+    //                     return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
+    //                         `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang('` + row['kode'] + `')"><i class="fa fa-edit"></i></button>` +
+    //                         `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
+    //                         `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
+    //                 } else {
+    //                     return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
+    //                         `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
+    //                         `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
+    //                 }
+
+    //             },
+    //             "className": 'text-center',
+    //             "orderable": false,
+    //             "data": null,
+    //         },
+    //     ],
+    //     pageLength: 50,
+    //     lengthMenu: [[50,100, 150, 200], [50,100, 150, 200]]
+    // });
 
 });
-
-//===============================================================================================
-function updatestatus(id) {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: true
-    })
-    Swal.fire({
-        title: 'Ganti Status ?',
-        text: "Apakah anda yakin mengganti status pembelian dari Draft ke Approve dan otomatis mengupdate status stok barang, item pada pembelian tidak dapat di rubah setelah aksi ini",
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, saya yakin',
-        cancelButtonText: 'Tidak'
-    }).then((result) => {
-        if (result.value) {
-            $('#panelsatu').loading('toggle');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                type: 'POST',
-                url: '/laravelpos/backend/pembelian/update-status/' + id,
-                data: {
-                    '_token': $('input[name=_token]').val(),
-                },
-                success: function () {
-                    swalWithBootstrapButtons.fire(
-                        'Updated!',
-                        'Status data berhasil diperbarui',
-                        'success'
-                    )
-                }, error: function () {
-                    swalWithBootstrapButtons.fire(
-                        'Oops!',
-                        'Status data gagal diperbarui',
-                        'error'
-                    )
-                }, complete: function () {
-                    $('#list-data').DataTable().ajax.reload();
-                    $('#panelsatu').loading('stop');
-                }
-            });
-        }
-    })
-}
 
 //===============================================================================================
 function hapusdata(kode) {
@@ -172,16 +134,17 @@ function hapusdata(kode) {
                         'Data berhasil dihapus',
                         'success'
                     )
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
+                    location.reload();
                 }, error: function () {
                     swalWithBootstrapButtons.fire(
                         'Oops!',
                         'Data gagal dihapus',
                         'error'
                     )
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
                 }, complete: function () {
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
                     $('#panelsatu').loading('stop');
                 }
             });
@@ -362,16 +325,17 @@ $('#btnsimpanhutang').on('click', function (e) {
                     'Data berhasil diperbarui',
                     'success'
                 )
+                location.reload();
             }, error: function () {
                 swalWithBootstrapButtons.fire(
                     'Oops!',
                     'Data gagal diperbarui',
                     'error'
                 )
-                $('#list-data').DataTable().ajax.reload();
+                // $('#list-data').DataTable().ajax.reload();
             }, complete: function () {
                 $('#panelsatu').loading('stop');
-                $('#list-data').DataTable().ajax.reload();
+                // $('#list-data').DataTable().ajax.reload();
             }
         });
     }

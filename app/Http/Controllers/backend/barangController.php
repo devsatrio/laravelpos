@@ -89,6 +89,21 @@ class barangController extends Controller
     }
 
     //=================================================================
+    public function caridetailbarangnonstok(Request $request)
+    {
+        if($request->has('q')){
+            $cari = $request->q;
+            
+            $data = DB::table('barang')
+            ->where([['kode','like','%'.$cari.'%'],['hitung_stok','=','y']])
+            ->orwhere([['nama','like','%'.$cari.'%'],['hitung_stok','=','y']])
+            ->get();
+            
+            return response()->json($data);
+        }
+    }
+
+    //=================================================================
     public function pilihdetailbarang($kode)
     {
         $data = DB::table('barang')

@@ -391,7 +391,7 @@ function simpan_detail(){
             if($('#is_use_scan').val()=='y'){
                 $('#cari_barang_qr').trigger("focus");
             }else{
-                $('#barang').select2('open');
+                // $('#barang').select2('open');
             }
             $('#panelsatu').loading('stop');
             $('#hitung_stok_barang').val('');

@@ -28,13 +28,43 @@ class penjualanController extends Controller
             ->leftjoin('users','users.id','=','penjualan.pembuat')
             ->orderby('penjualan.id','desc')
             ->get()
-            )->make(true);
+        )->make(true);
     }
 
     //=================================================================
-    public function index()
+    public function index(Request $request)
     {
-        return view('backend.penjualan.index');
+        if($request->has('tgl_buat')){
+            $tanggal = explode(' - ',$request->tgl_buat);
+            $tglsatu = $tanggal[0];
+            $tgldua = $tanggal[1];
+        }else{
+            $tglsatu = date('Y-m-d');
+            $tgldua = date('Y-m-d');
+        }
+
+        $data = DB::table('penjualan')
+        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
+        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
+        ->leftjoin('users','users.id','=','penjualan.pembuat');
+
+        if($request->has('status')){
+            if($request->status!='Semua Status'){
+                $data=$data->where('penjualan.status',$request->status);
+            }
+        }
+
+        if($request->has('kode')){
+            if($request->kode!=null){
+                $data=$data->where('penjualan.kode','like','%'.$request->kode.'%')
+                ->orwhere('penjualan.kode','like','%'.$request->kode.'%');
+            }
+        }
+        $data = $data->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua]);
+
+        $data=$data->orderby('penjualan.id','desc')
+        ->paginate(60);
+        return view('backend.penjualan.index',compact('data'));
     }
 
     //=================================================================
@@ -386,12 +416,14 @@ class penjualanController extends Controller
         foreach ($detail as $row) {
             $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
             foreach($caribarang as $row_caribarang){
-                $newstok = $row_caribarang->stok + $row->jumlah;
-                DB::table('barang')
-                ->where('kode',$row->kode_barang)
-                ->update([
-                    'stok'=>$newstok
-                ]);
+                if($row_caribarang->hitung_stok=='y'){
+                    $newstok = $row_caribarang->stok + $row->jumlah;
+                    DB::table('barang')
+                    ->where('kode',$row->kode_barang)
+                    ->update([
+                        'stok'=>$newstok
+                    ]);
+                }
             }
         }
 

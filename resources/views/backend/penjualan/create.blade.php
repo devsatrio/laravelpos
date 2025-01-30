@@ -23,7 +23,7 @@
         $view_input_scan=false;
     @endphp
     @foreach ($web_set as $row_web_set)
-        <input type="text" id="is_use_scan" value="{{$row_web_set->gunakan_scanner}}">
+        <input type="hidden" id="is_use_scan" value="{{$row_web_set->gunakan_scanner}}">
         @php
             if($row_web_set->gunakan_scanner=='y'){
                 $view_input_scan=true;
@@ -53,7 +53,7 @@
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
-                                        <div @if ($view_input_scan) class="col-md-12" @else class="col-md-12 d-none" @endif >
+                                        <div @if ($view_input_scan) class="col-md-12" @else class="col-md-12 d-none" @endif>
                                             <div class="form-group">
                                                 <label for="exampleInputEmail1">Cari Barang By Barcode</label>
                                                 <input type="text" class="form-control" name="cari_barang_qr"
@@ -102,7 +102,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <input type="text" name="hitung_stok_barang"
+                                            <input type="hidden" name="hitung_stok_barang"
                                                 id="hitung_stok_barang" readonly required>
                                         </div>
                                         <div class="col-md-6">

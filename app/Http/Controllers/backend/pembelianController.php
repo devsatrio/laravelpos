@@ -171,7 +171,8 @@ class pembelianController extends Controller
         ->where('pembuat',Auth::user()->id)
         ->delete();
         $supplier = DB::table('master_supplier')->orderby('id','desc')->get();
-        return view('backend.pembelian.create',compact('kode','supplier'));
+        $web_set = DB::table('settings')->orderby('id','desc')->get();
+        return view('backend.pembelian.create',compact('kode','supplier','web_set'));
     }
 
     //=================================================================
@@ -275,6 +276,7 @@ class pembelianController extends Controller
 
         DB::table('pembelian_thumb_detail')->insert($data);
         $supplier = DB::table('master_supplier')->orderby('id','desc')->get();
+        $web_set = DB::table('settings')->orderby('id','desc')->get();
 
         
         $kode = $kode_pembelian;
@@ -284,7 +286,7 @@ class pembelianController extends Controller
         if($status=='Approve'){
             return view('backend.pembelian.edit_appr',compact('kode','supplier','data_pembelian'));
         }else{
-            return view('backend.pembelian.edit',compact('kode','supplier','data_pembelian'));
+            return view('backend.pembelian.edit',compact('kode','supplier','data_pembelian','web_set'));
         }
 
     }

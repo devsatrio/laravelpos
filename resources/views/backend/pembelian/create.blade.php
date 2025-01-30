@@ -19,6 +19,17 @@
             </div>
         </div>
     </div>
+    @php
+        $view_input_scan=false;
+    @endphp
+    @foreach ($web_set as $row_web_set)
+        <input type="hidden" id="is_use_scan" value="{{$row_web_set->gunakan_scanner}}">
+        @php
+            if($row_web_set->gunakan_scanner=='y'){
+                $view_input_scan=true;
+            }
+        @endphp
+    @endforeach
     <div class="content">
         <div class="container-fluit">
             <div class="row pl-5 pr-5">
@@ -42,11 +53,11 @@
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div @if($view_input_scan) class="col-md-12" @else class="col-md-12 d-none" @endif>
                                             <div class="form-group">
                                                 <label for="exampleInputEmail1">Cari Barang By Barcode</label>
                                                 <input type="text" class="form-control" name="cari_barang_qr"
-                                                    id="cari_barang_qr" autofocus required>
+                                                    id="cari_barang_qr" @if($view_input_scan) autofocus @endif required>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -309,6 +320,4 @@
 
 @push('customscripts')
 <script src="{{asset('customjs/backend/pembelian_input.js')}}"></script>
-<!-- <script src="{{asset('customjs/backend/
-    ')}}"></script> -->
 @endpush

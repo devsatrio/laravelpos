@@ -28,7 +28,7 @@ $(function () {
         placeholder: "Cari berdasarkan nama/kode",
         minimumInputLength: 2,
         ajax: {
-            url: '/laravelpos/backend/data-barang/detail',
+            url: '/laravelpos/backend/data-barang-nonstok/detail',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {

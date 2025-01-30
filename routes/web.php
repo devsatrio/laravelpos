@@ -47,6 +47,7 @@ Route::prefix('backend')->group(function () {
     //-------------------------------------------------------------------------------------------
     Route::get('/list-data-barang/{kategori}','backend\barangController@listdata');
     Route::get('/data-barang/detail','backend\barangController@caridetailbarang');
+    Route::get('/data-barang-nonstok/detail','backend\barangController@caridetailbarangnonstok');
     Route::get('/data-barang/cari-detail/{kode}','backend\barangController@pilihdetailbarang');
     Route::get('/barang/cetak-barcode','backend\barangController@cetakbarcodebarang');
     Route::get('/barang/export-excel','backend\barangController@exsportexcel');

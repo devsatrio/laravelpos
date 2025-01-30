@@ -109,14 +109,15 @@ function hapusdata(kode) {
                         'Data berhasil dihapus',
                         'success'
                     )
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
+                    location.reload();
                 },error: function () {
                     swalWithBootstrapButtons.fire(
                         'Oops!',
                         'Data gagal dihapus',
                         'error'
                     )
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
                 }
             });
         }
@@ -168,7 +169,8 @@ function cetaklabel(id) {
                         'error'
                     )
                 }, complete: function () {
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
+                    location.reload();
                     $('#panelsatu').loading('stop');
                 }
             });
