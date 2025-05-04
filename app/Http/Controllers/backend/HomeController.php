@@ -54,10 +54,13 @@ class HomeController extends Controller
             $linevaluemgn = $linevaluemgn."".$jmlminggu.",";
         }
 
+        $i=0;
         foreach($kategoritahunan as $row_kategoritahunan){
             $nama_kategori = $nama_kategori."'".$row_kategoritahunan->nama."',";
             $value_kategori =$value_kategori."".$row_kategoritahunan->totalpcs.",";
-            $warna_kategori =$warna_kategori."'#". str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT)."',";
+            $get_color = $this->generate_color($i);
+            $warna_kategori =$warna_kategori."'".$get_color."',";
+            $i++;
         }
 
         for ($no_bln=1; $no_bln <= 12; $no_bln++) { 
@@ -79,6 +82,26 @@ class HomeController extends Controller
     public function editprofile(){
         $data = User::find(Auth::user()->id);
         return view('backend.dashboard.editprofile',['data'=>$data]);
+    }
+
+    //==================================================================
+    public function generate_color($i){
+        if($i>9){
+            $i=$i-9;
+        }
+        $arr_color = array(
+            '#1ABC9C',
+            '#3498DB',
+            '#9B59B6',
+            '#34495E',
+            '#F1C40F',
+            '#E74C3C',
+            '#7F8C8D',
+            '#F39C12',
+            '#27AE60',
+            '#8E44AD'
+        );
+        return $arr_color[$i];
     }
 
     //==================================================================

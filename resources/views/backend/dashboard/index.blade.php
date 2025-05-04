@@ -178,7 +178,6 @@
 @push('customscripts')
 <script>
 $(function() {
-
     var areaChartData = {
         labels: [{!!substr($linelabelmgn, 0, -1)!!}],
         datasets: [{
