@@ -476,6 +476,12 @@ function carikekurangan() {
     }
 
     $('#total').val(rupiah(parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)));
+    if(biaya_tambahan==0){
+        $('#tr_print_biaya_tambahan').hide();
+    }
+    if(potongan==0){
+        $('#tr_print_potongan').hide();
+    }
     $('#print_biaya_tambahan').html('Rp. ' + rupiah(parseInt(biaya_tambahan)));
     $('#print_potongan').html('Rp. ' + rupiah(parseInt(potongan)));
     $('#print_dibayar').html('Rp. ' + rupiah(parseInt(dibayar)));

@@ -196,8 +196,18 @@ function cetakulang(kode) {
                 $('#print_kode').html(value.kode);
                 $('#print_tgl_order').html(value.tgl_buat);
                 $('#print_pembuat').html(value.name);
-                $('#print_customer').html(value.namacustomer+' - '+value.customer);
+                if(value.namacustomer==null){
+                    $('#print_customer').html(' - ');
+                }else{
+                    $('#print_customer').html(value.namacustomer+' - '+value.customer);
+                }
                 $('#print_total').html('Rp. ' + rupiah(parseInt(value.total)));
+                if(value.biaya_tambahan==0){
+                    $('#tr_print_biaya_tambahan').hide();
+                }
+                if(value.potongan==0){
+                    $('#tr_print_potongan').hide();
+                }
                 $('#print_biaya_tambahan').html('Rp. ' + rupiah(parseInt(value.biaya_tambahan)));
                 $('#print_potongan').html('Rp. ' + rupiah(parseInt(value.potongan)));
                 $('#print_dibayar').html('Rp. ' + rupiah(parseInt(value.terbayar)));

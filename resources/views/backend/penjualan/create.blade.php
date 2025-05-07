@@ -468,11 +468,11 @@ $datasetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
     </table>
     <hr style="margin:0px;border-top: 1px dashed black;">
     <table width="100%">
-        <tr>
+        <tr id="tr_print_biaya_tambahan">
             <td>Biaya Tambahan</td>
             <td align="right"><span id="print_biaya_tambahan">-</span></td>
         </tr>
-        <tr>
+        <tr id="tr_print_potongan">
             <td>Potongan</td>
             <td align="right"><span id="print_potongan">-</span></td>
         </tr>
@@ -495,7 +495,7 @@ $datasetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
     </table>
     <hr style="margin:0px;border-top: 1px dashed black;">
     <span>{{$kode}}</span> || <span id="print_tgl_order">{{date('Y-m-d')}}</span><br>
-    <span>{{Auth::user()->name}}</span> || <span id="print_customer"></span><br>
+    <span>{{Auth::user()->name}}</span> || <span id="print_customer">-</span><br>
     <hr style="margin:0px;border-top: 1px dashed black;">
     {{$row_setting->note}}
 </div>

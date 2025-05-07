@@ -289,11 +289,11 @@
             </table>
             <hr style="margin:0px;border-top: 1px dashed black;">
             <table width="100%">
-                <tr>
+                <tr id="tr_print_biaya_tambahan">
                     <td>Biaya Tambahan</td>
                     <td align="right"><span id="print_biaya_tambahan">-</span></td>
                 </tr>
-                <tr>
+                <tr id="tr_print_potongan">
                     <td>Potongan</td>
                     <td align="right"><span id="print_potongan">-</span></td>
                 </tr>
