@@ -192,6 +192,7 @@ function cetakulang(kode) {
         success: function (data) {
             var rows_print = '';
             var subtotal = 0;
+            var total_diskon=0;
             $.each(data.detail, function (key, value) {
                 $('#print_kode').html(value.kode);
                 $('#print_tgl_order').html(value.tgl_buat);
@@ -217,13 +218,21 @@ function cetakulang(kode) {
             $.each(data.item, function (key, value) {
                 rows_print = rows_print + '<tr>';
                 rows_print = rows_print + '<td>' + value.namabarang + '</td>';
-                rows_print = rows_print + '<td>' + value.diskon + ' %</td>';
+                if(value.diskon ==0){
+                    rows_print = rows_print + '<td></td>';
+                }else{
+                    rows_print = rows_print + '<td>' + value.diskon + ' %</td>';
+                }
                 rows_print = rows_print + '<td>' + value.jumlah + ' Pcs</td>';
                 rows_print = rows_print + '<td align="right"> Rp ' + rupiah(value.harga) + '</td>';
                 rows_print = rows_print + '<td align="right"> Rp ' + rupiah(value.total) + '</td>';
                 rows_print = rows_print + '</tr>';
                 subtotal += parseInt(value.total);
+                total_diskon += parseInt(value.diskon);
             });
+            if(total_diskon==0){
+                $('.print_nota_diskon').hide();
+            }
             $('#print_detail').html(rows_print);
 
             var divToPrint = document.getElementById('print_div');

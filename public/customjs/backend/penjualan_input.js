@@ -412,12 +412,17 @@ function getdata() {
             var rows_print = '';
             var no = 0;
             var subtotal = 0;
+            var total_diskon =0;
             $.each(data, function (key, value) {
                 no += 1;
                 rows = rows + '<tr>';
                 rows = rows + '<td class="text-center"><button type="button" onclick="editdetail(' + value.id + ')" class="btn btn-success btn-sm m-1"><i class="fas fa-edit"></i></button><button type="button" onclick="hapusdetail(' + value.id + ')" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></button></td>';
                 rows = rows + '<td>' + value.kode_barang + ' - ' + value.namabarang + '</td>';
-                rows = rows + '<td class="text-center">' + value.diskon + ' %</td>';
+                if( value.diskon==0){
+                    rows = rows + '<td class="text-center"></td>';
+                }else{
+                    rows = rows + '<td class="text-center">' + value.diskon + ' %</td>';
+                }
                 rows = rows + '<td class="text-center">' + value.jumlah + ' Pcs</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.harga) + '</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.total) + '</td>';
@@ -436,10 +441,14 @@ function getdata() {
                 } else {
                     var harga = value.harga_jual_customer;
                 }
+                total_diskon +=value.diskon;
             });
             $('#tubuhnya').html(rows);
             $('#print_detail').html(rows_print);
             $('#subtotal').val(rupiah(subtotal));
+            if(total_diskon==0){
+                $('.print_nota_diskon').hide();
+            }
         }, complete: function () {
             carikekurangan();
             $('#paneldua').loading('stop');

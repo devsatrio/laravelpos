@@ -451,7 +451,7 @@ $datasetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
         <thead>
             <tr>
                 <td>Nama</td>
-                <td>Disk</td>
+                <td><span class="print_nota_diskon">Disk</span></td>
                 <td>Qty</td>
                 <td align="right">Harga</td>
                 <td align="right">Total</td>
