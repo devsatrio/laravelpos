@@ -212,8 +212,17 @@ function cetakulang(kode) {
                 $('#print_biaya_tambahan').html('Rp. ' + rupiah(parseInt(value.biaya_tambahan)));
                 $('#print_potongan').html('Rp. ' + rupiah(parseInt(value.potongan)));
                 $('#print_dibayar').html('Rp. ' + rupiah(parseInt(value.terbayar)));
-                $('#print_kekurangan').html('Rp. ' + rupiah(parseInt(value.kekurangan)));
-                $('#print_kembalian').html('Rp. ' + rupiah(parseInt(value.kembalian)));
+                if(value.kekurangan==0){
+                    $('#tr_print_kekurangan').hide();
+                }else{
+                    $('#print_kekurangan').html('Rp. ' + rupiah(parseInt(value.kekurangan)));
+                }
+
+                if(value.kembalian==0){
+                    $('#tr_print_kembalian').hide();
+                }else{
+                    $('#print_kembalian').html('Rp. ' + rupiah(parseInt(value.kembalian)));
+                }
             });
             $.each(data.item, function (key, value) {
                 rows_print = rows_print + '<tr>';

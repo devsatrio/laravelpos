@@ -418,11 +418,7 @@ function getdata() {
                 rows = rows + '<tr>';
                 rows = rows + '<td class="text-center"><button type="button" onclick="editdetail(' + value.id + ')" class="btn btn-success btn-sm m-1"><i class="fas fa-edit"></i></button><button type="button" onclick="hapusdetail(' + value.id + ')" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></button></td>';
                 rows = rows + '<td>' + value.kode_barang + ' - ' + value.namabarang + '</td>';
-                if( value.diskon==0){
-                    rows = rows + '<td class="text-center"></td>';
-                }else{
-                    rows = rows + '<td class="text-center">' + value.diskon + ' %</td>';
-                }
+                rows = rows + '<td class="text-center">' + value.diskon + ' %</td>';
                 rows = rows + '<td class="text-center">' + value.jumlah + ' Pcs</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.harga) + '</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.total) + '</td>';
@@ -430,7 +426,11 @@ function getdata() {
 
                 rows_print = rows_print + '<tr>';
                 rows_print = rows_print + '<td>' + value.namabarang + '</td>';
-                rows_print = rows_print + '<td>' + value.diskon + ' %</td>';
+                if( value.diskon==0){
+                    rows_print = rows_print + '<td></td>';
+                }else{
+                    rows_print = rows_print + '<td>' + value.diskon + ' %</td>';
+                }
                 rows_print = rows_print + '<td>' + value.jumlah + ' Pcs</td>';
                 rows_print = rows_print + '<td align="right"> Rp ' + rupiah(value.harga) + '</td>';
                 rows_print = rows_print + '<td align="right"> Rp ' + rupiah(value.total) + '</td>';
@@ -499,17 +499,19 @@ function carikekurangan() {
     kekurangan = (parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)) - parseInt(dibayar);
     var kembalian = parseInt(dibayar) - (parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan));
 
-    if (kekurangan < 0) {
+    if (kekurangan <= 0) {
         $('#kekurangan').val(0);
         $('#print_kekurangan').html('Rp. 0');
+        $('#tr_print_kekurangan').hide();
     } else {
         $('#kekurangan').val(rupiah(kekurangan));
         $('#print_kekurangan').html('Rp. ' + rupiah(parseInt(kekurangan)));
     }
 
-    if (kembalian < 0) {
+    if (kembalian <= 0) {
         $('#kembalian').val(0);
         $('#print_kembalian').html('Rp. 0');
+        $('#tr_print_kembalian').hide();
     } else {
         $('#kembalian').val(rupiah(kembalian));
         $('#print_kembalian').html('Rp. ' + rupiah(parseInt(kembalian)));

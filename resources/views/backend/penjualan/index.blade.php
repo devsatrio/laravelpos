@@ -305,11 +305,11 @@
                     <td>Tunai</td>
                     <td align="right"><span id="print_dibayar">-</span></td>
                 </tr>
-                <tr>
+                <tr id="tr_print_kekurangan">
                     <td>Kekurangan</td>
                     <td align="right"><span id="print_kekurangan">-</span></td>
                 </tr>
-                <tr>
+                <tr id="tr_print_kembalian">
                     <td>Kembalian</td>
                     <td align="right"><span id="print_kembalian">-</span></td>
                 </tr>
