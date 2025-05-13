@@ -97,7 +97,7 @@ class penjualanController extends Controller
     public function adddetailpenjualan(Request $request)
     {
         $caribarangdetail = DB::table('penjualan_thumb_detail')
-        ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+        ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang],['pembuat',Auth::user()->id]])
         ->get();
         if(count($caribarangdetail)>0){
             foreach ($caribarangdetail as $row) {
@@ -105,11 +105,23 @@ class penjualanController extends Controller
                 $jumlahdiskon = $harga*$request->diskon/100;
                 $jumlah=$row->jumlah + $request->jumlah_barang;
                 $total = $jumlah*($harga-$jumlahdiskon);
-                if($jumlah>$request->stok){
-                    $status = false;
+
+                if($request->hitung_stok=='y'){
+                    if($jumlah>$request->stok){
+                        $status = false;
+                    }else{
+                        DB::table('penjualan_thumb_detail')
+                        ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang],['pembuat',Auth::user()->id]])
+                        ->update([
+                            'harga'=>$harga,
+                            'jumlah'=>$jumlah,
+                            'total'=>$total,
+                        ]);
+                        $status = true;
+                    }
                 }else{
                     DB::table('penjualan_thumb_detail')
-                    ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang]])
+                    ->where([['kode_penjualan',$request->kode],['kode_barang',$request->kode_barang],['pembuat',Auth::user()->id]])
                     ->update([
                         'harga'=>$harga,
                         'jumlah'=>$jumlah,
@@ -314,15 +326,17 @@ class penjualanController extends Controller
                     $harga = $row_caribarang->harga_jual;
                     $diskon = $row_caribarang->diskon;
                     $kode_brg = $row_caribarang->kode;
+                    $hitung_stok = $row_caribarang->hitung_stok;
                 }else{
                     $harga = $row_caribarang->harga_jual_customer;
                     $diskon = $row_caribarang->diskon_customer;
                     $kode_brg = $row_caribarang->kode;
+                    $hitung_stok = $row_caribarang->hitung_stok;
                 }
             }
 
             $caribarangdetail = DB::table('penjualan_thumb_detail')
-            ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_brg]])
+            ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_brg],['pembuat',Auth::user()->id]])
             ->get();
 
             if(count($caribarangdetail)>0){
@@ -331,11 +345,23 @@ class penjualanController extends Controller
                     $jumlah=$row->jumlah + 1;
                     $total = $jumlah*($harga-$jumlahdiskon);
                     //perlu tambah validasi barang apakah menggunakan scanner
-                    if($jumlah>$stok){
-                        $status = false;
+                    if($hitung_stok=='y'){
+                        if($jumlah>$stok){
+                            $status = false;
+                        }else{
+                            DB::table('penjualan_thumb_detail')
+                            ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_brg],['pembuat',Auth::user()->id]])
+                            ->update([
+                                'diskon'=>$diskon,
+                                'harga'=>$harga,
+                                'jumlah'=>$jumlah,
+                                'total'=>$total,
+                            ]);
+                            $status = true;
+                        }
                     }else{
                         DB::table('penjualan_thumb_detail')
-                        ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_brg]])
+                        ->where([['kode_penjualan',$request->kode],['kode_barang',$kode_brg],['pembuat',Auth::user()->id]])
                         ->update([
                             'diskon'=>$diskon,
                             'harga'=>$harga,

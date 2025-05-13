@@ -370,6 +370,7 @@ function simpan_detail(){
             'stok': $('#stok_barang').val(),
             'jumlah_barang': $('#jumlah_barang').val(),
             'total_harga_barang': $('#total_harga_barang').val(),
+            'hitung_stok': $('#hitung_stok_barang').val(),
         },
         success: function (data) {
             if (data == false) {

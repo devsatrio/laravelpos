@@ -371,7 +371,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="text" name="edit_hitung_stok_barang" id="edit_hitung_stok_barang">
+                        <input type="hidden" name="edit_hitung_stok_barang" id="edit_hitung_stok_barang">
                     </div>
                     <div class="col-md-8">
                         <div class="form-group">

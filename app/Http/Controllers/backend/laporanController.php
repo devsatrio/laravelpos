@@ -678,7 +678,8 @@ class laporanController extends Controller
                 ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
                 ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
                 ->groupby('penjualan_detail.kode_barang')
-                ->orderby('penjualan_detail.kode_penjualan','desc')
+                ->orderByRaw('total_jumlah_penjualan DESC')
+                // ->orderby('penjualan_detail.kode_penjualan','desc')
                 ->get();
 
             }else{
@@ -689,7 +690,8 @@ class laporanController extends Controller
                 ->where('penjualan_detail.kode_barang','=',$request->barang)
                 ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
                 ->groupby('penjualan_detail.kode_barang')
-                ->orderby('penjualan_detail.kode_penjualan','desc')
+                ->orderByRaw('total_jumlah_penjualan DESC')
+                // ->orderby('penjualan_detail.kode_penjualan','desc')
                 ->get();
             }
         }else{
@@ -699,7 +701,8 @@ class laporanController extends Controller
             ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
             ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
             ->groupby('penjualan_detail.kode_barang')
-            ->orderby('penjualan_detail.kode_penjualan','desc')
+            ->orderByRaw('total_jumlah_penjualan DESC')
+            // ->orderby('penjualan_detail.kode_penjualan','desc')
             ->get();
         }
         $datacustomer = DB::table('master_customer')->orderby('id','desc')->get();
