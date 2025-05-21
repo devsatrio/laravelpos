@@ -488,9 +488,13 @@ function carikekurangan() {
     $('#total').val(rupiah(parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)));
     if(biaya_tambahan==0){
         $('#tr_print_biaya_tambahan').hide();
+    }else{
+        $('#tr_print_biaya_tambahan').show();
     }
     if(potongan==0){
         $('#tr_print_potongan').hide();
+    }else{
+        $('#tr_print_potongan').show();
     }
     $('#print_biaya_tambahan').html('Rp. ' + rupiah(parseInt(biaya_tambahan)));
     $('#print_potongan').html('Rp. ' + rupiah(parseInt(potongan)));
@@ -505,6 +509,7 @@ function carikekurangan() {
         $('#print_kekurangan').html('Rp. 0');
         $('#tr_print_kekurangan').hide();
     } else {
+        $('#tr_print_kekurangan').show();
         $('#kekurangan').val(rupiah(kekurangan));
         $('#print_kekurangan').html('Rp. ' + rupiah(parseInt(kekurangan)));
     }
@@ -514,6 +519,7 @@ function carikekurangan() {
         $('#print_kembalian').html('Rp. 0');
         $('#tr_print_kembalian').hide();
     } else {
+        $('#tr_print_kembalian').show();
         $('#kembalian').val(rupiah(kembalian));
         $('#print_kembalian').html('Rp. ' + rupiah(parseInt(kembalian)));
     }

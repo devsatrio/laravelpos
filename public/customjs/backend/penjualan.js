@@ -205,9 +205,13 @@ function cetakulang(kode) {
                 $('#print_total').html('Rp. ' + rupiah(parseInt(value.total)));
                 if(value.biaya_tambahan==0){
                     $('#tr_print_biaya_tambahan').hide();
+                }else{
+                    $('#tr_print_biaya_tambahan').show();
                 }
                 if(value.potongan==0){
                     $('#tr_print_potongan').hide();
+                }else{
+                    $('#tr_print_potongan').show();
                 }
                 $('#print_biaya_tambahan').html('Rp. ' + rupiah(parseInt(value.biaya_tambahan)));
                 $('#print_potongan').html('Rp. ' + rupiah(parseInt(value.potongan)));
@@ -215,6 +219,7 @@ function cetakulang(kode) {
                 if(value.kekurangan==0){
                     $('#tr_print_kekurangan').hide();
                 }else{
+                    $('#tr_print_kekurangan').show();
                     $('#print_kekurangan').html('Rp. ' + rupiah(parseInt(value.kekurangan)));
                 }
 

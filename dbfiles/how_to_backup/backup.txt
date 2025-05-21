@@ -1,0 +1,18 @@
+ikuti tutorial berikut : http://coding4ever.net/blog/2015/04/30/membuat-jadwal-backup-database-otomatis
+
+
+//script backup.cmd
+
+for /f "tokens=2-4 delims=/ " %%a in ('date /T') do set year=%%c
+for /f "tokens=2-4 delims=/ " %%a in ('date /T') do set month=%%a
+for /f "tokens=2-4 delims=/ " %%a in ('date /T') do set day=%%b
+ 
+for /f "tokens=1 delims=: " %%h in ('time /T') do set hour=%%h
+for /f "tokens=2 delims=: " %%m in ('time /T') do set minutes=%%m
+for /f "tokens=3 delims=: " %%a in ('time /T') do set ampm=%%a
+ 
+rem membuat file backup database dengan format nama_database-tahun-bulan-hari_jam_menit
+set FILE_BACKUP=D:\backup_database\laravelpos-%year%-%month%-%day%_%hour%-%minutes%-%ampm%
+ 
+rem USER_NAME, USER_PASSWORD dan NAMA_DATABASE menyesuaikan
+mysqldump -uUser -pPassword --routines nama_database > %FILE_BACKUP%.sql
