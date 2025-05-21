@@ -226,6 +226,7 @@ function cetakulang(kode) {
                 if(value.kembalian==0){
                     $('#tr_print_kembalian').hide();
                 }else{
+                    $('#tr_print_kembalian').show();
                     $('#print_kembalian').html('Rp. ' + rupiah(parseInt(value.kembalian)));
                 }
             });
