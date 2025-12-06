@@ -250,9 +250,7 @@
                                 <td>&nbsp;:&nbsp;</td>
                                 <td>
                                     @php
-                                        $datapembuat = DB::table('users')
-                                            ->where('id', $row_detail->created_by)
-                                            ->get();
+                                        $datapembuat = DB::table('users')->where('id', $row_detail->created_by)->get();
                                     @endphp
                                     @foreach ($datapembuat as $row_datapembuat)
                                         {{ $row_datapembuat->name }}
@@ -299,14 +297,18 @@
                         <td align="right">Rp.
                             {{ number_format($row_detail->subtotal, 0, ',', '.') }}</td>
                     </tr>
-                    <tr>
-                        <td align="right" colspan="4">Biaya Tambahan</td>
-                        <td align="right">Rp. {{ number_format($row_detail->biaya_tambahan, 0, ',', '.') }}</td>
-                    </tr>
+                    @if ($row_detail->biaya_tambahan !='0')
+                        <tr>
+                            <td align="right" colspan="4">Biaya Tambahan</td>
+                            <td align="right">Rp. {{ number_format($row_detail->biaya_tambahan, 0, ',', '.') }}</td>
+                        </tr>
+                    @endif
+                    @if ($row_detail->potongan !='0')
                     <tr>
                         <td align="right" colspan="4">Potongan</td>
                         <td align="right">Rp. {{ number_format($row_detail->potongan, 0, ',', '.') }}</td>
                     </tr>
+                    @endif
                     <tr>
                         <td align="right" colspan="4">Total</td>
                         <td align="right">Rp. {{ number_format($row_detail->total, 0, ',', '.') }}</td>
@@ -315,14 +317,18 @@
                         <td align="right" colspan="4">Dibayar</td>
                         <td align="right">Rp. {{ number_format($row_detail->terbayar, 0, ',', '.') }}</td>
                     </tr>
+                    @if ($row_detail->kekurangan !='0')
                     <tr>
                         <td align="right" colspan="4">Kekurangan</td>
                         <td align="right">Rp. {{ number_format($row_detail->kekurangan, 0, ',', '.') }}</td>
                     </tr>
+                    @endif
+                    @if ($row_detail->kembalian !='0')
                     <tr>
                         <td align="right" colspan="4">Kembalian</td>
                         <td align="right">Rp. {{ number_format($row_detail->kembalian, 0, ',', '.') }}</td>
                     </tr>
+                    @endif
                 </tfoot>
             </table>
             <hr>

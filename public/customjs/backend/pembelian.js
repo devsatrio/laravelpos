@@ -1,83 +1,97 @@
 
 $(function () {
-    $('#list-data').DataTable({
-        processing: true,
-        serverSide: true,
-        order: [[0, "desc"]],
-        //ajax: '/backend/data-pembelian',
-        ajax: '/laravelpos/backend/data-pembelian',
-        columns: [
-            {
-                data: 'id', render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            { data: 'kode', name: 'kode' },
-            { data: 'namasupplier', name: 'namasupplier' },
-            { data: 'tgl_buat', name: 'tgl_buat' },
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['total'])
-                },
-                "className": 'text-right',
-                "data": 'total',
-            },
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['terbayar'])
-                },
-                "className": 'text-right',
-                "data": 'terbayar',
-            },
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['kekurangan'])
-                },
-                "className": 'text-right',
-                "data": 'kekurangan',
-            },
-            {
-                render: function (data, type, row) {
-                    if (row['status'] == 'Belum Lunas') {
-                        return '<span class="badge bg-danger">' + row['status'] + '</span>';
-                    } else {
-                        return '<span class="badge bg-success">' + row['status'] + '</span>';
-                    }
-                }, data: 'status', name: 'status', className: 'text-center'
-            },
+    // $('#list-data').DataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     order: [[0, "desc"]],
+    //     //ajax: '/backend/data-pembelian',
+    //     ajax: '/laravelpos/backend/data-pembelian',
+    //     columns: [
+    //         {
+    //             data: 'id', render: function (data, type, row, meta) {
+    //                 return meta.row + meta.settings._iDisplayStart + 1;
+    //             }
+    //         },
+    //         { data: 'kode', name: 'kode' },
+    //         { data: 'namasupplier', name: 'namasupplier' },
+    //         { data: 'tgl_buat', name: 'tgl_buat' },
+    //         {
+    //             render: function (data, type, row) {
+    //                 return 'Rp.' + rupiah(row['total'])
+    //             },
+    //             "className": 'text-right',
+    //             "data": 'total',
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 return 'Rp.' + rupiah(row['terbayar'])
+    //             },
+    //             "className": 'text-right',
+    //             "data": 'terbayar',
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 return 'Rp.' + rupiah(row['kekurangan'])
+    //             },
+    //             "className": 'text-right',
+    //             "data": 'kekurangan',
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 if (row['status'] == 'Belum Lunas') {
+    //                     return '<span class="badge bg-danger">' + row['status'] + '</span>';
+    //                 } else {
+    //                     return '<span class="badge bg-success">' + row['status'] + '</span>';
+    //                 }
+    //             }, data: 'status', name: 'status', className: 'text-center'
+    //         },
 
-            {
-                render: function (data, type, row) {
-                    if (row['status_pembelian'] == 'Draft') {
-                        return '<span class="badge bg-warning">' + row['status_pembelian'] + '</span>';
-                    } else {
-                        return '<span class="badge bg-primary">' + row['status_pembelian'] + '</span>';
-                    }
-                }, data: 'status_pembelian', name: 'status_pembelian', className: 'text-center'
-            },
-            {
-                render: function (data, type, row) {
-                    if (row['status_pembelian'] == 'Draft') {
-                        return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
-                            '<button class="btn btn-sm m-1 btn-info" onclick="updatestatus(' + row['id'] + ')"><i class="fa fa-check"></i></button>' +
-                            '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
-                            '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
-                    }else{
-                        return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
-                            '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
-                            '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
+    //         {
+    //             render: function (data, type, row) {
+    //                 if (row['status_pembelian'] == 'Draft') {
+    //                     return '<span class="badge bg-warning">' + row['status_pembelian'] + '</span>';
+    //                 } else {
+    //                     return '<span class="badge bg-primary">' + row['status_pembelian'] + '</span>';
+    //                 }
+    //             }, data: 'status_pembelian', name: 'status_pembelian', className: 'text-center'
+    //         },
+    //         {
+    //             render: function (data, type, row) {
+    //                 if (row['status_pembelian'] == 'Draft') {
+    //                     return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
+    //                         '<button class="btn btn-sm m-1 btn-info" onclick="updatestatus(' + row['id'] + ')"><i class="fa fa-check"></i></button>' +
+    //                         '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
+    //                         '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
+    //                 }else{
+    //                     return '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>' +
+    //                         '<a href="/laravelpos/backend/pembelian/' + row['kode'] + '/edit" class="btn btn-sm m-1 btn-success"><i class="fa fa-wrench"></i></a>' +
+    //                         '<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>';
                         
-                    }
-                },
-                "className": 'text-center',
-                "orderable": false,
-                "data": null,
-            },
-        ],
-        pageLength: 20,
-        lengthMenu: [[20,50,100, 150, 200], [20,50,100, 150, 200]]
-    });
+    //                 }
+    //             },
+    //             "className": 'text-center',
+    //             "orderable": false,
+    //             "data": null,
+    //         },
+    //     ],
+    //     pageLength: 20,
+    //     lengthMenu: [[20,50,100, 150, 200], [20,50,100, 150, 200]]
+    // });
 
+    $('#tgl_buat').daterangepicker({
+        singleDatePicker: false,
+        locale: {
+            format: 'YYYY-MM-DD'
+        }
+    });
+    $('#list-data').DataTable({
+        "paging": false,
+        "bPaginate": false,
+        "info": false,
+        "language": {
+            "sSearch": "Cari Dihalaman ini:",
+        }
+    });
 });
 
 //===============================================================================================
@@ -124,8 +138,9 @@ function updatestatus(id) {
                         'error'
                     )
                 },complete:function () {
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
                     $('#panelsatu').loading('stop');
+                    location.reload();
                 }
             });
         }
@@ -167,17 +182,18 @@ function hapusdata(kode) {
                         'Deleted!',
                         'Data berhasil dihapus',
                         'success'
-                    )
-                    $('#list-data').DataTable().ajax.reload();
+                    );
+                    location.reload();
+                    // $('#list-data').DataTable().ajax.reload();
                 }, error: function () {
                     swalWithBootstrapButtons.fire(
                         'Oops!',
                         'Data gagal dihapus',
                         'error'
                     )
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
                 },complete:function () {
-                    $('#list-data').DataTable().ajax.reload();
+                    // $('#list-data').DataTable().ajax.reload();
                     $('#panelsatu').loading('stop');
                 }
             });

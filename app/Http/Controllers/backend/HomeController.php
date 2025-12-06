@@ -25,7 +25,7 @@ class HomeController extends Controller
         $jumlahsupplier = DB::table('master_customer')->count();
         $jumlahbarang = DB::table('barang')->count();
         $jumlahtransaksi = DB::table('penjualan')->count();
-        $barangstokmenipis = DB::table('barang')->where('stok','<','2')->count();
+        $barangstokmenipis = DB::table('barang')->where('hitung_stok','=','y')->where('stok','<','2')->count();
         $jumlahhutang = DB::table('pembelian')->where('status','Belum Lunas')->count();
         $jumlahpiutang = DB::table('penjualan')->where('status','Belum Lunas')->count();
 

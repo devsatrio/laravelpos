@@ -17,7 +17,7 @@
     <div class="container">
         <div class="row mb-2">
             <div class="col-sm-12 text-center">
-                <h1 class="m-0 text-dark"> Laporan Pengeluaran/Pemasukan Lain</h1>
+                <h1 class="m-0 text-dark"> Laporan Modal Barang</h1>
             </div>
         </div>
     </div>

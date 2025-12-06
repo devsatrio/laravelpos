@@ -56,8 +56,7 @@ class penjualanController extends Controller
 
         if($request->has('kode')){
             if($request->kode!=null){
-                $data=$data->where('penjualan.kode','like','%'.$request->kode.'%')
-                ->orwhere('penjualan.kode','like','%'.$request->kode.'%');
+                $data=$data->where('penjualan.kode','like','%'.$request->kode.'%');
             }
         }
         $data = $data->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua]);

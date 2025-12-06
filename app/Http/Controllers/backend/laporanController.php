@@ -641,12 +641,20 @@ class laporanController extends Controller
     public function laporanmodal(Request $request)
     {   
         if($request->has('kategori_barang')){
+            if($request->kategori_barang!='Semua'){
             $data_modal =DB::table('barang')
             ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
             ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
             ->where('barang.kategori','=',$request->kategori_barang)
             ->orderby('barang.id','desc')
             ->get();
+            }else{
+            $data_modal =DB::table('barang')
+            ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
+            ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
+            ->orderby('barang.id','desc')
+            ->get();
+            }
         }else{
             $data_modal =DB::table('barang')
             ->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))

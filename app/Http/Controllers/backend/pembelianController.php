@@ -158,9 +158,38 @@ class pembelianController extends Controller
     }
 
     //=================================================================
-    public function index()
+    public function index(Request $request)
     {
-        return view('backend.pembelian.index');
+        if($request->has('tgl_buat')){
+            $tanggal = explode(' - ',$request->tgl_buat);
+            $tglsatu = $tanggal[0];
+            $tgldua = $tanggal[1];
+        }else{
+            $tglsatu = date('Y-m-d');
+            $tgldua = date('Y-m-d');
+        }
+
+        $data = DB::table('pembelian')
+        ->select(DB::raw('pembelian.*,master_supplier.nama as namasupplier,users.name'))
+        ->leftjoin('master_supplier','master_supplier.kode','=','pembelian.supplier')
+        ->leftjoin('users','users.id','=','pembelian.pembuat');
+
+        if($request->has('status')){
+            if($request->status!='Semua Status'){
+                $data=$data->where('pembelian.status',$request->status);
+            }
+        }
+
+        if($request->has('kode')){
+            if($request->kode!=null){
+                $data=$data->where('pembelian.kode','like','%'.$request->kode.'%');
+            }
+        }
+        $data = $data->whereBetween('pembelian.tgl_buat',[$tglsatu,$tgldua]);
+        $data=$data->orderby('pembelian.id','desc')
+        ->paginate(60);
+
+        return view('backend.pembelian.index',compact('data'));
     }
 
     //=================================================================
@@ -369,23 +398,28 @@ class pembelianController extends Controller
     public function destroy($id)
     {
         $kode='';
+        $stts='';
         $data = DB::table('pembelian')->where('id',$id)->get();
         foreach ($data as $row) {
             $kode=$row->kode;
+            $stts=$row->status_pembelian;
         }
 
-        $detail = DB::table('pembelian_detail')
-        ->where('kode_pembelian',$kode)
-        ->get();
-        foreach ($detail as $row) {
-            $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
-            foreach($caribarang as $row_caribarang){
-                $newstok = $row_caribarang->stok - $row->jumlah;
-                DB::table('barang')
-                ->where('kode',$row->kode_barang)
-                ->update([
-                    'stok'=>$newstok
-                ]);
+        //apabila status pembelian sudah approve maka stok barang dikurangi
+        if($stts=='Approve'){
+            $detail = DB::table('pembelian_detail')
+            ->where('kode_pembelian',$kode)
+            ->get();
+            foreach ($detail as $row) {
+                $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
+                foreach($caribarang as $row_caribarang){
+                    $newstok = $row_caribarang->stok - $row->jumlah;
+                    DB::table('barang')
+                    ->where('kode',$row->kode_barang)
+                    ->update([
+                        'stok'=>$newstok
+                    ]);
+                }
             }
         }
 
