@@ -39,14 +39,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Nama</label>
+                                        <label>Nama</label>
                                         <input type="text" class="form-control" name="nama" value="{{$data->name}}"
                                             required autofocus>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Username</label>
+                                        <label>Username</label>
                                         <input type="hidden" name="oldusername" value="{{$data->username}}">
                                         <input type="text" class="form-control" name="username"
                                             value="{{$data->username}}" required>
@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Email</label>
+                                        <label>Email</label>
                                         <input type="hidden" name="oldemail" value="{{$data->email}}">
                                         <input type="email" class="form-control" name="email" value="{{$data->email}}"
                                             required>
@@ -62,14 +62,14 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">No. Telp</label>
+                                        <label>No. Telp</label>
                                         <input type="text" class="form-control" name="telp" value="{{$data->telp}}"
                                             required>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Level</label>
+                                        <label>Level</label>
                                         <select name="level" class="form-control">
                                             @foreach($roles as $row_roles)
                                             <option value="{{$row_roles->name}}" @if($data->level==$row_roles->name)
@@ -92,13 +92,13 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Password Baru*</label>
+                                        <label>Password Baru*</label>
                                         <input type="password" class="form-control" id="password" name="password" autocomplete="new-password">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Konfirmasi Password Baru*</label>
+                                        <label>Konfirmasi Password Baru*</label>
                                         <input type="password" class="form-control" id="kpassword">
                                     </div>
                                 </div>

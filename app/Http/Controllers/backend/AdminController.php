@@ -41,27 +41,44 @@ class AdminController extends Controller
     //=================================================================
     public function store(Request $request)
     {
-        $request->validate([
-            'username' => ['required', 'unique:users'],
-            'email' => ['required', 'unique:users'],
-        ]);
-        $nameland=$request->file('gambar')->getClientOriginalname();
-        $lower_file_name=strtolower($nameland);
-        $replace_space=str_replace(' ', '-', $lower_file_name);
-        $finalname=time().'-'.$replace_space;
-        $destination=public_path('img/admin');
-        $request->file('gambar')->move($destination,$finalname);
-        
-        $usr = User::create([
-            'name'=>$request->nama,
-            'username'=>$request->username,
-            'email'=>$request->email,
-            'telp'=>$request->telp,
-            'level'=>$request->level,
-            'gambar'=>$finalname,
-            'password'=>Hash::make($request->password),
-        ]);
-        $usr->assignRole($request->level);
+        if(!$request->hasFile('gambar')){
+           $request->validate([
+                'username' => ['required', 'unique:users'],
+                'email' => ['required', 'unique:users'],
+            ]);
+            $usr = User::create([
+                'name'=>$request->nama,
+                'username'=>$request->username,
+                'email'=>$request->email,
+                'telp'=>$request->telp,
+                'level'=>$request->level,
+                'password'=>Hash::make($request->password),
+            ]);
+            $usr->assignRole($request->level);
+        }else{
+            $request->validate([
+                'username' => ['required', 'unique:users'],
+                'email' => ['required', 'unique:users'],
+                'gambar' => ['mimes:jpeg,jpg,png,gif,svg|max:2048'],
+            ]);
+            $nameland=$request->file('gambar')->getClientOriginalname();
+            $lower_file_name=strtolower($nameland);
+            $replace_space=str_replace(' ', '-', $lower_file_name);
+            $finalname=time().'-'.$replace_space;
+            $destination=public_path('img/admin');
+            $request->file('gambar')->move($destination,$finalname);
+            
+            $usr = User::create([
+                'name'=>$request->nama,
+                'username'=>$request->username,
+                'email'=>$request->email,
+                'telp'=>$request->telp,
+                'level'=>$request->level,
+                'gambar'=>$finalname,
+                'password'=>Hash::make($request->password),
+            ]);
+            $usr->assignRole($request->level);
+        }
         
         return redirect('/backend/admin')->with('status','Sukses menyimpan data');
     }
