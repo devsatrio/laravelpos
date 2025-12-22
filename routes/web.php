@@ -12,11 +12,16 @@ Auth::routes([
   'reset' => false, // Password Reset Routes...
   'verify' => false, // Email Verification Routes...
 ]);
+
 Route::prefix('backend')->group(function () {
     //-------------------------------------------------------------------------------------------
     Route::get('/home', 'backend\HomeController@index')->name('home');
     Route::get('/edit-profile', 'backend\HomeController@editprofile')->name('editprofile');
     Route::post('/edit-profile/{id}', 'backend\HomeController@aksieditprofile');
+
+    //-------------------------------------------------------------------------------------------
+    Route::resource('/permission','backend\permissionsController');
+    Route::get('/data-permission','backend\permissionsController@listdata');
 
     //-------------------------------------------------------------------------------------------
     Route::resource('/roles','backend\rolesController');

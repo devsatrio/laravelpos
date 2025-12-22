@@ -496,6 +496,7 @@ $datasetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
     <hr style="margin:0px;border-top: 1px dashed black;">
     <span>{{$kode}}</span> || <span id="print_tgl_order">{{date('Y-m-d')}}</span><br>
     <span>{{Auth::user()->name}}</span> || <span id="print_customer">-</span><br>
+    <span id="print_keterangan"></span>
     <hr style="margin:0px;border-top: 1px dashed black;">
     {{$row_setting->note}}
 </div>

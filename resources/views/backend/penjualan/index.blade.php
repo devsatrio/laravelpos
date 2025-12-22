@@ -317,6 +317,7 @@
             <hr style="margin:0px;border-top: 1px dashed black;">
             <span id="print_kode"></span> || <span id="print_tgl_order"></span><br>
             <span id="print_pembuat"></span> || <span id="print_customer"></span><br>
+            <span id="print_keterangan"></span>
             <hr style="margin:0px;border-top: 1px dashed black;">
             {{ $row_setting->note }}
         </div>

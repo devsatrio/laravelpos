@@ -36,7 +36,7 @@ function editdata(kode) {
         success: function (data) {
             $.each(data, function (key, value) {
                 $('#nama').val(value.nama);
-                $('#editform').attr('action', '/backend/kategori-barang/'+value.id);
+                $('#editform').attr('action', '/laravelpos/backend/kategori-barang/'+value.id);
             });
             $('#modaledit').modal('show');
         },

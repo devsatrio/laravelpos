@@ -35,8 +35,9 @@ class rolesController extends Controller
     //=================================================================
     public function create()
     {
-        $data_permission = DB::table('permissions')->orderby('id','desc')->get();
-        return view('backend.roles.create',compact('data_permission'));
+        $data_permission = DB::table('permissions')->orderby('grub','desc')->get();
+        $permission_grub = DB::table('permissions')->groupby('grub')->orderby('grub','desc')->get();
+        return view('backend.roles.create',compact('data_permission','permission_grub'));
     }
 
     //=================================================================
@@ -48,18 +49,13 @@ class rolesController extends Controller
     }
 
     //=================================================================
-    public function show($id)
-    {
-        //
-    }
-
-    //=================================================================
     public function edit($id)
     {
         $role = Role::find($id);
-        $permission = Permission::get();
+        $permission = DB::table('permissions')->orderby('grub','desc')->get();
+        $permission_grub = DB::table('permissions')->groupby('grub')->orderby('grub','desc')->get();
         $rolePermissions =  DB::table('role_has_permissions')->where('role_id',$id)->get();
-        return view('backend.roles.edit',compact('role','permission','rolePermissions'));
+        return view('backend.roles.edit',compact('role','permission','permission_grub','rolePermissions'));
     }
 
     //=================================================================
@@ -75,6 +71,24 @@ class rolesController extends Controller
     //=================================================================
     public function destroy($id)
     {
-        DB::table("roles")->where('id',$id)->delete();
+        $code='200';
+        $msg='Berhasil Dihapus!';
+        
+        $cek = DB::table('model_has_roles')
+        ->where('role_id',$id)
+        ->get();
+
+        if(count($cek)>0){
+            $code='400';
+            $msg='Gagal Dihapus! Data Sedang Digunakan di User';
+        }else{
+            DB::table("roles")->where('id',$id)->delete();
+        }
+
+        $print=[
+            'code'=>$code,
+            'msg'=>$msg
+        ];
+        return response()->json($print);
     }
 }

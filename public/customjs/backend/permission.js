@@ -4,8 +4,7 @@ $(function () {
         processing: true,
         serverSide: true,
         order: [[0, "desc"]],
-        //ajax: '/backend/data-roles',
-        ajax: '/laravelpos/backend/data-roles',
+        ajax: '/laravelpos/backend/data-permission',
         columns: [
             {
                 data: 'id', render: function (data, type, row, meta) {
@@ -13,17 +12,10 @@ $(function () {
                 }
             },
             { data: 'name', name: 'name' },
+            { data: 'grub', name: 'grub' },
             {
                 render: function (data, type, row) {
-                    return row['total'] + ' Permission'
-                },
-                "className": 'text-center',
-                "orderable": false,
-                "data": 'total',
-            },
-            {
-                render: function (data, type, row) {
-                    return '<a href="/laravelpos/backend/roles/' + row['id'] + '/edit" class="btn btn-success"><i class="fa fa-wrench"></i></a> <button class="btn btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
+                    return '<button class="btn btn-success m-1" type="button" onclick="editdata(' + row['id'] + ')"><i class="fa fa-wrench"></i></button><button class="btn m-1 btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
                 },
                 "className": 'text-center',
                 "orderable": false,
@@ -33,9 +25,29 @@ $(function () {
         pageLength: 10,
         lengthMenu: [[5, 10, 20], [5, 10, 20]]
     });
-
 });
 
+//------------------------------------------------------------------------------------------------------------
+function editdata(kode) {
+    $('#panel').loading('toggle');
+    $.ajax({
+        type: 'GET',
+        url: '/laravelpos/backend/permission/' + kode,
+        success: function (data) {
+            $.each(data, function (key, value) {
+                $('#permission').val(value.name);
+                $('#permission_grup').val(value.grub);
+                $('#editform').attr('action', '/laravelpos/backend/permission/' + value.id);
+            });
+            $('#modaledit').modal('show');
+        },
+        complete: function () {
+            $('#panel').loading('stop');
+        }
+    });
+}
+
+//------------------------------------------------------------------------------------------------------------
 function hapusdata(kode) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -61,7 +73,7 @@ function hapusdata(kode) {
             });
             $.ajax({
                 type: 'DELETE',
-                url: '/laravelpos/backend/roles/' + kode,
+                url: '/laravelpos/backend/permission/' + kode,
                 data: {
                     '_token': $('input[name=_token]').val(),
                 },
@@ -80,7 +92,7 @@ function hapusdata(kode) {
                             'error'
                         )
                     }
-                },error: function () {
+                }, error: function () {
                     swalWithBootstrapButtons.fire(
                         'Oops!',
                         'Data gagal dihapus',

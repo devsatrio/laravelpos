@@ -202,6 +202,13 @@ function cetakulang(kode) {
                 }else{
                     $('#print_customer').html(value.namacustomer+' - '+value.customer);
                 }
+                if(value.keterangan==null){
+                    $('#print_keterangan').html('');
+                    $('#print_keterangan').hide();
+                }else{
+                    $('#print_keterangan').html('Ket. : '+value.keterangan);
+                    $('#print_keterangan').show();
+                }
                 $('#print_total').html('Rp. ' + rupiah(parseInt(value.total)));
                 if(value.biaya_tambahan==0){
                     $('#tr_print_biaya_tambahan').hide();

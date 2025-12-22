@@ -523,8 +523,6 @@ function carikekurangan() {
         $('#kembalian').val(rupiah(kembalian));
         $('#print_kembalian').html('Rp. ' + rupiah(parseInt(kembalian)));
     }
-
-
 }
 
 //===============================================================================================
@@ -696,6 +694,12 @@ $('#simpanbtn').on('click', function (e) {
                                 'keterangan': $('#keterangan').val(),
                             },
                             success: function () {
+                                if($('#keterangan').val()!=''){
+                                    $('#print_keterangan').html('Ket. : '+$('#keterangan').val());
+                                    $('#print_keterangan').show();
+                                }else{
+                                    $('#print_keterangan').hide();
+                                }
                                 var divToPrint = document.getElementById('print_div');
                                 var newWin = window.open('', 'Print-Window');
                                 newWin.document.open();

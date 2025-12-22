@@ -16,6 +16,12 @@
             <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                 class="nav-link dropdown-toggle">Admin Management</a>
             <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
+                @if (auth()->user()->can('view-permission') ||
+                        auth()->user()->can('create-permission') ||
+                        auth()->user()->can('edit-permission') ||
+                        auth()->user()->can('delete-permission'))
+                <a href="{{ url('backend/permission') }}" class="dropdown-item">Permission </a></li>
+                @endif
                 @if (auth()->user()->can('view-roles') ||
                         auth()->user()->can('create-roles') ||
                         auth()->user()->can('edit-roles') ||
