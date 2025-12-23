@@ -70,11 +70,26 @@
                             <div class="card-body">
                                 <form action="" method="get">
                                     <div class="row">
-                                        <div class="col-md-4 mt-0">
+                                        <div class="col-md-3 mt-0">
                                             <label>Nama atau Kode</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control" name="nama" @if(Request::has('nama')) value="{{Request::get('nama')}}" @endif>
                                             </div>
+                                        </div>
+                                        <div class="col-md-3 mt-0">
+                                            <label>Hitung Stok</label>
+                                                <select name="stok" id="stok" style="width:100%;"
+                                                    class="form-control">
+                                                    <option value="semua" @if(Request::has('stok'))
+                                                        @if(Request::get('stok')=='semua' ) selected @endif
+                                                        @endif>Semua</option>
+                                                    <option value="y" @if(Request::has('stok'))
+                                                        @if(Request::get('stok')=='y' ) selected @endif
+                                                        @endif>Ya</option>
+                                                    <option value="n" @if(Request::has('stok'))
+                                                        @if(Request::get('stok')=='n' ) selected @endif
+                                                        @endif>Tidak</option>
+                                                </select>
                                         </div>
                                         <div class="col-md-4 mt-0">
                                             <label>Kategori</label>
@@ -168,7 +183,12 @@
                                             <td>{{$row->namakategori}}</td>
                                             <td class="text-right">{{ 'Rp ' . number_format(round($row->harga_jual), 0, ',', '.') }}</td>
                                             <td class="text-right">{{ 'Rp ' . number_format(round($row->harga_jual_customer), 0, ',', '.') }}</td>
-                                            <td class="text-right">{{$row->stok}} Pcs</td>
+                                            <td class="text-right">
+                                                 @if ($row->hitung_stok=='y')
+                                                {{$row->stok}} Pcs
+                                                @else
+                                                -
+                                                @endif</td>
                                             <td class="text-center">
                                                 @if ($row->hitung_stok=='y')
                                                 <span class="badge bg-success">Ya</span>

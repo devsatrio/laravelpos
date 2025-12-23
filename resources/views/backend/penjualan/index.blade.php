@@ -5,6 +5,8 @@
 @endsection
 
 @section('customcss')
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/daterangepicker/daterangepicker.css') }}">
@@ -49,7 +51,7 @@
                                 <div class="card-body">
                                     <form action="" method="get">
                                         <div class="row">
-                                            <div class="col-md-3 mt-0">
+                                            <div class="col-md-2 mt-0">
                                                 <label>Kode</label>
                                                 <div class="input-group">
                                                     <input type="text" class="form-control" name="kode"
@@ -57,12 +59,36 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-3 mt-0">
+                                                <label>Pembuat</label>
+                                                <div class="input-group">
+                                                    <select name="pembuat" id="pembuat" class="form-control" style="width: 100%;">
+                                                        <option value="Semua Pembuat" @if(Request::has('pembuat')) @if(Request::get('pembuat')=='Semua Pembuat') selected @endif @endif>Semua Pembuat</option>
+                                                        @foreach ($user as $row_user)
+                                                            <option value="{{ $row_user->id }}" @if(Request::has('pembuat')) @if(Request::get('pembuat')==$row_user->id) selected @endif @endif>{{ $row_user->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mt-0">
+                                                <label>Customer</label>
+                                                <div class="input-group">
+                                                    <select name="customer" id="customer" class="form-control" style="width: 100%;">
+                                                        <option value="Semua Customer" @if(Request::has('customer')) @if(Request::get('customer')=='Semua Customer') selected @endif @endif>Semua Customer</option>
+                                                        @foreach ($customer as $row_customer)
+                                                            <option value="{{ $row_customer->kode }}" @if(Request::has('customer')) @if(Request::get('customer')==$row_customer->kode) selected @endif @endif>{{ $row_customer->kode }} - {{ $row_customer->nama }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mt-0">
                                                 <label>Tgl. Buat</label>
                                                 <div class="input-group">
                                                     <input type="text" class="form-control" name="tgl_buat" id="tgl_buat" @if (Request::has('tgl_buat')) value="{{ Request::get('tgl_buat') }}" @endif readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 mt-0">
+                                            <div class="col-md-2 mt-0">
                                                 <label>Status</label>
                                                 <div class="input-group">
                                                     <select name="status" id="status" class="form-control">
@@ -326,6 +352,7 @@
 
 @push('customjs')
     <script src="{{ asset('assets/plugins/datatables/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script>
     <script src="{{ asset('assets/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/daterangepicker/daterangepicker.js') }}"></script>

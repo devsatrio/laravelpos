@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 4.9.5deb2
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Dec 06, 2025 at 09:04 AM
--- Server version: 10.4.31-MariaDB-1:10.4.31+maria~ubu1804
--- PHP Version: 7.4.33
+-- Host: localhost:3306
+-- Generation Time: Dec 22, 2025 at 09:08 PM
+-- Server version: 8.0.42-0ubuntu0.20.04.1
+-- PHP Version: 7.4.3-4ubuntu2.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -28,19 +29,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `barang` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(250) DEFAULT NULL,
-  `kode_qr` text DEFAULT NULL,
-  `nama` varchar(300) DEFAULT NULL,
-  `kategori` int(11) DEFAULT NULL,
-  `harga_beli` int(11) DEFAULT NULL,
-  `harga_jual` int(11) DEFAULT NULL,
-  `harga_jual_customer` int(11) DEFAULT NULL,
-  `diskon` int(11) DEFAULT NULL,
-  `diskon_customer` int(11) DEFAULT NULL,
-  `stok` int(11) DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `hitung_stok` enum('y','n') DEFAULT 'y'
+  `id` bigint NOT NULL,
+  `kode` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kode_qr` text COLLATE utf8mb4_general_ci,
+  `nama` varchar(300) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kategori` int DEFAULT NULL,
+  `harga_beli` int DEFAULT NULL,
+  `harga_jual` int DEFAULT NULL,
+  `harga_jual_customer` int DEFAULT NULL,
+  `diskon` int DEFAULT NULL,
+  `diskon_customer` int DEFAULT NULL,
+  `stok` int DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `hitung_stok` enum('y','n') COLLATE utf8mb4_general_ci DEFAULT 'y'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -49,10 +50,10 @@ CREATE TABLE `barang` (
 
 INSERT INTO `barang` (`id`, `kode`, `kode_qr`, `nama`, `kategori`, `harga_beli`, `harga_jual`, `harga_jual_customer`, `diskon`, `diskon_customer`, `stok`, `keterangan`, `hitung_stok`) VALUES
 (2, 'BRG-0002', 'BRG-0002', 'Barang D', 5, 10000, 20000, 12000, 0, 0, 15, '-', 'y'),
-(3, 'BRG-0003', 'BRG-0003', 'Barang C', 5, 5000, 20000, 30000, 40, 0, 0, '-', 'y'),
-(4, 'BRG-0004', 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 0, 'ket Barang B', 'y'),
+(3, 'BRG-0003', 'BRG-0003', 'Barang C', 5, 5000, 20000, 30000, 40, 0, 50, '-', 'y'),
+(4, 'BRG-0004', 'BRG-0004', 'Barang B', 5, 15000, 35000, 30000, 10, 0, 50, 'ket Barang B', 'y'),
 (5, 'BRG-0005', 'BRG-0005', 'Barang A', 2, 2000000, 3000000, 2500000, 10, 0, 48, 'ket barang A', 'y'),
-(6, 'BRG-0006', '120823', 'barang E', 5, 25000, 50000, 40000, 0, 0, 0, '-', 'y'),
+(6, 'BRG-0006', '120823', 'barang E', 5, 25000, 50000, 40000, 0, 0, 30, '-', 'y'),
 (11, 'BRG-0007', '-', 'barang tidak dihitung stok', 3, 10000, 15000, 15000, 0, 0, 0, 'barang tidak dihitung stok', 'n');
 
 -- --------------------------------------------------------
@@ -62,12 +63,12 @@ INSERT INTO `barang` (`id`, `kode`, `kode_qr`, `nama`, `kategori`, `harga_beli`,
 --
 
 CREATE TABLE `detail_perbaikan_stok` (
-  `id` int(11) NOT NULL,
-  `kode_perbaikan_stok` text DEFAULT NULL,
-  `kode_barang` text DEFAULT NULL,
-  `stok_lama` int(11) DEFAULT NULL,
-  `stok_baru` int(11) DEFAULT NULL,
-  `keterangan` text DEFAULT NULL
+  `id` int NOT NULL,
+  `kode_perbaikan_stok` text COLLATE utf8mb4_general_ci,
+  `kode_barang` text COLLATE utf8mb4_general_ci,
+  `stok_lama` int DEFAULT NULL,
+  `stok_baru` int DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -75,7 +76,10 @@ CREATE TABLE `detail_perbaikan_stok` (
 --
 
 INSERT INTO `detail_perbaikan_stok` (`id`, `kode_perbaikan_stok`, `kode_barang`, `stok_lama`, `stok_baru`, `keterangan`) VALUES
-(1, 'PBS-0001', 'BRG-0002', 12, 15, 'perbaikan');
+(2, 'PBS-0001', 'BRG-0006', 0, 20, NULL),
+(8, 'PBS-0002', 'BRG-0003', 0, 50, NULL),
+(9, 'PBS-0003', 'BRG-0006', 20, 30, 'test'),
+(10, 'PBS-0003', 'BRG-0004', 0, 50, NULL);
 
 -- --------------------------------------------------------
 
@@ -84,13 +88,13 @@ INSERT INTO `detail_perbaikan_stok` (`id`, `kode_perbaikan_stok`, `kode_barang`,
 --
 
 CREATE TABLE `detail_perbaikan_stok_thumb` (
-  `id` int(11) NOT NULL,
-  `kode_perbaikan_stok` text DEFAULT NULL,
-  `kode_barang` text DEFAULT NULL,
-  `stok_lama` int(11) DEFAULT NULL,
-  `stok_baru` int(11) DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `pembuat` int(11) DEFAULT NULL
+  `id` int NOT NULL,
+  `kode_perbaikan_stok` text COLLATE utf8mb4_general_ci,
+  `kode_barang` text COLLATE utf8mb4_general_ci,
+  `stok_lama` int DEFAULT NULL,
+  `stok_baru` int DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `pembuat` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -100,12 +104,12 @@ CREATE TABLE `detail_perbaikan_stok_thumb` (
 --
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint UNSIGNED NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -115,9 +119,9 @@ CREATE TABLE `failed_jobs` (
 --
 
 CREATE TABLE `kategori_barang` (
-  `id` int(11) NOT NULL,
-  `nama` varchar(250) DEFAULT NULL,
-  `slug` varchar(250) DEFAULT NULL
+  `id` int NOT NULL,
+  `nama` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `slug` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -136,14 +140,14 @@ INSERT INTO `kategori_barang` (`id`, `nama`, `slug`) VALUES
 --
 
 CREATE TABLE `log_stok_barang` (
-  `id` bigint(20) NOT NULL,
-  `kode_barang` varchar(300) DEFAULT NULL,
-  `tipe` enum('Stok Masuk','Stok Keluar') DEFAULT 'Stok Masuk',
-  `keterangan` text DEFAULT NULL,
-  `stok_tertakhir` int(11) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `hasil_akhir` int(11) DEFAULT NULL,
-  `users` int(11) DEFAULT NULL,
+  `id` bigint NOT NULL,
+  `kode_barang` varchar(300) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tipe` enum('Stok Masuk','Stok Keluar') COLLATE utf8mb4_general_ci DEFAULT 'Stok Masuk',
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `stok_tertakhir` int DEFAULT NULL,
+  `jumlah` int DEFAULT NULL,
+  `hasil_akhir` int DEFAULT NULL,
+  `users` int DEFAULT NULL,
   `tgl_buat` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -154,12 +158,12 @@ CREATE TABLE `log_stok_barang` (
 --
 
 CREATE TABLE `master_customer` (
-  `id` int(11) NOT NULL,
-  `kode` varchar(250) DEFAULT NULL,
-  `nama` varchar(250) DEFAULT NULL,
-  `telp` varchar(250) DEFAULT NULL,
-  `alamat` text DEFAULT NULL,
-  `keterangan` text DEFAULT NULL
+  `id` int NOT NULL,
+  `kode` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nama` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `telp` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `alamat` text COLLATE utf8mb4_general_ci,
+  `keterangan` text COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -179,12 +183,12 @@ INSERT INTO `master_customer` (`id`, `kode`, `nama`, `telp`, `alamat`, `keterang
 --
 
 CREATE TABLE `master_supplier` (
-  `id` int(11) NOT NULL,
-  `kode` varchar(250) DEFAULT NULL,
-  `nama` varchar(250) DEFAULT NULL,
-  `telp` varchar(250) DEFAULT NULL,
-  `alamat` text DEFAULT NULL,
-  `keterangan` text DEFAULT NULL
+  `id` int NOT NULL,
+  `kode` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nama` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `telp` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `alamat` text COLLATE utf8mb4_general_ci,
+  `keterangan` text COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -203,9 +207,9 @@ INSERT INTO `master_supplier` (`id`, `kode`, `nama`, `telp`, `alamat`, `keterang
 --
 
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(191) NOT NULL,
-  `batch` int(11) NOT NULL
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -226,9 +230,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `model_has_permissions` (
-  `permission_id` bigint(20) UNSIGNED NOT NULL,
-  `model_type` varchar(191) NOT NULL,
-  `model_id` bigint(20) UNSIGNED NOT NULL
+  `permission_id` bigint UNSIGNED NOT NULL,
+  `model_type` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -238,9 +242,9 @@ CREATE TABLE `model_has_permissions` (
 --
 
 CREATE TABLE `model_has_roles` (
-  `role_id` bigint(20) UNSIGNED NOT NULL,
-  `model_type` varchar(191) NOT NULL,
-  `model_id` bigint(20) UNSIGNED NOT NULL
+  `role_id` bigint UNSIGNED NOT NULL,
+  `model_type` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -248,9 +252,11 @@ CREATE TABLE `model_has_roles` (
 --
 
 INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
-(1, 'App\\User', 2),
 (2, 'App\\User', 1),
-(2, 'App\\User', 3);
+(1, 'App\\User', 2),
+(2, 'App\\User', 3),
+(2, 'App\\User', 5),
+(1, 'App\\User', 6);
 
 -- --------------------------------------------------------
 
@@ -259,8 +265,8 @@ INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
 --
 
 CREATE TABLE `password_resets` (
-  `email` varchar(191) NOT NULL,
-  `token` varchar(191) NOT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -271,14 +277,14 @@ CREATE TABLE `password_resets` (
 --
 
 CREATE TABLE `pembayaran` (
-  `id` bigint(20) NOT NULL,
-  `kode_penjualan` text DEFAULT NULL,
-  `customer` text DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
+  `id` bigint NOT NULL,
+  `kode_penjualan` text COLLATE utf8mb4_general_ci,
+  `customer` text COLLATE utf8mb4_general_ci,
+  `jumlah` int DEFAULT NULL,
   `tgl_bayar` date DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `keterangan` text DEFAULT NULL
+  `created_by` int DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -300,24 +306,24 @@ INSERT INTO `pembayaran` (`id`, `kode_penjualan`, `customer`, `jumlah`, `tgl_bay
 --
 
 CREATE TABLE `pembelian` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(250) DEFAULT NULL,
-  `supplier` varchar(250) DEFAULT NULL,
-  `subtotal` int(11) DEFAULT NULL,
-  `potongan` int(11) DEFAULT NULL,
-  `biaya_tambahan` int(11) DEFAULT NULL,
-  `total` int(11) DEFAULT NULL,
-  `terbayar` int(11) DEFAULT NULL,
-  `kekurangan` int(11) DEFAULT NULL,
-  `pembuat` int(11) DEFAULT NULL,
+  `id` bigint NOT NULL,
+  `kode` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `supplier` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `subtotal` int DEFAULT NULL,
+  `potongan` int DEFAULT NULL,
+  `biaya_tambahan` int DEFAULT NULL,
+  `total` int DEFAULT NULL,
+  `terbayar` int DEFAULT NULL,
+  `kekurangan` int DEFAULT NULL,
+  `pembuat` int DEFAULT NULL,
   `tgl_buat` date DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `status` varchar(200) DEFAULT 'Lunas',
-  `status_pembelian` varchar(200) DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `status` varchar(200) COLLATE utf8mb4_general_ci DEFAULT 'Lunas',
+  `status_pembelian` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -334,12 +340,12 @@ INSERT INTO `pembelian` (`id`, `kode`, `supplier`, `subtotal`, `potongan`, `biay
 --
 
 CREATE TABLE `pembelian_detail` (
-  `id` bigint(20) NOT NULL,
-  `kode_pembelian` varchar(250) DEFAULT NULL,
-  `kode_barang` varchar(250) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `harga` int(11) DEFAULT NULL,
-  `total` int(11) DEFAULT NULL
+  `id` bigint NOT NULL,
+  `kode_pembelian` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kode_barang` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jumlah` int DEFAULT NULL,
+  `harga` int DEFAULT NULL,
+  `total` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -356,13 +362,13 @@ INSERT INTO `pembelian_detail` (`id`, `kode_pembelian`, `kode_barang`, `jumlah`,
 --
 
 CREATE TABLE `pembelian_thumb_detail` (
-  `id` bigint(20) NOT NULL,
-  `kode_pembelian` varchar(250) DEFAULT NULL,
-  `kode_barang` varchar(250) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `harga` int(11) DEFAULT NULL,
-  `total` int(11) DEFAULT NULL,
-  `pembuat` int(11) DEFAULT NULL
+  `id` bigint NOT NULL,
+  `kode_pembelian` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kode_barang` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jumlah` int DEFAULT NULL,
+  `harga` int DEFAULT NULL,
+  `total` int DEFAULT NULL,
+  `pembuat` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -372,25 +378,25 @@ CREATE TABLE `pembelian_thumb_detail` (
 --
 
 CREATE TABLE `penjualan` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(250) DEFAULT NULL,
-  `customer` varchar(250) DEFAULT NULL,
-  `subtotal` int(11) DEFAULT NULL,
-  `potongan` int(11) DEFAULT NULL,
-  `biaya_tambahan` int(11) DEFAULT NULL,
-  `total` int(11) DEFAULT NULL,
-  `terbayar` int(11) DEFAULT NULL,
-  `kekurangan` int(11) DEFAULT NULL,
-  `kembalian` int(11) DEFAULT NULL,
-  `pembuat` int(11) DEFAULT NULL,
+  `id` bigint NOT NULL,
+  `kode` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `customer` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `subtotal` int DEFAULT NULL,
+  `potongan` int DEFAULT NULL,
+  `biaya_tambahan` int DEFAULT NULL,
+  `total` int DEFAULT NULL,
+  `terbayar` int DEFAULT NULL,
+  `kekurangan` int DEFAULT NULL,
+  `kembalian` int DEFAULT NULL,
+  `pembuat` int DEFAULT NULL,
   `tgl_buat` date DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `status` varchar(200) DEFAULT 'Lunas',
-  `status_penjualan` varchar(200) DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `status` varchar(200) COLLATE utf8mb4_general_ci DEFAULT 'Lunas',
+  `status_penjualan` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -412,13 +418,13 @@ INSERT INTO `penjualan` (`id`, `kode`, `customer`, `subtotal`, `potongan`, `biay
 --
 
 CREATE TABLE `penjualan_detail` (
-  `id` bigint(20) NOT NULL,
-  `kode_penjualan` varchar(250) DEFAULT NULL,
-  `kode_barang` varchar(250) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `harga` int(11) DEFAULT NULL,
-  `diskon` int(11) DEFAULT NULL,
-  `total` int(11) DEFAULT NULL
+  `id` bigint NOT NULL,
+  `kode_penjualan` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kode_barang` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jumlah` int DEFAULT NULL,
+  `harga` int DEFAULT NULL,
+  `diskon` int DEFAULT NULL,
+  `total` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -443,23 +449,15 @@ INSERT INTO `penjualan_detail` (`id`, `kode_penjualan`, `kode_barang`, `jumlah`,
 --
 
 CREATE TABLE `penjualan_thumb_detail` (
-  `id` bigint(20) NOT NULL,
-  `kode_penjualan` varchar(250) DEFAULT NULL,
-  `kode_barang` varchar(250) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `harga` int(11) DEFAULT NULL,
-  `diskon` int(11) DEFAULT NULL,
-  `total` int(11) DEFAULT NULL,
-  `pembuat` int(11) DEFAULT NULL
+  `id` bigint NOT NULL,
+  `kode_penjualan` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kode_barang` varchar(250) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jumlah` int DEFAULT NULL,
+  `harga` int DEFAULT NULL,
+  `diskon` int DEFAULT NULL,
+  `total` int DEFAULT NULL,
+  `pembuat` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `penjualan_thumb_detail`
---
-
-INSERT INTO `penjualan_thumb_detail` (`id`, `kode_penjualan`, `kode_barang`, `jumlah`, `harga`, `diskon`, `total`, `pembuat`) VALUES
-(11, 'PNJ-122025-0001', 'BRG-0002', 2, 12000, 0, 24000, 3),
-(12, 'PNJ-122025-0001', 'BRG-0007', 5, 15000, 0, 75000, 3);
 
 -- --------------------------------------------------------
 
@@ -468,12 +466,12 @@ INSERT INTO `penjualan_thumb_detail` (`id`, `kode_penjualan`, `kode_barang`, `ju
 --
 
 CREATE TABLE `perbaikan_stok` (
-  `id` int(11) NOT NULL,
-  `kode` text DEFAULT NULL,
-  `pembuat` int(11) DEFAULT NULL,
+  `id` int NOT NULL,
+  `kode` text COLLATE utf8mb4_general_ci,
+  `pembuat` int DEFAULT NULL,
   `tgl_buat` date DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `status` varchar(50) DEFAULT 'Draft'
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `status` varchar(50) COLLATE utf8mb4_general_ci DEFAULT 'Draft'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -481,7 +479,9 @@ CREATE TABLE `perbaikan_stok` (
 --
 
 INSERT INTO `perbaikan_stok` (`id`, `kode`, `pembuat`, `tgl_buat`, `keterangan`, `status`) VALUES
-(1, 'PBS-0001', 3, '2025-12-06', 'test', 'Approve');
+(2, 'PBS-0001', 3, '2025-12-18', NULL, 'Approve'),
+(4, 'PBS-0002', 3, '2025-12-22', 'test', 'Approve'),
+(5, 'PBS-0003', 3, '2025-12-22', 'test', 'Approve');
 
 -- --------------------------------------------------------
 
@@ -490,9 +490,10 @@ INSERT INTO `perbaikan_stok` (`id`, `kode`, `pembuat`, `tgl_buat`, `keterangan`,
 --
 
 CREATE TABLE `permissions` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(191) NOT NULL,
-  `guard_name` varchar(191) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `grub` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -501,62 +502,66 @@ CREATE TABLE `permissions` (
 -- Dumping data for table `permissions`
 --
 
-INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
-(1, 'view-users', 'web', NULL, NULL),
-(2, 'create-users', 'web', NULL, NULL),
-(3, 'edit-users', 'web', NULL, NULL),
-(4, 'delete-users', 'web', NULL, NULL),
-(5, 'view-roles', 'web', NULL, NULL),
-(6, 'create-roles', 'web', NULL, NULL),
-(7, 'edit-roles', 'web', NULL, NULL),
-(8, 'delete-roles', 'web', NULL, NULL),
-(9, 'setting-web', 'web', NULL, NULL),
-(10, 'view-customer', 'web', NULL, NULL),
-(11, 'create-customer', 'web', NULL, NULL),
-(12, 'edit-customer', 'web', NULL, NULL),
-(13, 'delete-customer', 'web', NULL, NULL),
-(14, 'view-kategori-barang', 'web', NULL, NULL),
-(15, 'create-kategori-barang', 'web', NULL, NULL),
-(16, 'edit-kategori-barang', 'web', NULL, NULL),
-(17, 'delete-kategori-barang', 'web', NULL, NULL),
-(18, 'view-supplier', 'web', NULL, NULL),
-(19, 'create-supplier', 'web', NULL, NULL),
-(20, 'edit-supplier', 'web', NULL, NULL),
-(21, 'delete-supplier', 'web', NULL, NULL),
-(22, 'view-barang', 'web', NULL, NULL),
-(23, 'create-barang', 'web', NULL, NULL),
-(24, 'edit-barang', 'web', NULL, NULL),
-(25, 'delete-barang', 'web', NULL, NULL),
-(26, 'view-harga-beli-barang', 'web', NULL, NULL),
-(27, 'view-pembelian', 'web', NULL, NULL),
-(28, 'create-pembelian', 'web', NULL, NULL),
-(29, 'edit-pembelian', 'web', NULL, NULL),
-(30, 'delete-pembelian', 'web', NULL, NULL),
-(31, 'approve-pembelian', 'web', NULL, NULL),
-(32, 'view-penjualan', 'web', NULL, NULL),
-(33, 'create-penjualan', 'web', NULL, NULL),
-(34, 'update-hutang-penjualan', 'web', NULL, NULL),
-(35, 'delete-penjualan', 'web', NULL, NULL),
-(36, 'view-transaksi-lain', 'web', NULL, NULL),
-(37, 'create-transaksi-lain', 'web', NULL, NULL),
-(38, 'edit-transaksi-lain', 'web', NULL, NULL),
-(39, 'delete-transaksi-lain', 'web', NULL, NULL),
-(40, 'create-perbaikan-stok', 'web', NULL, NULL),
-(41, 'view-perbaikan-stok', 'web', NULL, NULL),
-(42, 'edit-perbaikan-stok', 'web', NULL, NULL),
-(43, 'delete-perbaikan-stok', 'web', NULL, NULL),
-(44, 'approve-perbaikan-stok', 'web', NULL, NULL),
-(45, 'cetak-barcode-barang', 'web', NULL, NULL),
-(46, 'import-export-barang', 'web', NULL, NULL),
-(47, 'view-laporan-penjualan', 'web', NULL, NULL),
-(48, 'view-laporan-detail-penjualan', 'web', NULL, NULL),
-(49, 'view-laporan-pembelian', 'web', NULL, NULL),
-(50, 'view-laporan-detail-pembelian', 'web', NULL, NULL),
-(51, 'view-laporan-pemasukan-pengeluaran-lain', 'web', NULL, NULL),
-(52, 'view-laporan-laba-rugi', 'web', NULL, NULL),
-(53, 'view-laporan-nilai-barang', 'web', NULL, NULL),
-(54, 'view-laporan-penjualan-barang', 'web', NULL, NULL),
-(55, 'view-laporan-modal', 'web', NULL, NULL);
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `grub`, `created_at`, `updated_at`) VALUES
+(1, 'view-users', 'web', 'users', NULL, NULL),
+(2, 'create-users', 'web', 'users', NULL, NULL),
+(3, 'edit-users', 'web', 'users', NULL, NULL),
+(4, 'delete-users', 'web', 'users', NULL, NULL),
+(5, 'view-roles', 'web', 'roles', NULL, NULL),
+(6, 'create-roles', 'web', 'roles', NULL, NULL),
+(7, 'edit-roles', 'web', 'roles', NULL, NULL),
+(8, 'delete-roles', 'web', 'roles', NULL, NULL),
+(9, 'setting-web', 'web', 'lainnya', NULL, NULL),
+(10, 'view-customer', 'web', 'customer', NULL, NULL),
+(11, 'create-customer', 'web', 'customer', NULL, NULL),
+(12, 'edit-customer', 'web', 'customer', NULL, NULL),
+(13, 'delete-customer', 'web', 'customer', NULL, NULL),
+(14, 'view-kategori-barang', 'web', 'kategori-barang', NULL, NULL),
+(15, 'create-kategori-barang', 'web', 'kategori-barang', NULL, NULL),
+(16, 'edit-kategori-barang', 'web', 'kategori-barang', NULL, NULL),
+(17, 'delete-kategori-barang', 'web', 'kategori-barang', NULL, NULL),
+(18, 'view-supplier', 'web', 'supplier', NULL, NULL),
+(19, 'create-supplier', 'web', 'supplier', NULL, NULL),
+(20, 'edit-supplier', 'web', 'supplier', NULL, NULL),
+(21, 'delete-supplier', 'web', 'supplier', NULL, NULL),
+(22, 'view-barang', 'web', 'barang', NULL, NULL),
+(23, 'create-barang', 'web', 'barang', NULL, NULL),
+(24, 'edit-barang', 'web', 'barang', NULL, NULL),
+(25, 'delete-barang', 'web', 'barang', NULL, NULL),
+(26, 'view-harga-beli-barang', 'web', 'barang', NULL, NULL),
+(27, 'view-pembelian', 'web', 'pembelian', NULL, NULL),
+(28, 'create-pembelian', 'web', 'pembelian', NULL, NULL),
+(29, 'edit-pembelian', 'web', 'pembelian', NULL, NULL),
+(30, 'delete-pembelian', 'web', 'pembelian', NULL, NULL),
+(31, 'approve-pembelian', 'web', 'pembelian', NULL, NULL),
+(32, 'view-penjualan', 'web', 'penjualan', NULL, NULL),
+(33, 'create-penjualan', 'web', 'penjualan', NULL, NULL),
+(34, 'update-hutang-penjualan', 'web', 'penjualan', NULL, NULL),
+(35, 'delete-penjualan', 'web', 'penjualan', NULL, NULL),
+(36, 'view-transaksi-lain', 'web', 'transaksi-lain', NULL, NULL),
+(37, 'create-transaksi-lain', 'web', 'transaksi-lain', NULL, NULL),
+(38, 'edit-transaksi-lain', 'web', 'transaksi-lain', NULL, NULL),
+(39, 'delete-transaksi-lain', 'web', 'transaksi-lain', NULL, NULL),
+(40, 'create-perbaikan-stok', 'web', 'perbaikan-stok', NULL, NULL),
+(41, 'view-perbaikan-stok', 'web', 'perbaikan-stok', NULL, NULL),
+(42, 'edit-perbaikan-stok', 'web', 'perbaikan-stok', NULL, NULL),
+(43, 'delete-perbaikan-stok', 'web', 'perbaikan-stok', NULL, NULL),
+(44, 'approve-perbaikan-stok', 'web', 'perbaikan-stok', NULL, NULL),
+(45, 'cetak-barcode-barang', 'web', 'barang', NULL, NULL),
+(46, 'import-export-barang', 'web', 'barang', NULL, NULL),
+(47, 'view-laporan-penjualan', 'web', 'laporan', NULL, NULL),
+(48, 'view-laporan-detail-penjualan', 'web', 'laporan', NULL, NULL),
+(49, 'view-laporan-pembelian', 'web', 'laporan', NULL, NULL),
+(50, 'view-laporan-detail-pembelian', 'web', 'laporan', NULL, NULL),
+(51, 'view-laporan-pemasukan-pengeluaran-lain', 'web', 'laporan', NULL, NULL),
+(52, 'view-laporan-laba-rugi', 'web', 'laporan', NULL, NULL),
+(53, 'view-laporan-nilai-barang', 'web', 'laporan', NULL, NULL),
+(54, 'view-laporan-penjualan-barang', 'web', 'laporan', NULL, NULL),
+(55, 'view-laporan-modal', 'web', 'laporan', NULL, NULL),
+(56, 'view-permission', 'web', 'permission', NULL, NULL),
+(57, 'create-permission', 'web', 'permission', NULL, NULL),
+(58, 'edit-permission', 'web', 'permission', NULL, NULL),
+(59, 'delete-permission', 'web', 'permission', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -565,9 +570,9 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 --
 
 CREATE TABLE `roles` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(191) NOT NULL,
-  `guard_name` varchar(191) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -588,8 +593,8 @@ INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VAL
 --
 
 CREATE TABLE `role_has_permissions` (
-  `permission_id` bigint(20) UNSIGNED NOT NULL,
-  `role_id` bigint(20) UNSIGNED NOT NULL
+  `permission_id` bigint UNSIGNED NOT NULL,
+  `role_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -597,6 +602,9 @@ CREATE TABLE `role_has_permissions` (
 --
 
 INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
+(22, 1),
+(23, 1),
+(24, 1),
 (1, 2),
 (2, 2),
 (3, 2),
@@ -618,16 +626,11 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (19, 2),
 (20, 2),
 (21, 2),
-(22, 1),
 (22, 2),
-(22, 3),
-(23, 1),
 (23, 2),
-(24, 1),
 (24, 2),
 (25, 2),
 (26, 2),
-(26, 3),
 (27, 2),
 (28, 2),
 (29, 2),
@@ -656,7 +659,13 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (52, 2),
 (53, 2),
 (54, 2),
-(55, 2);
+(55, 2),
+(56, 2),
+(57, 2),
+(58, 2),
+(59, 2),
+(22, 3),
+(26, 3);
 
 -- --------------------------------------------------------
 
@@ -665,16 +674,16 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 --
 
 CREATE TABLE `settings` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `nama_program` varchar(191) NOT NULL,
-  `singkatan_nama_program` varchar(191) NOT NULL,
-  `instansi` varchar(191) NOT NULL,
-  `alamat` text DEFAULT NULL,
-  `deskripsi_program` varchar(191) NOT NULL,
-  `note` text DEFAULT NULL,
-  `note_program` text DEFAULT NULL,
-  `logo` text DEFAULT NULL,
-  `gunakan_scanner` enum('y','n') DEFAULT 'n'
+  `id` bigint UNSIGNED NOT NULL,
+  `nama_program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `singkatan_nama_program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `instansi` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alamat` text COLLATE utf8mb4_unicode_ci,
+  `deskripsi_program` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `note` text COLLATE utf8mb4_unicode_ci,
+  `note_program` text COLLATE utf8mb4_unicode_ci,
+  `logo` text COLLATE utf8mb4_unicode_ci,
+  `gunakan_scanner` enum('y','n') COLLATE utf8mb4_unicode_ci DEFAULT 'n'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -682,7 +691,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `nama_program`, `singkatan_nama_program`, `instansi`, `alamat`, `deskripsi_program`, `note`, `note_program`, `logo`, `gunakan_scanner`) VALUES
-(1, 'AGSPEED POS V.1', 'AGPOS', 'AGSPEED SHOP', 'Desa Gurah 1, Kec.Gurah, Kab. Kediri', 'A Pos system for AGSPEED SHOP', 'Barang Yang Sudah Dibeli Tidak Bisa Dikembalikan', 'Harap jangan matikan komputer sebelum proses backup dilakukan', '1639745101-ag-shop.jpg', 'y');
+(1, 'AGSPEED POS V.1', 'AGPOS', 'AGSPEED SHOP', 'Desa Gurah 1, Kec.Gurah, Kab. Kediri', 'A Pos system for AGSPEED SHOP', 'Barang Yang Sudah Dibeli Tidak Bisa Dikembalikan', 'Harap jangan matikan komputer sebelum proses backup dilakukan', '1639745101-ag-shop.jpg', 'n');
 
 -- --------------------------------------------------------
 
@@ -691,12 +700,12 @@ INSERT INTO `settings` (`id`, `nama_program`, `singkatan_nama_program`, `instans
 --
 
 CREATE TABLE `transaksi_lain` (
-  `id` bigint(20) NOT NULL,
-  `status` varchar(100) DEFAULT NULL,
-  `jumlah` int(11) DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
+  `id` bigint NOT NULL,
+  `status` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jumlah` int DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci,
   `tgl_buat` date DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -705,7 +714,9 @@ CREATE TABLE `transaksi_lain` (
 --
 
 INSERT INTO `transaksi_lain` (`id`, `status`, `jumlah`, `keterangan`, `tgl_buat`, `created_by`, `created_at`) VALUES
-(1, 'Pengeluaran', 500000, 'biaya listrik', '2025-12-06', 3, '2025-12-06 02:00:19');
+(1, 'Pengeluaran', 500000, 'biaya listrik', '2025-12-06', 3, '2025-12-06 02:00:19'),
+(2, 'Pengeluaran', 500000, 'Gaji kasir 1', '2025-12-23', 3, '2025-12-22 13:40:49'),
+(3, 'Pemasukan', 50000, 'Jual kardus bekas barang', '2025-12-22', 3, '2025-12-22 13:20:19');
 
 -- --------------------------------------------------------
 
@@ -714,16 +725,16 @@ INSERT INTO `transaksi_lain` (`id`, `status`, `jumlah`, `keterangan`, `tgl_buat`
 --
 
 CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `username` varchar(191) DEFAULT NULL,
-  `name` varchar(191) DEFAULT NULL,
-  `email` varchar(191) NOT NULL,
-  `telp` varchar(191) DEFAULT NULL,
-  `level` varchar(191) DEFAULT NULL,
-  `gambar` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `username` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `telp` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `level` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gambar` text COLLATE utf8mb4_unicode_ci,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(191) DEFAULT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -735,7 +746,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `name`, `email`, `telp`, `level`, `gambar`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'devasatrio', 'Deva Satrio', 'deva@example.com', '081209380909', 'super admin', NULL, NULL, '$2y$10$1bxkMCXJ0YQ.I//lJY4XJelWYJ/k/Bk5G28z31qCYdi2wJAlkqcAW', 'rfZGCoJJnPkf4Y5lhATYtb7iFCNGV1DPZGqLg0yZB3LXsjAwS1uGWWfvTWA7', '2021-11-17 18:12:54', '2021-11-23 23:20:45'),
 (2, 'admin', 'admin', 'admin@gmail.com', '234902', 'admin', '1637324169-user.png', NULL, '$2y$10$9EKR5n/fmKonHExiQzW49..H29KrhaP/ZVgFwKOregDa/Bxjn1/zq', 'oLVBWNB0kuWf6VcqVTs7FXXhgU5aT4VGlUzGGzAPlJ0f01XVUS3r1XO1oBg6', '2021-11-19 05:16:10', '2025-12-05 16:27:03'),
-(3, 'superadmin', 'superadmin', 'superadmin@test.id', '111', 'super admin', '1764978941-madao.jpeg', NULL, '$2y$10$GbEzeLwKsz6HEvwq2BH7Oed2M74D/YphxOhPHaXddR/tXnvBVR9PW', 'TLmwCXH4TL6PUQBISBG5gJOEyF1d9kY4D78JSrrQnSN3fRKRVhRFQRJPfg3R', '2025-12-05 16:55:41', '2025-12-05 16:55:41');
+(3, 'superadmin', 'superadmin', 'superadmin@test.id', '111', 'super admin', '1764978941-madao.jpeg', NULL, '$2y$10$GbEzeLwKsz6HEvwq2BH7Oed2M74D/YphxOhPHaXddR/tXnvBVR9PW', 'sFFYyCzfMnkAdIcKWDvzIaa01X05n6KBk6qRtdhAVypmPQIMtZ9HJClnxVon', '2025-12-05 16:55:41', '2025-12-05 16:55:41'),
+(5, 'test_admin_dua', 'test_admin_dua', 'test_admin_dua321@gmail.com', '12345678', 'super admin', '1766101960-logo.png', NULL, '$2y$10$YP/1C36jO.Y.m7RUrSj99OTY2.TaN1IdxwkqhGH2fd/dbMsjErJY6', '9JVn5cWRnJ6cPUT33ggG42PDQpS0dZ6276eKgT2rCsUfJiVDAeBE4hkFVs01', '2025-12-18 16:52:40', '2025-12-18 16:55:17'),
+(6, 'test', 'test', 'test@gmail.com', '123214', 'admin', NULL, NULL, '$2y$10$83smP7JCvVwKLRUcImCZ/e5azXoPu2Pza0WX3Wjzq3Qzn0xKAuqP2', 'eu4D6fGj0gIEbAbNQPgyUvtLOzCa062Ekpx5dLW844Jua2B4mIcKsPpaicCF', '2025-12-18 17:11:05', '2025-12-18 17:11:05');
 
 --
 -- Indexes for dumped tables
@@ -911,133 +924,133 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `detail_perbaikan_stok`
 --
 ALTER TABLE `detail_perbaikan_stok`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `detail_perbaikan_stok_thumb`
 --
 ALTER TABLE `detail_perbaikan_stok_thumb`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `kategori_barang`
 --
 ALTER TABLE `kategori_barang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `log_stok_barang`
 --
 ALTER TABLE `log_stok_barang`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `master_customer`
 --
 ALTER TABLE `master_customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `master_supplier`
 --
 ALTER TABLE `master_supplier`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pembelian_detail`
 --
 ALTER TABLE `pembelian_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pembelian_thumb_detail`
 --
 ALTER TABLE `pembelian_thumb_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `penjualan`
 --
 ALTER TABLE `penjualan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `penjualan_detail`
 --
 ALTER TABLE `penjualan_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `penjualan_thumb_detail`
 --
 ALTER TABLE `penjualan_thumb_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `perbaikan_stok`
 --
 ALTER TABLE `perbaikan_stok`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `transaksi_lain`
 --
 ALTER TABLE `transaksi_lain`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables

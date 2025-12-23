@@ -20,82 +20,10 @@ $(function () {
             "sSearch": "Cari Dihalaman ini:",
         }
     });
-    // $('#list-data').DataTable({
-    //     processing: true,
-    //     serverSide: true,
-    //     order: [[0, "desc"]],
-    //     //ajax: '/backend/data-pembelian',
-    //     ajax: '/laravelpos/backend/data-penjualan',
-    //     columns: [
-    //         {
-    //             data: 'id', render: function (data, type, row, meta) {
-    //                 return meta.row + meta.settings._iDisplayStart + 1;
-    //             }
-    //         },
-    //         { data: 'kode', name: 'kode' },
-    //         { data: 'namacustomer', name: 'namacustomer' },
-    //         { data: 'name', name: 'name' },
-    //         { data: 'tgl_buat', name: 'tgl_buat' },
-    //         {
-    //             render: function (data, type, row) {
-    //                 return 'Rp.' + rupiah(row['total'])
-    //             },
-    //             "className": 'text-right',
-    //             "data": 'total',
-    //         },
-    //         {
-    //             render: function (data, type, row) {
-    //                 return 'Rp.' + rupiah(row['terbayar'])
-    //             },
-    //             "className": 'text-right',
-    //             "data": 'terbayar',
-    //         },
-    //         {
-    //             render: function (data, type, row) {
-    //                 return 'Rp.' + rupiah(row['kekurangan'])
-    //             },
-    //             "className": 'text-right',
-    //             "data": 'kekurangan',
-    //         },
-    //         {
-    //             render: function (data, type, row) {
-    //                 return 'Rp.' + rupiah(row['kembalian'])
-    //             },
-    //             "className": 'text-right',
-    //             "data": 'kembalian',
-    //         },
-    //         {
-    //             render: function (data, type, row) {
-    //                 if (row['status'] == 'Belum Lunas') {
-    //                     return '<span class="badge bg-danger">' + row['status'] + '</span>';
-    //                 } else {
-    //                     return '<span class="badge bg-success">' + row['status'] + '</span>';
-    //                 }
-    //             }, data: 'status', name: 'status', className: 'text-center'
-    //         },
-    //         {
-    //             render: function (data, type, row) {
-    //                 if (row['status'] == 'Belum Lunas') {
-    //                     return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-    //                         `<button class="btn btn-sm m-1 btn-info" onclick="bayarhutang('` + row['kode'] + `')"><i class="fa fa-edit"></i></button>` +
-    //                         `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
-    //                         `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
-    //                 } else {
-    //                     return `<a href="/laravelpos/backend/penjualan/` + row['kode'] + `" class="btn btn-sm btn-warning m-1"><i class="fa fa-eye"></i></a>` +
-    //                         `<button class="btn btn-sm m-1 btn-secondary" onclick="cetakulang('` + row['kode'] + `')"><i class="fa fa-print"></i></button>` +
-    //                         `<button class="btn btn-sm m-1 btn-danger" onclick="hapusdata('` + row['kode'] + `')"><i class="fa fa-trash"></i></button>`;
-    //                 }
 
-    //             },
-    //             "className": 'text-center',
-    //             "orderable": false,
-    //             "data": null,
-    //         },
-    //     ],
-    //     pageLength: 50,
-    //     lengthMenu: [[50,100, 150, 200], [50,100, 150, 200]]
-    // });
+    $('#pembuat').select2();
 
+    $('#customer').select2();
 });
 
 //===============================================================================================

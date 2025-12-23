@@ -59,11 +59,27 @@ class penjualanController extends Controller
                 $data=$data->where('penjualan.kode','like','%'.$request->kode.'%');
             }
         }
+        
+        if($request->has('pembuat')){
+            if($request->pembuat!='Semua Pembuat'){
+                $data=$data->where('penjualan.pembuat',$request->pembuat);
+            }
+        }
+        
+        if($request->has('customer')){
+            if($request->customer!='Semua Customer'){
+                $data=$data->where('penjualan.customer',$request->customer);
+            }
+        }
+
         $data = $data->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua]);
 
         $data=$data->orderby('penjualan.id','desc')
         ->paginate(60);
-        return view('backend.penjualan.index',compact('data'));
+
+        $user = DB::table('users')->get();
+        $customer = DB::table('master_customer')->get();
+        return view('backend.penjualan.index',compact('data','user','customer'));
     }
 
     //=================================================================

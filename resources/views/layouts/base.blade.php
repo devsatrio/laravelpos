@@ -81,7 +81,13 @@
         <div class="content-wrapper">
             @yield('content')
         </div>
-
+        <footer class="main-footer text-sm">
+            Made By <b><a href="https://www.google.com/search?q=Hamba Allah" target="blank()" class="text-black">Hamba
+                    Allah</a></b> Using <a href="https://adminlte.io" target="blank">AdminLTE.io</a>
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Version</b> 0.1.0
+            </div>
+        </footer>
     </div>
     <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

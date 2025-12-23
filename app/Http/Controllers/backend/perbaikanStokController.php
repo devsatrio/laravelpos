@@ -21,15 +21,54 @@ class perbaikanStokController extends Controller
     }
 
     //=================================================================
-    public function index()
+    public function index(Request $request)
     {
-        return view('backend.perbaikanstok.index');
+        if($request->has('tgl_buat')){
+            $tanggal = explode(' - ',$request->tgl_buat);
+            $tglsatu = $tanggal[0];
+            $tgldua = $tanggal[1];
+        }else{
+            $tglsatu = date('Y-m-d');
+            $tgldua = date('Y-m-d');
+        }
+        $data = DB::table('perbaikan_stok')
+        ->select(DB::raw('perbaikan_stok.*,users.name'))
+        ->leftjoin('users','users.id','=','perbaikan_stok.pembuat');
+
+
+        if($request->has('status')){
+            if($request->status!='Semua Status'){
+                $data=$data->where('perbaikan_stok.status',$request->status);
+            }
+        }
+
+        if($request->has('pembuat')){
+            if($request->pembuat!='Semua Pembuat'){
+                $data=$data->where('perbaikan_stok.pembuat',$request->pembuat);
+            }
+        }
+
+        if($request->has('kode')){
+            if($request->kode!=null){
+                $data=$data->where('perbaikan_stok.kode','like','%'.$request->kode.'%');
+            }
+        }
+
+        $data=$data->whereBetween('perbaikan_stok.tgl_buat',[$tglsatu,$tgldua])
+        ->orderby('perbaikan_stok.id','desc')
+        ->paginate(60);
+
+        $user = DB::table('users')->get();
+        return view('backend.perbaikanstok.index',compact('data','user'));
     }
 
     //=================================================================
     public function create()
     {
         $kode = $this->carikode();
+        DB::table('detail_perbaikan_stok_thumb')
+        ->where('detail_perbaikan_stok_thumb.pembuat',Auth::user()->id)
+        ->delete();
         return view('backend.perbaikanstok.create',compact('kode'));
     }
 

@@ -37,6 +37,11 @@ class barangController extends Controller
                 $data=$data->where('barang.kategori',$request->kategori);
             }
         }
+        if($request->has('stok')){
+            if($request->stok!='semua'){
+                $data=$data->where('barang.hitung_stok',$request->stok);
+            }
+        }
 
         if($request->has('nama')){
             if($request->nama!=null){

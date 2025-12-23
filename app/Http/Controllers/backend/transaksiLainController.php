@@ -20,9 +20,40 @@ class transaksiLainController extends Controller
     }
 
     //=================================================================
-    public function index()
+    public function index(Request $request)
     {
-        return view('backend.transaksilain.index');
+        if($request->has('tgl_buat')){
+            $tanggal = explode(' - ',$request->tgl_buat);
+            $tglsatu = $tanggal[0];
+            $tgldua = $tanggal[1];
+        }else{
+            $tglsatu = date('Y-m-d');
+            $tgldua = date('Y-m-d');
+        }
+
+        $data=DB::table('transaksi_lain')
+        ->select(DB::raw('transaksi_lain.*,users.name'))
+        ->leftjoin('users','users.id','=','transaksi_lain.created_by');
+
+
+        if($request->has('status')){
+            if($request->status!='Semua Status'){
+                $data=$data->where('transaksi_lain.status',$request->status);
+            }
+        }
+
+        if($request->has('pembuat')){
+            if($request->pembuat!='Semua Pembuat'){
+                $data=$data->where('transaksi_lain.created_by',$request->pembuat);
+            }
+        }
+
+        $data=$data->whereBetween('transaksi_lain.tgl_buat',[$tglsatu,$tgldua])
+        ->orderby('transaksi_lain.id','desc')
+        ->paginate(60);
+
+        $user = DB::table('users')->get();
+        return view('backend.transaksilain.index',compact('data','user'));
     }
 
     //=================================================================

@@ -80,8 +80,8 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="reset" onclick="history.go(-1)"
-                                    class="btn btn-danger">Kembali</button>
+                                {{-- <button type="reset" onclick="history.go(-1)"
+                                    class="btn btn-danger">Kembali</button> --}}
                                 <button type="button" id="tambahbtn" class="btn btn-primary float-right">Tambah</button>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Tgl Buat</label>
-                                            <input type="text" class="form-control" id="tgl_buat" name="tgl_buat" value="{{date('Y-m-d')}}" required>
+                                            <input type="text" class="form-control" id="tgl_buat" readonly name="tgl_buat" value="{{date('Y-m-d')}}" required>
                                         </div>
                                     </div>
                                 </div>

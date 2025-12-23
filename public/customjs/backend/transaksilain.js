@@ -1,41 +1,21 @@
 
 $(function () {
+    $('#tgl_buat').daterangepicker({
+        singleDatePicker: false,
+        locale: {
+            format: 'YYYY-MM-DD'
+        }
+    });
     $('#list-data').DataTable({
-        processing: true,
-        serverSide: true,
-        order: [[0, "desc"]],
-        ajax: '/laravelpos/backend/data-transaksi-lain',
-        columns: [
-            {
-                data: 'id', render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            { data: 'name', name: 'name' },
-            { data: 'tgl_buat', name: 'tgl_buat',className: 'text-center'},
-            { data: 'status', name: 'status',className: 'text-center'},
-            
-            {
-                render: function (data, type, row) {
-                    return 'Rp.' + rupiah(row['jumlah'])
-                },
-                "className": 'text-right',
-                "data": 'jumlah',
-            },
-            { data: 'keterangan', name: 'keterangan' },
-            {
-                render: function (data, type, row) {
-                    return '<a href="/laravelpos/backend/transaksi-lain/' + row['id'] + '/edit" class="btn btn-success"><i class="fa fa-wrench"></i></a> <button class="btn btn-danger" onclick="hapusdata(' + row['id'] + ')"><i class="fa fa-trash"></i></button>'
-                },
-                "className": 'text-center',
-                "orderable": false,
-                "data": null,
-            },
-        ],
-        pageLength: 10,
-        lengthMenu: [[5, 10, 20], [5, 10, 20]]
+        "paging": false,
+        "bPaginate": false,
+        "info": false,
+        "language": {
+            "sSearch": "Cari Dihalaman ini:",
+        }
     });
 
+    $('#pembuat').select2();
 });
 
 //===============================================================================================
@@ -75,7 +55,7 @@ function hapusdata(kode) {
                         'success'
                     )
                     $('#list-data').DataTable().ajax.reload();
-                },error: function () {
+                }, error: function () {
                     swalWithBootstrapButtons.fire(
                         'Oops!',
                         'Data gagal dihapus',
