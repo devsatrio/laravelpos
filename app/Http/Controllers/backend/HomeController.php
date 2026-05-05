@@ -21,6 +21,12 @@ class HomeController extends Controller
     //=================================================================
     public function index()
     {
+
+        return view('backend.dashboard.index');
+    }
+
+    //=================================================================
+    public function getjumlah(){
         $jumlahpelanggan = DB::table('master_customer')->count();
         $jumlahsupplier = DB::table('master_customer')->count();
         $jumlahbarang = DB::table('barang')->count();
@@ -28,6 +34,21 @@ class HomeController extends Controller
         $barangstokmenipis = DB::table('barang')->where('hitung_stok','=','y')->where('stok','<','2')->count();
         $jumlahhutang = DB::table('pembelian')->where('status','Belum Lunas')->count();
         $jumlahpiutang = DB::table('penjualan')->where('status','Belum Lunas')->count();
+
+        $print=[
+            'jumlahpelanggan'=>$jumlahpelanggan,
+            'jumlahsupplier'=>$jumlahsupplier,
+            'jumlahbarang'=>$jumlahbarang,
+            'jumlahtransaksi'=>$jumlahtransaksi,
+            'barangstokmenipis'=>$barangstokmenipis,
+            'jumlahhutang'=>$jumlahhutang,
+            'jumlahpiutang'=>$jumlahpiutang
+        ];
+        return response()->json($print);
+    }
+
+    //=================================================================
+    public function getjumlahgrafik() {
 
         $kategoritahunan = DB::table('penjualan_detail')
         ->select(DB::raw('penjualan_detail.*,penjualan.tgl_buat,barang.kategori,kategori_barang.nama,sum(penjualan_detail.jumlah) as totalpcs'))
@@ -37,45 +58,55 @@ class HomeController extends Controller
         ->whereYear('penjualan.tgl_buat',date('Y'))
         ->groupby('barang.kategori')
         ->get();
-
-        $linelabelmgn = '';
-        $linevaluemgn = '';
-        $nama_kategori = '';
-        $value_kategori ='';
-        $warna_kategori='';
-        $linelabeltahun='';
-        $linevallunastahun='';
-        $linevalbelumlunastahun='';
+        
+        $linelabelmgn = [];
+        $linevaluemgn = [];
+        $nama_kategori = [];
+        $value_kategori =[];
+        $warna_kategori=[];
+        $linelabeltahun=[];
+        $linevallunastahun=[];
+        $linevalbelumlunastahun=[];
 
         for ($x=7; $x > 0; $x--) { 
             $day=date('Y-m-d',strtotime(date('Y-m-d') . "-" .$x." days"));
-            $linelabelmgn=$linelabelmgn."'".$day."',"; 
+            $linelabelmgn[]=$day; 
             $jmlminggu=DB::table('penjualan')->where('tgl_buat',$day)->count();
-            $linevaluemgn = $linevaluemgn."".$jmlminggu.",";
+            $linevaluemgn[] = $jmlminggu;
         }
 
         $i=0;
         foreach($kategoritahunan as $row_kategoritahunan){
-            $nama_kategori = $nama_kategori."'".$row_kategoritahunan->nama."',";
-            $value_kategori =$value_kategori."".$row_kategoritahunan->totalpcs.",";
+            $nama_kategori[] = $row_kategoritahunan->nama;
+            $value_kategori[] =$row_kategoritahunan->totalpcs;
             $get_color = $this->generate_color($i);
-            $warna_kategori =$warna_kategori."'".$get_color."',";
+            $warna_kategori[] =$get_color;
             $i++;
         }
 
         for ($no_bln=1; $no_bln <= 12; $no_bln++) { 
             $new_no_bln = sprintf("%02s",$no_bln);
             $bulan_nama = date("F", mktime(0, 0, 0, $new_no_bln, 10));
-            $linelabeltahun = $linelabeltahun."'".$bulan_nama."',";
+            $linelabeltahun[] = $bulan_nama;
 
             $jmlbulan=DB::table('penjualan')->whereYear('tgl_buat','=',date('Y'))->whereMonth('tgl_buat','=',$new_no_bln)->where('status','Telah Lunas')->count();
-            $linevallunastahun = $linevallunastahun."".$jmlbulan.",";
+            $linevallunastahun[] = $jmlbulan;
 
             $jmlbulanblmlunas=DB::table('penjualan')->whereYear('tgl_buat','=',date('Y'))->whereMonth('tgl_buat','=',$new_no_bln)->where('status','Belum Lunas')->count();
-            $linevalbelumlunastahun = $linevalbelumlunastahun."".$jmlbulanblmlunas.",";
+            $linevalbelumlunastahun[] = $jmlbulanblmlunas;
         }
 
-        return view('backend.dashboard.index',compact('linevallunastahun','linevalbelumlunastahun','linelabeltahun','warna_kategori','value_kategori','nama_kategori','linelabelmgn','linevaluemgn','kategoritahunan','jumlahpiutang','jumlahhutang','jumlahpelanggan','jumlahsupplier','jumlahbarang','jumlahtransaksi','barangstokmenipis'));
+        $print=[
+            'linelabelmgn'=>$linelabelmgn,
+            'linevaluemgn'=>$linevaluemgn,
+            'nama_kategori'=>$nama_kategori,
+            'value_kategori'=>$value_kategori,
+            'warna_kategori'=>$warna_kategori,
+            'linelabeltahun'=>$linelabeltahun,
+            'linevallunastahun'=>$linevallunastahun,
+            'linevalbelumlunastahun'=>$linevalbelumlunastahun,
+        ];
+        return response()->json($print);
     }
 
     //==================================================================

@@ -16,6 +16,8 @@ Auth::routes([
 Route::prefix('backend')->group(function () {
     //-------------------------------------------------------------------------------------------
     Route::get('/home', 'backend\HomeController@index')->name('home');
+    Route::get('/home/get-jumlah', 'backend\HomeController@getjumlah');
+    Route::get('/home/get-jumlah-grafik', 'backend\HomeController@getjumlahgrafik');
     Route::get('/edit-profile', 'backend\HomeController@editprofile')->name('editprofile');
     Route::post('/edit-profile/{id}', 'backend\HomeController@aksieditprofile');
 
