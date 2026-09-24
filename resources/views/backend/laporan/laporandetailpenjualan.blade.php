@@ -34,7 +34,7 @@
                         <label class="mb-0">Cari Data Berdasarkan</label><br>
                         <form action="" method="get">
                             <div class="row mb-3">
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-2 mt-3">
                                     <div class="input-group">
                                         <select name="customer" class="form-control select2">
                                             <option @if(Request::has('customer')) @if(Request::get('customer')=='Semua'
@@ -78,7 +78,24 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4 mt-3">
+                                <div class="col-md-2 mt-3">
+                                    <div class="input-group">
+                                        <select name="jenis_bayar" class="form-control">
+                                            <option @if(Request::has('jenis_bayar')) @if(Request::get('jenis_bayar')=='Semua' )
+                                                selected @endif @endif value="Semua" selected>Semua Jenis Bayar</option>
+                                            <option @if(Request::has('jenis_bayar'))
+                                                @if(Request::get('jenis_bayar')=='Cash' ) selected @endif @endif
+                                                value="Cash">Cash</option>
+                                            <option @if(Request::has('jenis_bayar'))
+                                                @if(Request::get('jenis_bayar')=='QRIS' ) selected @endif @endif
+                                                value="QRIS">QRIS</option>
+                                            <option @if(Request::has('jenis_bayar'))
+                                                @if(Request::get('jenis_bayar')=='Transfer Bank' ) selected @endif @endif
+                                                value="Transfer Bank">Transfer Bank</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mt-3">
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="tanggal" id="tanggal"
                                             @if(Request::has('tanggal')) value="{{Request::get('tanggal')}}" @else
@@ -134,6 +151,12 @@
                         @endif
                         @endif
 
+                        @if(Request::has('jenis_bayar'))
+                        @if(Request::get('jenis_bayar')!='Semua' && Request::get('jenis_bayar')!='')
+                        Jenis Bayar <b>{{Request::get('jenis_bayar')}}</b>
+                        @endif
+                        @endif
+
                         @else
                         Hasil Pencarian <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
                         @endif
@@ -146,6 +169,7 @@
                                         <th>Tgl Buat</th>
                                         <th>Pembuat</th>
                                         <th>Customer</th>
+                                        <th>Jenis Bayar</th>
                                         <th>Barang</th>
                                         <th>Jumlah</th>
                                         <th>Diskon</th>
@@ -168,6 +192,17 @@
                                         <td>{{$row->tgl_buat}}</td>
                                         <td>{{$row->name}}</td>
                                         <td>@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
+                                        <td>
+                                            @if($row->jenis_bayar == 'Cash')
+                                                <span class="badge badge-success">Cash</span>
+                                            @elseif($row->jenis_bayar == 'QRIS')
+                                                <span class="badge badge-info">QRIS</span>
+                                            @elseif($row->jenis_bayar == 'Transfer Bank')
+                                                <span class="badge badge-primary">Transfer Bank</span>
+                                            @else
+                                                <span class="badge badge-secondary">{{$row->jenis_bayar ?? 'Cash'}}</span>
+                                            @endif
+                                        </td>
                                         <td>{{$row->kode_barang}} - {{$row->nama}}</td>
                                         <td>{{$row->jumlah}} Pcs</td>
                                         <td>{{$row->diskon}} %</td>
@@ -187,26 +222,26 @@
                                 <tfoot>
                                     @php
                                         $total_potongan=0;
-                                    @endphp
+                                     @endphp
                                     @foreach ($data_penjualan as $row_data_penjualan)
                                     @php
                                     $total_potongan+=$row_data_penjualan->potongan;
                                     @endphp
                                     @endforeach
                                     <tr>
-                                        <td colspan="11" class="text-right"><b>Total Beli</b></td>
+                                        <td colspan="12" class="text-right"><b>Total Beli</b></td>
                                         <td class="text-right"><b>Rp. {{number_format($total_beli,0,',','.')}}</b></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="11" class="text-right"><b>Total Jual</b></td>
+                                        <td colspan="12" class="text-right"><b>Total Jual</b></td>
                                         <td class="text-right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="11" class="text-right text-danger"><b>Total Potongan</b></td>
+                                        <td colspan="12" class="text-right text-danger"><b>Total Potongan</b></td>
                                         <td class="text-right text-danger"><b>Rp. {{number_format($total_potongan,0,',','.')}}</b></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="11" class="text-right"><b>Total Laba</b></td>
+                                        <td colspan="12" class="text-right"><b>Total Laba</b></td>
                                         <td class="text-right"><b>Rp.
                                                 {{number_format($total_jual - $total_beli-$total_potongan,0,',','.')}}</b></td>
                                     </tr>
@@ -257,6 +292,12 @@
     @endif
     @endif
 
+    @if(Request::has('jenis_bayar'))
+    @if(Request::get('jenis_bayar')!='Semua' && Request::get('jenis_bayar')!='')
+    Jenis Bayar <b>{{Request::get('jenis_bayar')}}</b>
+    @endif
+    @endif
+
     @else
     Laporan Detail Penjualan <b>{{date('Y-m-d')}} - {{date('Y-m-d')}}</b>
     @endif
@@ -268,6 +309,7 @@
                 <th style="padding:3px;">Tgl Buat</th>
                 <th style="padding:3px;">Pembuat</th>
                 <th style="padding:3px;">Customer</th>
+                <th style="padding:3px;">Jenis Bayar</th>
                 <th style="padding:3px;">Barang</th>
                 <th style="padding:3px;">Jumlah</th>
                 <th style="padding:3px;">Diskon</th>
@@ -284,6 +326,7 @@
                 <td style="padding:3px;">{{$row->tgl_buat}}</td>
                 <td style="padding:3px;">{{$row->name}}</td>
                 <td style="padding:3px;">@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
+                <td style="padding:3px;">{{$row->jenis_bayar ?? 'Cash'}}</td>
                 <td style="padding:3px;">{{$row->kode_barang}} - {{$row->nama}}</td>
                 <td style="padding:3px;">{{$row->jumlah}} Pcs</td>
                 <td style="padding:3px;">{{$row->diskon}} %</td>
@@ -295,19 +338,19 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="9" style="padding:3px;" align="right"><b>Total Beli</b></td>
+                <td colspan="10" style="padding:3px;" align="right"><b>Total Beli</b></td>
                 <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_beli,0,',','.')}}</b></td>
             </tr>
             <tr>
-                <td colspan="9" style="padding:3px;" align="right"><b>Total Jual</b></td>
+                <td colspan="10" style="padding:3px;" align="right"><b>Total Jual</b></td>
                 <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual,0,',','.')}}</b></td>
             </tr>
             <tr>
-                <td colspan="9" style="padding:3px;" align="right"><b>Total Potongan</b></td>
+                <td colspan="10" style="padding:3px;" align="right"><b>Total Potongan</b></td>
                 <td style="padding:3px;" align="right"><b>Rp. {{number_format($total_potongan,0,',','.')}}</b></td>
             </tr>
             <tr>
-                <td colspan="9" style="padding:3px;" align="right"><b>Total Laba</b></td>
+                <td colspan="10" style="padding:3px;" align="right"><b>Total Laba</b></td>
                 <td  style="padding:3px;" align="right"><b>Rp. {{number_format($total_jual - $total_beli-$total_potongan,0,',','.')}}</b></td>
             </tr>
         </tfoot>

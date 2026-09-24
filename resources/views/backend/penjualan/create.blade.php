@@ -207,6 +207,16 @@
                                     </table>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="jenis_bayar">Jenis Bayar</label>
+                                            <select class="form-control select2" name="jenis_bayar" id="jenis_bayar" required>
+                                                <option value="Cash">Cash</option>
+                                                <option value="QRIS">QRIS</option>
+                                                <option value="Transfer Bank">Transfer Bank</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Biaya Tambahan</label>
@@ -481,7 +491,11 @@ $datasetting = DB::table('settings')->orderby('id','desc')->limit(1)->get();
             <td align="right"><span id="print_total">-</span></td>
         </tr>
         <tr>
-            <td>Tunai</td>
+            <td>Jenis Bayar</td>
+            <td align="right"><span id="print_jenis_bayar">Cash</span></td>
+        </tr>
+        <tr>
+            <td>Dibayar</td>
             <td align="right"><span id="print_dibayar">-</span></td>
         </tr>
         <tr id="tr_print_kekurangan">

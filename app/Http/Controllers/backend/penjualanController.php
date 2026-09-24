@@ -54,6 +54,12 @@ class penjualanController extends Controller
             }
         }
 
+        if($request->has('jenis_bayar')){
+            if($request->jenis_bayar!='Semua Jenis Bayar'){
+                $data=$data->where('penjualan.jenis_bayar',$request->jenis_bayar);
+            }
+        }
+
         if($request->has('kode')){
             if($request->kode!=null){
                 $data=$data->where('penjualan.kode','like','%'.$request->kode.'%');
@@ -275,6 +281,7 @@ class penjualanController extends Controller
             'status_penjualan'=>'Draft',
             'created_at'=>date('Y-m-d H:i:s'),
             'created_by'=>Auth::user()->id,
+            'jenis_bayar'=>$request->jenis_bayar ?? 'Cash',
         ]);
 
         DB::table('penjualan_thumb_detail')->where('pembuat',Auth::user()->id)->delete();

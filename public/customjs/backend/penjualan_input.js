@@ -31,6 +31,7 @@ $(function () {
         minimumInputLength: 2,
         ajax: {
             url: '/laravelpos/backend/data-customer/detail',
+            // url: '/backend/data-customer/detail',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -53,6 +54,7 @@ $(function () {
         minimumInputLength: 2,
         ajax: {
             url: '/laravelpos/backend/data-barang/detail',
+            // url: '/backend/data-barang/detail',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -118,6 +120,7 @@ function tambahadetailbyqr(kodebarang) {
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/add-detail-penjualan-qr',
+        // url: '/backend/data-penjualan/add-detail-penjualan-qr',
         data: {
             '_token': $('input[name=_token]').val(),
             'kode': $('#kode').val(),
@@ -188,6 +191,7 @@ function gantiharga() {
     $.ajax({
         type: 'GET',
         url: '/laravelpos/backend/data-penjualan/ganti-harga/' + kode + '/' + status,
+        // url: '/backend/data-penjualan/ganti-harga/' + kode + '/' + status,
         success: function (data) {
         }, complete: function () {
             getdata();
@@ -202,6 +206,7 @@ $('#simpancustomer').on('click', function (e) {
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/customer',
+        // url: '/backend/customer',
         data: {
             '_token': $('input[name=_token]').val(),
             'nama': $('#nama_customer').val(),
@@ -233,6 +238,7 @@ $('#barang').on('select2:select', function (e) {
     $('#panelsatu').loading('toggle');
     var kode = $(this).val();
     var url = '/laravelpos/backend/data-barang/cari-detail/' + kode;
+    // var url = '/backend/data-barang/cari-detail/' + kode;
     $.ajax({
         type: 'GET',
         url: url,
@@ -361,6 +367,7 @@ function simpan_detail(){
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/add-detail-penjualan',
+        // url: '/backend/data-penjualan/add-detail-penjualan',
         data: {
             '_token': $('input[name=_token]').val(),
             'kode': $('#kode').val(),
@@ -408,6 +415,7 @@ function getdata() {
     $.ajax({
         type: 'GET',
         url: '/laravelpos/backend/data-penjualan/list-detail-penjualan/' + kode,
+        // url: '/backend/data-penjualan/list-detail-penjualan/' + kode,
         success: function (data) {
             var rows = '';
             var rows_print = '';
@@ -531,6 +539,7 @@ function hapusdetail(id) {
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/hapus-detail-penjualan',
+        // url: '/backend/data-penjualan/hapus-detail-penjualan',
         data: {
             '_token': $('input[name=_token]').val(),
             'kode': id,
@@ -555,6 +564,7 @@ function editdetail(id) {
     $('#edit_hitung_stok_barang').val('');
     $('#edit_id').val('');
     var url = '/laravelpos/backend/data-penjualan/detail-penjualan/' + id;
+    // var url = '/backend/data-penjualan/detail-penjualan/' + id;
     $.ajax({
         type: 'GET',
         url: url,
@@ -601,6 +611,7 @@ function edit_detail() {
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/edit-detail-penjualan',
+        // url: '/backend/data-penjualan/edit-detail-penjualan',
         data: {
             '_token': $('input[name=_token]').val(),
             'edit_id': $('#edit_id').val(),
@@ -680,12 +691,14 @@ $('#simpanbtn').on('click', function (e) {
                         $.ajax({
                             type: 'POST',
                             url: '/laravelpos/backend/penjualan',
+                            // url: '/backend/penjualan',
                             data: {
                                 '_token': $('input[name=_token]').val(),
                                 'kode': $('#kode').val(),
                                 'customer': $('#customer').val(),
                                 'tgl_order': $('#tgl_order').val(),
                                 'subtotal': $('#subtotal').val(),
+                                'jenis_bayar': $('#jenis_bayar').val(),
                                 'biaya_tambahan': $('#biaya_tambahan').val(),
                                 'dibayar': $('#dibayar').val(),
                                 'potongan': $('#potongan').val(),
@@ -694,6 +707,7 @@ $('#simpanbtn').on('click', function (e) {
                                 'keterangan': $('#keterangan').val(),
                             },
                             success: function () {
+                                $('#print_jenis_bayar').html($('#jenis_bayar').val());
                                 if($('#keterangan').val()!=''){
                                     $('#print_keterangan').html('Ket. : '+$('#keterangan').val());
                                     $('#print_keterangan').show();
@@ -705,7 +719,7 @@ $('#simpanbtn').on('click', function (e) {
                                 newWin.document.open();
                                 newWin.document.write('<html><body onload="window.print();window.close()">' + divToPrint.innerHTML + '</body></html>');
                                 newWin.document.close();
-                                window.location.replace('/laravelpos/backend/penjualan');
+                                window.location.replace('/backend/penjualan');
                             }
                         });
                     }

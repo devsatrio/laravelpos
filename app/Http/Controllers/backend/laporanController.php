@@ -33,105 +33,29 @@ class laporanController extends Controller
             $tgldua = date('Y-m-d');
         }
 
-        if ($request->has('customer') ||$request->has('pembuat') ||$request->has('status')) {
-            if($request->customer!='Semua'){
-                if($request->pembuat!='Semua'){
-                    if($request->status!='Semua'){
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->where('penjualan.status','=',$request->status)
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }
-                }else{
-                    if($request->status!='Semua'){
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->where('penjualan.status','=',$request->status)
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }
-                }
-            }else{
-                if($request->pembuat!='Semua'){
-                    if($request->status!='Semua'){
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->where('penjualan.status','=',$request->status)
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }
-                }else{
-                    if($request->status!='Semua'){
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.status','=',$request->status)
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan')
-                        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->orderby('penjualan.id','desc')
-                        ->get();
-                    }
-                }
-            }
-        }else{
-            $data = DB::table('penjualan')
+        $query = DB::table('penjualan')
             ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
             ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
             ->leftjoin('users','users.id','=','penjualan.pembuat')
-            ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-            ->orderby('penjualan.id','desc')
-            ->get();
+            ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua]);
+
+        if ($request->has('customer') && $request->customer != 'Semua') {
+            $query->where('penjualan.customer', '=', $request->customer);
         }
+
+        if ($request->has('pembuat') && $request->pembuat != 'Semua') {
+            $query->where('penjualan.pembuat', '=', $request->pembuat);
+        }
+
+        if ($request->has('status') && $request->status != 'Semua') {
+            $query->where('penjualan.status', '=', $request->status);
+        }
+
+        if ($request->has('jenis_bayar') && $request->jenis_bayar != 'Semua' && $request->jenis_bayar != '') {
+            $query->where('penjualan.jenis_bayar', '=', $request->jenis_bayar);
+        }
+
+        $data = $query->orderby('penjualan.id','desc')->get();
 
         $datacustomer = DB::table('master_customer')->orderby('id','desc')->get();
         $dataadmin = DB::table('users')->orderby('id','desc')->get();
@@ -329,123 +253,32 @@ class laporanController extends Controller
             $tglsatu = date('Y-m-d');
             $tgldua = date('Y-m-d');
         }
-        if ($request->has('customer') ||$request->has('pembuat') ||$request->has('barang')) {
-            if($request->customer!='Semua'){
-                if($request->pembuat!='Semua'){
-                    if($request->barang!='Semua'){
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->where('penjualan_detail.kode_barang','=',$request->barang)
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }
-                }else{
-                    if($request->barang!='Semua'){
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->where('penjualan_detail.kode_barang','=',$request->barang)
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.customer','=',$request->customer)
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }
-                }
-            }else{
-                if($request->pembuat!='Semua'){
-                    if($request->barang!='Semua'){
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->where('penjualan_detail.kode_barang','=',$request->barang)
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan.pembuat','=',$request->pembuat)
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }
-                }else{
-                    if($request->barang!='Semua'){
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->where('penjualan_detail.kode_barang','=',$request->barang)
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }else{
-                        $data = DB::table('penjualan_detail')
-                        ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
-                        ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
-                        ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
-                        ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
-                        ->leftjoin('users','users.id','=','penjualan.pembuat')
-                        ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-                        ->orderby('penjualan_detail.kode_penjualan','desc')
-                        ->get();
-                    }
-                }
-            }
-        }else{
-            $data = DB::table('penjualan_detail')
-            ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,barang.nama,barang.harga_beli'))
+
+        $query = DB::table('penjualan_detail')
+            ->select(DB::raw('penjualan_detail.*,users.name,penjualan.tgl_buat,penjualan.customer,master_customer.nama as namacustomer,penjualan.pembuat,penjualan.jenis_bayar,barang.nama,barang.harga_beli'))
             ->leftjoin('penjualan','penjualan.kode','=','penjualan_detail.kode_penjualan')
             ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
             ->leftjoin('barang','barang.kode','=','penjualan_detail.kode_barang')
             ->leftjoin('users','users.id','=','penjualan.pembuat')
-            ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua])
-            ->orderby('penjualan_detail.kode_penjualan','desc')
-            ->get();
+            ->whereBetween('penjualan.tgl_buat',[$tglsatu,$tgldua]);
+
+        if ($request->has('customer') && $request->customer != 'Semua') {
+            $query->where('penjualan.customer', '=', $request->customer);
         }
+
+        if ($request->has('pembuat') && $request->pembuat != 'Semua') {
+            $query->where('penjualan.pembuat', '=', $request->pembuat);
+        }
+
+        if ($request->has('barang') && $request->barang != 'Semua') {
+            $query->where('penjualan_detail.kode_barang', '=', $request->barang);
+        }
+
+        if ($request->has('jenis_bayar') && $request->jenis_bayar != 'Semua' && $request->jenis_bayar != '') {
+            $query->where('penjualan.jenis_bayar', '=', $request->jenis_bayar);
+        }
+
+        $data = $query->orderby('penjualan_detail.kode_penjualan','desc')->get();
 
         $data_kode=[];
         foreach ($data as $row) {

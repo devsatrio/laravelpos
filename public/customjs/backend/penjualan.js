@@ -53,6 +53,7 @@ function hapusdata(kode) {
             $.ajax({
                 type: 'DELETE',
                 url: '/laravelpos/backend/penjualan/' + kode,
+                // url: '/backend/penjualan/' + kode,
                 data: {
                     '_token': $('input[name=_token]').val(),
                 },
@@ -117,6 +118,7 @@ function cetakulang(kode) {
     $.ajax({
         type: 'GET',
         url: '/laravelpos/backend/data-penjualan/cetak-ulang/' + kode,
+        // url: '/backend/data-penjualan/cetak-ulang/' + kode,
         success: function (data) {
             var rows_print = '';
             var subtotal = 0;
@@ -138,6 +140,7 @@ function cetakulang(kode) {
                     $('#print_keterangan').show();
                 }
                 $('#print_total').html('Rp. ' + rupiah(parseInt(value.total)));
+                $('#print_jenis_bayar').html(value.jenis_bayar ? value.jenis_bayar : 'Cash');
                 if(value.biaya_tambahan==0){
                     $('#tr_print_biaya_tambahan').hide();
                 }else{
@@ -206,6 +209,7 @@ function bayarhutang(kode) {
     $('#edit_dibayar').val('');
     $('#bayarhutangmodal').modal('show');
     var url = '/laravelpos/backend/data-penjualan/cetak-ulang/' + kode;
+    // var url = '/backend/data-penjualan/cetak-ulang/' + kode;
     $.ajax({
         type: 'GET',
         url: url,
@@ -279,7 +283,8 @@ $('#btnsimpanhutang').on('click', function (e) {
         $('#panelsatu').loading('toggle');
         $.ajax({
             type: 'POST',
-            url: '/laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
+            url: 'laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
+            // url: '/backend/data-penjualan/bayar-hutang-penjualan',
             data: {
                 '_token': $('input[name=_token]').val(),
                 'kode': $('#edit_kode').val(),

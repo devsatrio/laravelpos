@@ -58,7 +58,7 @@
                                                         @if (Request::has('kode')) value="{{ Request::get('kode') }}" @endif>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 mt-0">
+                                            <div class="col-md-2 mt-0">
                                                 <label>Pembuat</label>
                                                 <div class="input-group">
                                                     <select name="pembuat" id="pembuat" class="form-control" style="width: 100%;">
@@ -70,7 +70,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 mt-0">
+                                            <div class="col-md-2 mt-0">
                                                 <label>Customer</label>
                                                 <div class="input-group">
                                                     <select name="customer" id="customer" class="form-control" style="width: 100%;">
@@ -86,6 +86,17 @@
                                                 <label>Tgl. Buat</label>
                                                 <div class="input-group">
                                                     <input type="text" class="form-control" name="tgl_buat" id="tgl_buat" @if (Request::has('tgl_buat')) value="{{ Request::get('tgl_buat') }}" @endif readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mt-0">
+                                                <label>Jenis Bayar</label>
+                                                <div class="input-group">
+                                                    <select name="jenis_bayar" id="filter_jenis_bayar" class="form-control">
+                                                        <option value="Semua Jenis Bayar" @if(Request::has('jenis_bayar')) @if(Request::get('jenis_bayar')=='Semua Jenis Bayar') selected @endif @endif>Semua Jenis</option>
+                                                        <option value="Cash" @if(Request::has('jenis_bayar')) @if(Request::get('jenis_bayar')=='Cash') selected @endif @endif>Cash</option>
+                                                        <option value="QRIS" @if(Request::has('jenis_bayar')) @if(Request::get('jenis_bayar')=='QRIS') selected @endif @endif>QRIS</option>
+                                                        <option value="Transfer Bank" @if(Request::has('jenis_bayar')) @if(Request::get('jenis_bayar')=='Transfer Bank') selected @endif @endif>Transfer Bank</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-2 mt-0">
@@ -134,6 +145,7 @@
                                                 <th>Customer</th>
                                                 <th>Pembuat</th>
                                                 <th>Tgl Buat</th>
+                                                <th>Jenis Bayar</th>
                                                 <th>Total</th>
                                                 <th>Terbayar</th>
                                                 <th>Kekurangan</th>
@@ -153,6 +165,7 @@
                                                     <td>{{$row->namacustomer}}</td>
                                                     <td>{{$row->name}}</td>
                                                     <td>{{$row->tgl_buat}}</td>
+                                                    <td><span class="badge badge-info">{{ $row->jenis_bayar ?? 'Cash' }}</span></td>
                                                     <td class="text-right">{{ 'Rp ' . number_format(round($row->total), 0, ',', '.') }}</td>
                                                     <td class="text-right">{{ 'Rp ' . number_format(round($row->terbayar), 0, ',', '.') }}</td>
                                                     <td class="text-right">{{ 'Rp ' . number_format(round($row->kekurangan), 0, ',', '.') }}</td>
@@ -182,6 +195,7 @@
                                                 <th>Customer</th>
                                                 <th>Pembuat</th>
                                                 <th>Tgl Buat</th>
+                                                <th>Jenis Bayar</th>
                                                 <th>Total</th>
                                                 <th>Terbayar</th>
                                                 <th>Kekurangan</th>
@@ -328,7 +342,11 @@
                     <td align="right"><span id="print_total">-</span></td>
                 </tr>
                 <tr>
-                    <td>Tunai</td>
+                    <td>Jenis Bayar</td>
+                    <td align="right"><span id="print_jenis_bayar">Cash</span></td>
+                </tr>
+                <tr>
+                    <td>Dibayar</td>
                     <td align="right"><span id="print_dibayar">-</span></td>
                 </tr>
                 <tr id="tr_print_kekurangan">

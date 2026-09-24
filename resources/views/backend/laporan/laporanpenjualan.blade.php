@@ -48,7 +48,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-2 mt-3">
                                     <div class="input-group">
                                         <select name="pembuat" class="form-control">
                                             <option @if(Request::has('pembuat')) @if(Request::get('pembuat')=='Semua' )
@@ -58,6 +58,23 @@
                                                 @if(Request::get('pembuat')==$row_dataadmin->id) selected @endif @endif
                                                 value="{{$row_dataadmin->id}}">{{$row_dataadmin->name}}</option>
                                             @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <div class="input-group">
+                                        <select name="jenis_bayar" class="form-control">
+                                            <option @if(Request::has('jenis_bayar')) @if(Request::get('jenis_bayar')=='Semua' )
+                                                selected @endif @endif value="Semua" selected>Semua Jenis Bayar</option>
+                                            <option @if(Request::has('jenis_bayar'))
+                                                @if(Request::get('jenis_bayar')=='Cash' ) selected @endif @endif
+                                                value="Cash">Cash</option>
+                                            <option @if(Request::has('jenis_bayar'))
+                                                @if(Request::get('jenis_bayar')=='QRIS' ) selected @endif @endif
+                                                value="QRIS">QRIS</option>
+                                            <option @if(Request::has('jenis_bayar'))
+                                                @if(Request::get('jenis_bayar')=='Transfer Bank' ) selected @endif @endif
+                                                value="Transfer Bank">Transfer Bank</option>
                                         </select>
                                     </div>
                                 </div>
@@ -75,7 +92,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="tanggal" id="tanggal"
                                             @if(Request::has('tanggal')) value="{{Request::get('tanggal')}}" @else
@@ -119,6 +136,12 @@
                         @endif
                         @endif
 
+                        @if(Request::has('jenis_bayar'))
+                        @if(Request::get('jenis_bayar')!='Semua' && Request::get('jenis_bayar')!='')
+                        Jenis Bayar <b>{{Request::get('jenis_bayar')}}</b>
+                        @endif
+                        @endif
+
                         @if(Request::has('status'))
                         @if(Request::get('status')!='Semua')
                         Status <b>{{Request::get('status')}}</b>
@@ -136,6 +159,7 @@
                                         <th>Kode</th>
                                         <th>Customer</th>
                                         <th>Pembuat</th>
+                                        <th>Jenis Bayar</th>
                                         <th>Tgl Buat</th>
                                         <th class="text-right">Total</th>
                                         <th class="text-right">Terbayar</th>
@@ -153,6 +177,17 @@
                                         <td>{{$row->kode}}</td>
                                         <td>@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
                                         <td>{{$row->name}}</td>
+                                        <td>
+                                            @if($row->jenis_bayar == 'Cash')
+                                                <span class="badge badge-success">Cash</span>
+                                            @elseif($row->jenis_bayar == 'QRIS')
+                                                <span class="badge badge-info">QRIS</span>
+                                            @elseif($row->jenis_bayar == 'Transfer Bank')
+                                                <span class="badge badge-primary">Transfer Bank</span>
+                                            @else
+                                                <span class="badge badge-secondary">{{$row->jenis_bayar ?? 'Cash'}}</span>
+                                            @endif
+                                        </td>
                                         <td>{{$row->tgl_buat}}</td>
                                         <td class="text-right">Rp. {{number_format($row->total,0,',','.')}}</td>
                                         <td class="text-right">Rp. {{number_format($row->terbayar,0,',','.')}}</td>
@@ -171,6 +206,7 @@
                                         <th>Kode</th>
                                         <th>Customer</th>
                                         <th>Pembuat</th>
+                                        <th>Jenis Bayar</th>
                                         <th>Tgl Buat</th>
                                         <th>Total</th>
                                         <th>Terbayar</th>
@@ -213,6 +249,12 @@
     @endif
     @endif
 
+    @if(Request::has('jenis_bayar'))
+    @if(Request::get('jenis_bayar')!='Semua' && Request::get('jenis_bayar')!='')
+    Jenis Bayar <b>{{Request::get('jenis_bayar')}}</b>
+    @endif
+    @endif
+
     @if(Request::has('status'))
     @if(Request::get('status')!='Semua')
     Status <b>{{Request::get('status')}}</b>
@@ -229,6 +271,7 @@
                 <th style="padding:3px;">Kode</th>
                 <th style="padding:3px;">Customer</th>
                 <th style="padding:3px;">Pembuat</th>
+                <th style="padding:3px;">Jenis Bayar</th>
                 <th style="padding:3px;">Tgl Buat</th>
                 <th style="padding:3px;" align="right">Total</th>
                 <th style="padding:3px;" align="right">Terbayar</th>
@@ -245,6 +288,7 @@
                 <td style="padding:3px;">{{$row->kode}}</td>
                 <td style="padding:3px;">@if($row->namacustomer=='') - @else {{$row->namacustomer}} @endif</td>
                 <td style="padding:3px;">{{$row->name}}</td>
+                <td style="padding:3px;">{{$row->jenis_bayar ?? 'Cash'}}</td>
                 <td style="padding:3px;">{{$row->tgl_buat}}</td>
                 <td style="padding:3px;" align="right">Rp. {{number_format($row->total,0,',','.')}}</td>
                 <td style="padding:3px;" align="right">Rp. {{number_format($row->terbayar,0,',','.')}}</td>

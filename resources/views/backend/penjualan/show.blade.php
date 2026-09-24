@@ -87,6 +87,12 @@
                                             </table>
                                         </div>
                                         <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1">Jenis Bayar</label>
+                                                    <p><span class="badge badge-info">{{ $row_detail->jenis_bayar ?? 'Cash' }}</span></p>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="exampleInputEmail1">Biaya Tambahan</label>
