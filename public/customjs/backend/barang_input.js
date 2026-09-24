@@ -21,6 +21,14 @@ if (harga_grosir) {
 $(function () {
     $('#kategori').select2();
 
+    // Disable Enter key pada inputan barcode agar saat scan tidak langsung men-submit form
+    $(document).on('keydown keypress', 'input[name="barcode[]"]', function(e) {
+        if (e.key === 'Enter' || e.keyCode === 13 || e.which === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
     $('#btn-add-barcode').on('click', function() {
         var row = `
         <div class="input-group mb-2 barcode-row">
