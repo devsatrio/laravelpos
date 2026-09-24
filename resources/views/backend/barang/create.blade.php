@@ -43,13 +43,7 @@
                                         <input type="text" class="form-control" name="nama" required autofocus>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Kode QR</label>
-                                        <input type="text" class="form-control" name="kode_qr" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1">Kategori</label>
                                         <select name="kategori" id="kategori" class="form-control">
@@ -57,6 +51,27 @@
                                             <option value="{{$row_kategori->id}}">{{$row_kategori->nama}}</option>
                                             @endforeach
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="d-flex justify-content-between align-items-center">
+                                            <span><strong>Barcode Barang</strong> <small class="text-muted">(Bisa input lebih dari satu barcode untuk barang ini)</small></span>
+                                            <button type="button" class="btn btn-sm btn-success" id="btn-add-barcode">
+                                                <i class="fas fa-plus"></i> Tambah Barcode
+                                            </button>
+                                        </label>
+                                        <div id="barcode-container">
+                                            <div class="input-group mb-2 barcode-row">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                                </div>
+                                                <input type="text" class="form-control" name="barcode[]" placeholder="Scan atau ketik kode barcode">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn btn-danger btn-remove-barcode"><i class="fas fa-trash"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">

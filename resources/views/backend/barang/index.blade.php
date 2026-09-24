@@ -248,7 +248,7 @@
                             <ol>
                                 <li>Download template excel dengan mengklik tombol <b>Download Template</b> dibawah.
                                 </li>
-                                <li><b>kode_qr</b> dapat dikosongi atau diisi sesuai kode yang ada di barcode barang.
+                                <li><b>barcode / kode_qr</b> dapat dikosongi atau diisi sesuai kode barcode barang (jika ada lebih dari 1 barcode, pisahkan dengan koma).
                                 </li>
                                 <li><b>nama</b> harus diisi dengan format string atau text.</li>
                                 <li><b>kategori</b> harus diisi dengan id kategori barang, data id kategori barang dapat

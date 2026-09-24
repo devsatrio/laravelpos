@@ -19,9 +19,8 @@ class BarangImport implements ToModel, WithHeadingRow,WithValidation
     public function model(array $row)
     {
         $kode = $this->carikode();
-        return new BarangModel([
+        $barang = BarangModel::create([
             'kode' => $kode,
-            'kode_qr'=>$row['kode_qr'],
             'nama'=>$row['nama'],
             'kategori'=>$row['kategori'],
             'harga_beli'=>$row['harga_beli'],
@@ -33,6 +32,22 @@ class BarangImport implements ToModel, WithHeadingRow,WithValidation
             'keterangan'=>$row['keterangan'],
             'hitung_stok'=>$row['hitung_stok'],
         ]);
+
+        $barcodeValue = isset($row['barcode']) ? $row['barcode'] : (isset($row['kode_qr']) ? $row['kode_qr'] : null);
+        if ($barcodeValue && $barcodeValue != '-') {
+            $barcodes = explode(',', $barcodeValue);
+            foreach ($barcodes as $bc) {
+                $bc = trim($bc);
+                if (!empty($bc)) {
+                    DB::table('barang_barcode')->insert([
+                        'id_barang' => $barang->id,
+                        'kode_barcode' => $bc,
+                    ]);
+                }
+            }
+        }
+
+        return $barang;
     }
 
     //=================================================================

@@ -70,15 +70,22 @@ biaya_tambahan.addEventListener("keyup", function (e) {
     carikekurangan();
 });
 
-cari_barang_qr.addEventListener("keyup", function (e) {
-    var textnya =this.value;
-    if(textnya.length >= 8){
-        tambahadetailbyqr(this.value);
+var is_scanning = false;
+cari_barang_qr.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
+        e.preventDefault();
+        var textnya = this.value.trim();
+        if (textnya !== '' && !is_scanning) {
+            this.value = '';
+            tambahadetailbyqr(textnya);
+        }
     }
 });
 
 //========================================================================================
 function tambahadetailbyqr(kodebarang) {
+    if (is_scanning) return;
+    is_scanning = true;
     //$('#panelsatu').loading('toggle');
     $.ajax({
         type: 'POST',
@@ -93,6 +100,7 @@ function tambahadetailbyqr(kodebarang) {
                 getdata();
             }
         }, complete: function () {
+            is_scanning = false;
             $('#harga_barang').val('');
             $('#jumlah_barang').val('');
             $('#total_harga_barang').val('');

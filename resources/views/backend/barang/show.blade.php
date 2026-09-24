@@ -33,8 +33,18 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Kode Barcode</label>
-                                    <p>{{$row->kode_qr}}</p>
+                                    <label for="exampleInputEmail1">Daftar Barcode</label>
+                                    <p>
+                                        @if(isset($barcodes) && count($barcodes) > 0)
+                                            @foreach($barcodes as $bc)
+                                                <span class="badge badge-info mr-1 mb-1 p-2" style="font-size: 13px;"><i class="fas fa-barcode"></i> {{$bc->kode_barcode}}</span>
+                                            @endforeach
+                                        @elseif($row->kode_qr != '')
+                                            <span class="badge badge-info p-2" style="font-size: 13px;"><i class="fas fa-barcode"></i> {{$row->kode_qr}}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -115,35 +125,52 @@
                     <div class="card-header">
                         <h3 class="card-title">BarCode Barang</h3>
                     </div>
-                    @if($row->kode_qr!='')
-                    <div class="card-body text-center">
+                    @php
+                        $listBarcode = [];
+                        if(isset($barcodes) && count($barcodes) > 0) {
+                            foreach($barcodes as $b) {
+                                $listBarcode[] = $b->kode_barcode;
+                            }
+                        } elseif(!empty($row->kode_qr)) {
+                            $listBarcode[] = $row->kode_qr;
+                        }
+                    @endphp
+                    @if(count($listBarcode) > 0)
+                    <div class="card-body text-center" style="max-height: 500px; overflow-y: auto;">
                         @php
-                        $redColor = [255, 0, 0];
                         $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
-                        echo '<img class="img-thumbnail"
-                            src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode_qr, $generator::TYPE_CODE_128,3,45)) . '">';
                         @endphp
-                        <p>{{$row->kode_qr}}</p>
+                        @foreach($listBarcode as $bcCode)
+                        <div class="mb-3 p-2 border rounded">
+                            <img class="img-thumbnail"
+                                src="data:image/png;base64,{{ base64_encode($generator->getBarcode($bcCode, $generator::TYPE_CODE_128, 2, 40)) }}">
+                            <p class="font-weight-bold mb-0 mt-1">{{$bcCode}}</p>
+                        </div>
+                        @endforeach
                     </div>
                     <div class="card-footer">
-                        <button type="button" onclick="cetakbarcode()" class="btn btn-info">Cetak</button>
+                        <button type="button" onclick="cetakbarcode()" class="btn btn-info btn-block">Cetak Semua Barcode</button>
+                    </div>
+                    @else
+                    <div class="card-body text-center text-muted">
+                        <p>Belum ada barcode untuk barang ini.</p>
                     </div>
                     @endif
                 </div>
             </div>
-                    @if($row->kode_qr!='')
+            @if(count($listBarcode) > 0)
             <div id="print_div" style="display:none;">
-                <div style="border-style: solid;padding-top:15px;padding-right:8px;padding-left:8px;width:300px;"
-                    align="center">
-                    @php
-                    $redColor = [255, 0, 0];
-                    $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
-                    echo '<img
-                        src="data:image/png;base64,' . base64_encode($generator->getBarcode($row->kode_qr, $generator::TYPE_CODE_128)) . '">';
-                    @endphp
+                @php
+                $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+                @endphp
+                @foreach($listBarcode as $bcCode)
+                <div style="border-style: solid;padding:15px;width:300px;margin-bottom:15px;display:inline-block;" align="center">
+                    <img src="data:image/png;base64,{{ base64_encode($generator->getBarcode($bcCode, $generator::TYPE_CODE_128)) }}">
                     <br>
-                    <span>{{$row->kode_qr}}</span>
+                    <span style="font-size:14px;font-weight:bold;">{{$row->nama}}</span><br>
+                    <span>{{$bcCode}}</span>
                 </div>
+                @endforeach
             </div>
             @endif
             @endforeach

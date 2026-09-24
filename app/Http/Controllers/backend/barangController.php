@@ -45,8 +45,17 @@ class barangController extends Controller
 
         if($request->has('nama')){
             if($request->nama!=null){
-                $data=$data->where('barang.nama','like','%'.$request->nama.'%')
-                ->orwhere('barang.kode','like','%'.$request->nama.'%');
+                $cari = $request->nama;
+                $data=$data->where(function($query) use ($cari){
+                    $query->where('barang.nama','like','%'.$cari.'%')
+                    ->orwhere('barang.kode','like','%'.$cari.'%')
+                    ->orWhereExists(function ($sub) use ($cari) {
+                        $sub->select(DB::raw(1))
+                            ->from('barang_barcode')
+                            ->whereColumn('barang_barcode.id_barang', 'barang.id')
+                            ->where('barang_barcode.kode_barcode', 'like', '%'.$cari.'%');
+                    });
+                });
             }
         }
 
@@ -85,8 +94,16 @@ class barangController extends Controller
             $cari = $request->q;
             
             $data = DB::table('barang')
-            ->where('kode','like','%'.$cari.'%')
-            ->orwhere('nama','like','%'.$cari.'%')
+            ->where(function($query) use ($cari){
+                $query->where('barang.kode','like','%'.$cari.'%')
+                ->orwhere('barang.nama','like','%'.$cari.'%')
+                ->orWhereExists(function ($sub) use ($cari) {
+                    $sub->select(DB::raw(1))
+                        ->from('barang_barcode')
+                        ->whereColumn('barang_barcode.id_barang', 'barang.id')
+                        ->where('barang_barcode.kode_barcode', 'like', '%'.$cari.'%');
+                });
+            })
             ->get();
             
             return response()->json($data);
@@ -100,8 +117,17 @@ class barangController extends Controller
             $cari = $request->q;
             
             $data = DB::table('barang')
-            ->where([['kode','like','%'.$cari.'%'],['hitung_stok','=','y']])
-            ->orwhere([['nama','like','%'.$cari.'%'],['hitung_stok','=','y']])
+            ->where('hitung_stok','=','y')
+            ->where(function($query) use ($cari){
+                $query->where('barang.kode','like','%'.$cari.'%')
+                ->orwhere('barang.nama','like','%'.$cari.'%')
+                ->orWhereExists(function ($sub) use ($cari) {
+                    $sub->select(DB::raw(1))
+                        ->from('barang_barcode')
+                        ->whereColumn('barang_barcode.id_barang', 'barang.id')
+                        ->where('barang_barcode.kode_barcode', 'like', '%'.$cari.'%');
+                });
+            })
             ->get();
             
             return response()->json($data);
@@ -152,10 +178,9 @@ class barangController extends Controller
     public function store(Request $request)
     {
         $kode = $this->carikode();
-        DB::table('barang')
-        ->insert([
+        $barang_id = DB::table('barang')
+        ->insertGetId([
             'kode'=>$kode,
-            'kode_qr'=>$request->kode_qr,
             'nama'=>$request->nama,
             'kategori'=>$request->kategori,
             'harga_beli'=>str_replace('.','',$request->harga_beli),
@@ -167,6 +192,24 @@ class barangController extends Controller
             'stok'=>0,
             'keterangan'=>$request->keterangan,
         ]);
+
+        if ($request->has('barcode')) {
+            $barcodes = is_array($request->barcode) ? $request->barcode : [$request->barcode];
+            $insertBarcodes = [];
+            foreach ($barcodes as $bc) {
+                $bc = trim($bc);
+                if (!empty($bc) && !in_array($bc, array_column($insertBarcodes, 'kode_barcode'))) {
+                    $insertBarcodes[] = [
+                        'id_barang' => $barang_id,
+                        'kode_barcode' => $bc,
+                    ];
+                }
+            }
+            if (!empty($insertBarcodes)) {
+                DB::table('barang_barcode')->insert($insertBarcodes);
+            }
+        }
+
         return redirect('/backend/barang')->with('status','Sukses menyimpan data');
     }
 
@@ -191,7 +234,8 @@ class barangController extends Controller
         $data=DB::table('barang')->select(DB::raw('barang.*,kategori_barang.nama as namakategori'))
         ->leftjoin('kategori_barang','kategori_barang.id','=','barang.kategori')
         ->where('barang.id',$id)->get();
-        return view('backend.barang.show',compact('kategori','data'));
+        $barcodes = DB::table('barang_barcode')->where('id_barang', $id)->get();
+        return view('backend.barang.show',compact('kategori','data','barcodes'));
     }
 
     //=================================================================
@@ -199,13 +243,21 @@ class barangController extends Controller
     {
         $kategori=DB::table('kategori_barang')->orderby('id','desc')->get();
         $data=DB::table('barang')->where('id',$id)->get();
-        return view('backend.barang.edit',compact('kategori','data'));
+        $barcodes=DB::table('barang_barcode')->where('id_barang',$id)->get();
+        return view('backend.barang.edit',compact('kategori','data','barcodes'));
     }
 
     //=================================================================
     public function cetakbarcodebarang()
     {
-        $barang=DB::table('barang')->where('kode_qr','!=','')->orderby('id','desc')->get();
+        $barang = DB::table('barang')
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('barang_barcode')
+                    ->whereColumn('barang_barcode.id_barang', 'barang.id');
+            })
+            ->orderby('id', 'desc')
+            ->get();
         return view('backend.barang.cetakbarcode',compact('barang'));
     }
 
@@ -215,7 +267,6 @@ class barangController extends Controller
         DB::table('barang')
         ->where('id',$id)
         ->update([
-            'kode_qr'=>$request->kode_qr,
             'nama'=>$request->nama,
             'kategori'=>$request->kategori,
             'harga_beli'=>str_replace('.','',$request->harga_beli),
@@ -226,7 +277,26 @@ class barangController extends Controller
             'diskon_customer'=>$request->diskon_grosir,
             'keterangan'=>$request->keterangan,
         ]);
-        return redirect('/backend/barang')->with('status','Sukses memeperbarui data');
+
+        DB::table('barang_barcode')->where('id_barang', $id)->delete();
+        if ($request->has('barcode')) {
+            $barcodes = is_array($request->barcode) ? $request->barcode : [$request->barcode];
+            $insertBarcodes = [];
+            foreach ($barcodes as $bc) {
+                $bc = trim($bc);
+                if (!empty($bc) && !in_array($bc, array_column($insertBarcodes, 'kode_barcode'))) {
+                    $insertBarcodes[] = [
+                        'id_barang' => $id,
+                        'kode_barcode' => $bc,
+                    ];
+                }
+            }
+            if (!empty($insertBarcodes)) {
+                DB::table('barang_barcode')->insert($insertBarcodes);
+            }
+        }
+
+        return redirect('/backend/barang')->with('status','Sukses memperbarui data');
     }
 
     //=================================================================
@@ -236,6 +306,7 @@ class barangController extends Controller
         foreach ($data as $row) {
             DB::table('log_stok_barang')->where('kode_barang',$row->kode)->delete();
         }
+        DB::table('barang_barcode')->where('id_barang', $id)->delete();
         DB::table('barang')->where('id',$id)->delete();
     }
 }

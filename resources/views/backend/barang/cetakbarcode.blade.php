@@ -61,19 +61,25 @@
                             $databarang = DB::table('barang')->where('kode',$kode_barang)->get();
                             @endphp
                             @foreach($databarang as $row_databarang)
-
-                            <div class="col-md-3 text-center">
+                            @php
+                            $barcodes = DB::table('barang_barcode')->where('id_barang', $row_databarang->id)->get();
+                            if(count($barcodes) == 0 && !empty($row_databarang->kode_qr)) {
+                                $barcodes = [(object)['kode_barcode' => $row_databarang->kode_qr]];
+                            }
+                            @endphp
+                            @foreach($barcodes as $bc)
+                            <div class="col-md-3 text-center mb-3">
                                 @php
-                                $redColor = [255, 0, 0];
                                 $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
                                 echo '<img class="img-thumbnail"
-                                    src="data:image/png;base64,' . base64_encode($generator->getBarcode($row_databarang->kode_qr, $generator::TYPE_CODE_128)) . '">';
+                                    src="data:image/png;base64,' . base64_encode($generator->getBarcode($bc->kode_barcode, $generator::TYPE_CODE_128)) . '">';
                                 @endphp
                                 <br>
-                                <p>{{$row_databarang->nama}} - {{$row_databarang->kode_qr}}</p>
-                                @endforeach
-
+                                <p class="font-weight-bold mb-0 mt-1">{{$row_databarang->nama}}</p>
+                                <p class="text-muted">{{$bc->kode_barcode}}</p>
                             </div>
+                            @endforeach
+                            @endforeach
                             @endforeach
                         </div>
                     </div>
@@ -101,31 +107,38 @@ $nomorrow=1;
             $databarang = DB::table('barang')->where('kode',$kode_barang)->get();
             @endphp
             @foreach($databarang as $row_databarang)
-
+            @php
+            $barcodes = DB::table('barang_barcode')->where('id_barang', $row_databarang->id)->get();
+            if(count($barcodes) == 0 && !empty($row_databarang->kode_qr)) {
+                $barcodes = [(object)['kode_barcode' => $row_databarang->kode_qr]];
+            }
+            @endphp
+            @foreach($barcodes as $bc)
             <td width="25%" align="center" style="padding-top:20px;">
                 @php
-                $redColor = [255, 0, 0];
                 $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
                 echo '<img class="img-thumbnail"
-                    src="data:image/png;base64,' . base64_encode($generator->getBarcode($row_databarang->kode_qr, $generator::TYPE_CODE_128)) . '">';
+                    src="data:image/png;base64,' . base64_encode($generator->getBarcode($bc->kode_barcode, $generator::TYPE_CODE_128)) . '">';
                 @endphp
                 <br>
                 <span>Rp. {{number_format($row_databarang->harga_jual,0,',','.')}}</span><br>
-                <span>{{$row_databarang->nama}}</span>
+                <span>{{$row_databarang->nama}}</span><br>
+                <small>{{$bc->kode_barcode}}</small>
 
-                @endforeach
-
-                @if($nomorrow==4)
+                @if($nomorrow % 4 == 0)
             </td>
         </tr>
         <tr>
-            @else
+                @else
             </td>
-            @endif
-            @php
-            $nomorrow++;
-            @endphp
+                @endif
+                @php
+                $nomorrow++;
+                @endphp
             @endforeach
+            @endforeach
+            @endforeach
+        </tr>
     </table>
 </div>
 
@@ -135,22 +148,30 @@ $nomorrow=1;
     $databarang = DB::table('barang')->where('kode',$kode_barang)->get();
     @endphp
     @foreach($databarang as $row_databarang)
+    @php
+    $barcodes = DB::table('barang_barcode')->where('id_barang', $row_databarang->id)->get();
+    if(count($barcodes) == 0 && !empty($row_databarang->kode_qr)) {
+        $barcodes = [(object)['kode_barcode' => $row_databarang->kode_qr]];
+    }
+    @endphp
+    @foreach($barcodes as $bc)
     <table width="100%" border="0">
         <tr>
             <td width="25%" align="center" style="padding-top:10px;">
                 @php
-                $redColor = [255, 0, 0];
                 $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
                 echo '<img class="img-thumbnail"
-                    src="data:image/png;base64,' . base64_encode($generator->getBarcode($row_databarang->kode_qr, $generator::TYPE_CODE_128)) . '">';
+                    src="data:image/png;base64,' . base64_encode($generator->getBarcode($bc->kode_barcode, $generator::TYPE_CODE_128)) . '">';
                 @endphp
                 <br>
                 <span>Rp. {{number_format($row_databarang->harga_jual,0,',','.')}}</span><br>
-                <span>{{$row_databarang->nama}}</span>
+                <span>{{$row_databarang->nama}}</span><br>
+                <small>{{$bc->kode_barcode}}</small>
             </td>
         </tr>
     </table>
     <div style='break-after:always'></div>
+    @endforeach
     @endforeach
     @endforeach
 </div>

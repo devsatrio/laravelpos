@@ -102,21 +102,28 @@ biaya_tambahan.addEventListener("keyup", function (e) {
     carikekurangan();
 });
 
-cari_barang_qr.addEventListener("keyup", function (e) {
-    var textnya = this.value;
-    if (textnya.length >= 8) {
-        tambahadetailbyqr(this.value);
+var is_scanning = false;
+cari_barang_qr.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
+        e.preventDefault();
+        var textnya = this.value.trim();
+        if (textnya !== '' && !is_scanning) {
+            this.value = '';
+            tambahadetailbyqr(textnya);
+        }
     }
 });
 
 //========================================================================================
 function tambahadetailbyqr(kodebarang) {
+    if (is_scanning) return;
+    is_scanning = true;
     if ($('#customer').val() == '' || $('#customer').val() == null) {
         var status = 'umum';
     } else {
         var status = 'customer';
     }
-    //$('#panelsatu').loading('toggle');
+    $('#panelsatu').loading('toggle');
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/add-detail-penjualan-qr',
@@ -128,29 +135,34 @@ function tambahadetailbyqr(kodebarang) {
             'status': status,
         },
         success: function (data) {
-            if (data.status == false) {
+            if (data.statusbarang == false) {
+                swalWithBootstrapButtons.fire({
+                    title: 'Oops',
+                    text: 'Barang tidak ditemukan',
+                    confirmButtonText: 'OK'
+                });
+            } else if (data.status == false) {
                 swalWithBootstrapButtons.fire({
                     title: 'Oops',
                     text: 'Stok tidak mencukupi',
                     confirmButtonText: 'OK'
                 });
-            }else{
-                if(data.statusbarang!=false){
-                    getdata();
-                }
+            } else {
+                getdata();
             }
         }, complete: function () {
+            is_scanning = false;
             $('#harga_barang').val('');
             $('#jumlah_barang').val('');
             $('#total_harga_barang').val('');
-            $('#dikon_barang').val('');
+            $('#diskon_barang').val('');
             $('#stok_barang').val('');
             $('#barang').val(null).trigger('change');
             $('#cari_barang_qr').val('');
             if($('#is_use_scan').val()=='y'){
                 $('#cari_barang_qr').trigger("focus");
             }
-            //$('#panelsatu').loading('stop');
+            $('#panelsatu').loading('stop');
         }
     });
 }
@@ -337,28 +349,41 @@ function hitungsubtotalbarang() {
 
 //===============================================================================================
 $('#tambahbtn').on('click', function (e) {
+    e.preventDefault();
     if ($('#barang').val() == "" || $('#harga_barang').val() == "" || $('#jumlah_barang').val() == "" || $('#total_harga_barang').val() == "") {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
             text: 'Data tidak boleh kosong',
             confirmButtonText: 'OK'
         });
-    } else {
-        if($('#hitung_stok_barang').val()=='y'){
-            if (parseInt($('#jumlah_barang').val()) > parseInt($('#stok_barang').val())) {
-                swalWithBootstrapButtons.fire({
-                    title: 'Oops',
-                    text: 'Stok tidak mencukupi',
-                    confirmButtonText: 'OK'
-                });
-                $('#jumlah_barang').val('');
-            } else {
-                simpan_detail()
-            }
-        }else{
-            simpan_detail()
+        return;
+    }
+
+    var jumlah = parseInt($('#jumlah_barang').val());
+    var stok = parseInt($('#stok_barang').val());
+
+    if (isNaN(jumlah) || jumlah <= 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Jumlah barang harus lebih dari 0',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    if ($('#hitung_stok_barang').val() == 'y') {
+        if (jumlah > stok) {
+            swalWithBootstrapButtons.fire({
+                title: 'Oops',
+                text: 'Stok tidak mencukupi',
+                confirmButtonText: 'OK'
+            });
+            $('#jumlah_barang').val('');
+            return;
         }
     }
+
+    simpan_detail();
 });
 
 //===============================================================================================
@@ -380,29 +405,29 @@ function simpan_detail(){
             'hitung_stok': $('#hitung_stok_barang').val(),
         },
         success: function (data) {
-            if (data == false) {
+            if (data == false || data == "false") {
                 swalWithBootstrapButtons.fire({
                     title: 'Oops',
                     text: 'Stok tidak mencukupi',
                     confirmButtonText: 'OK'
                 });
+                $('#jumlah_barang').val('');
+            } else {
+                getdata();
+                $('#harga_barang').val('');
+                $('#jumlah_barang').val('');
+                $('#diskon_barang').val('');
+                $('#stok_barang').val('');
+                $('#total_harga_barang').val('');
+                $('#barang').val(null).trigger('change');
+                $('#cari_barang_qr').val('');
+                $('#hitung_stok_barang').val('');
+                if($('#is_use_scan').val()=='y'){
+                    $('#cari_barang_qr').trigger("focus");
+                }
             }
         }, complete: function () {
-            getdata();
-            $('#harga_barang').val('');
-            $('#jumlah_barang').val('');
-            $('#diskon_barang').val('');
-            $('#stok_barang').val('');
-            $('#total_harga_barang').val('');
-            $('#barang').val(null).trigger('change');
-            $('#cari_barang_qr').val('');
-            if($('#is_use_scan').val()=='y'){
-                $('#cari_barang_qr').trigger("focus");
-            }else{
-                // $('#barang').select2('open');
-            }
             $('#panelsatu').loading('stop');
-            $('#hitung_stok_barang').val('');
         }
     });
 }
@@ -588,25 +613,34 @@ function editdetail(id) {
 
 //===============================================================================================
 $('#editjumlahdetail').on('click', function (e) {
-    if($('#edit_hitung_stok_barang').val()=='y'){
-        if (parseInt($('#edit_jumlah_barang').val()) > parseInt($('#edit_stok_barang').val())) {
+    var editJumlah = parseInt($('#edit_jumlah_barang').val());
+    var editStok = parseInt($('#edit_stok_barang').val());
+
+    if (isNaN(editJumlah) || editJumlah <= 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Jumlah barang harus lebih dari 0',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    if ($('#edit_hitung_stok_barang').val() == 'y') {
+        if (editJumlah > editStok) {
             swalWithBootstrapButtons.fire({
                 title: 'Oops',
                 text: 'Stok tidak mencukupi',
                 confirmButtonText: 'OK'
             });
-            $('#jumlah_barang').val('');
-        } else {
-            edit_detail();
+            $('#edit_jumlah_barang').val('');
+            return;
         }
-    }else{
-        edit_detail();
     }
+    edit_detail();
 });
 
 //===============================================================================================
 function edit_detail() {
-    $('#editdetailmodal').modal('hide');
     $('#paneldua').loading('toggle');
     $.ajax({
         type: 'POST',
@@ -619,18 +653,28 @@ function edit_detail() {
             'edit_jumlah_barang': $('#edit_jumlah_barang').val(),
             'edit_harga_barang': $('#edit_harga_barang').val(),
         },
-        success: function () {
-        }, complete: function () {
-            getdata();
-            $('#edit_kode_barang').val('');
-            $('#edit_nama_barang').val('');
-            $('#edit_hitung_stok_barang').val('');
-            $('#edit_jumlah_barang').val('');
-            $('#edit_id').val('');
-            $('#cari_barang_qr').val('');
-            if($('#is_use_scan').val()=='y'){
-                $('#cari_barang_qr').trigger("focus");
+        success: function (data) {
+            if (data == false || data == "false") {
+                swalWithBootstrapButtons.fire({
+                    title: 'Oops',
+                    text: 'Stok tidak mencukupi',
+                    confirmButtonText: 'OK'
+                });
+                $('#edit_jumlah_barang').val('');
+            } else {
+                $('#editdetailmodal').modal('hide');
+                getdata();
+                $('#edit_kode_barang').val('');
+                $('#edit_nama_barang').val('');
+                $('#edit_hitung_stok_barang').val('');
+                $('#edit_jumlah_barang').val('');
+                $('#edit_id').val('');
+                $('#cari_barang_qr').val('');
+                if($('#is_use_scan').val()=='y'){
+                    $('#cari_barang_qr').trigger("focus");
+                }
             }
+        }, complete: function () {
             $('#paneldua').loading('stop');
         }
     });

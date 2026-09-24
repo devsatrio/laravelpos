@@ -68,7 +68,16 @@ class pembelianController extends Controller
     {
         $statusbarang=true;
         $harga_barang=0;
-        $caribarang = DB::table('barang')->where('kode_qr',$request->kode_barang)->get();
+        $kode_barang = $request->kode_barang;
+        $caribarang = DB::table('barang')
+            ->whereExists(function ($query) use ($kode_barang) {
+                $query->select(DB::raw(1))
+                    ->from('barang_barcode')
+                    ->whereColumn('barang_barcode.id_barang', 'barang.id')
+                    ->where('barang_barcode.kode_barcode', $kode_barang);
+            })
+            ->orWhere('barang.kode', $kode_barang)
+            ->get();
         if(count($caribarang)>0){
             foreach ($caribarang as $row_caribarang) {
                 $kode_brg=$row_caribarang->kode;
