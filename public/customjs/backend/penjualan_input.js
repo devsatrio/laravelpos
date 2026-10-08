@@ -763,7 +763,7 @@ $('#simpanbtn').on('click', function (e) {
                                 newWin.document.open();
                                 newWin.document.write('<html><body onload="window.print();window.close()">' + divToPrint.innerHTML + '</body></html>');
                                 newWin.document.close();
-                                window.location.replace('/backend/penjualan');
+                                window.location.replace('/laravelpos/backend/penjualan');
                             }
                         });
                     }

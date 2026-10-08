@@ -283,7 +283,7 @@ $('#btnsimpanhutang').on('click', function (e) {
         $('#panelsatu').loading('toggle');
         $.ajax({
             type: 'POST',
-            url: 'laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
+            url: '/laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
             // url: '/backend/data-penjualan/bayar-hutang-penjualan',
             data: {
                 '_token': $('input[name=_token]').val(),
