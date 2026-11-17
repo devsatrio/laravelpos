@@ -18,6 +18,8 @@ var total = document.getElementById("total");
 //========================================================================================
 $(function () {
     getdata();
+    $('#print_customer').html('Umum');
+
     $('#tgl_order').daterangepicker({
         singleDatePicker: true,
         locale: {
@@ -31,7 +33,6 @@ $(function () {
         minimumInputLength: 2,
         ajax: {
             url: '/laravelpos/backend/data-customer/detail',
-            // url: '/backend/data-customer/detail',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -54,7 +55,6 @@ $(function () {
         minimumInputLength: 2,
         ajax: {
             url: '/laravelpos/backend/data-barang/detail',
-            // url: '/backend/data-barang/detail',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -84,11 +84,24 @@ harga_barang.addEventListener("keyup", function (e) {
 });
 
 jumlah_barang.addEventListener("keyup", function (e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
     hitungsubtotalbarang();
+});
+
+jumlah_barang.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
+        e.preventDefault();
+        $('#tambahbtn').trigger('click');
+    }
 });
 
 potongan.addEventListener("keyup", function (e) {
     potongan.value = formatRupiah(this.value);
+    carikekurangan();
+});
+
+potongan.addEventListener("blur", function (e) {
+    if (this.value.trim() === '') this.value = '0';
     carikekurangan();
 });
 
@@ -97,37 +110,50 @@ dibayar.addEventListener("keyup", function (e) {
     carikekurangan();
 });
 
+dibayar.addEventListener("blur", function (e) {
+    if (this.value.trim() === '') this.value = '0';
+    carikekurangan();
+});
+
 biaya_tambahan.addEventListener("keyup", function (e) {
     biaya_tambahan.value = formatRupiah(this.value);
     carikekurangan();
 });
 
-var is_scanning = false;
+biaya_tambahan.addEventListener("blur", function (e) {
+    if (this.value.trim() === '') this.value = '0';
+    carikekurangan();
+});
+
+var scanQueue = [];
+var is_processing_queue = false;
+
 cari_barang_qr.addEventListener("keydown", function (e) {
     if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
         e.preventDefault();
         var textnya = this.value.trim();
-        if (textnya !== '' && !is_scanning) {
+        if (textnya !== '') {
             this.value = '';
-            tambahadetailbyqr(textnya);
+            scanQueue.push(textnya);
+            processScanQueue();
         }
     }
 });
 
 //========================================================================================
-function tambahadetailbyqr(kodebarang) {
-    if (is_scanning) return;
-    is_scanning = true;
-    if ($('#customer').val() == '' || $('#customer').val() == null) {
-        var status = 'umum';
-    } else {
-        var status = 'customer';
+function processScanQueue() {
+    if (is_processing_queue || scanQueue.length === 0) {
+        return;
     }
+    is_processing_queue = true;
+    var kodebarang = scanQueue.shift();
+
+    var status = ($('#customer').val() == '' || $('#customer').val() == null) ? 'umum' : 'customer';
+
     $('#panelsatu').loading('toggle');
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/add-detail-penjualan-qr',
-        // url: '/backend/data-penjualan/add-detail-penjualan-qr',
         data: {
             '_token': $('input[name=_token]').val(),
             'kode': $('#kode').val(),
@@ -138,7 +164,7 @@ function tambahadetailbyqr(kodebarang) {
             if (data.statusbarang == false) {
                 swalWithBootstrapButtons.fire({
                     title: 'Oops',
-                    text: 'Barang tidak ditemukan',
+                    text: 'Barang tidak ditemukan (' + kodebarang + ')',
                     confirmButtonText: 'OK'
                 });
             } else if (data.status == false) {
@@ -147,22 +173,25 @@ function tambahadetailbyqr(kodebarang) {
                     text: 'Stok tidak mencukupi',
                     confirmButtonText: 'OK'
                 });
-            } else {
-                getdata();
             }
         }, complete: function () {
-            is_scanning = false;
-            $('#harga_barang').val('');
-            $('#jumlah_barang').val('');
-            $('#total_harga_barang').val('');
-            $('#diskon_barang').val('');
-            $('#stok_barang').val('');
-            $('#barang').val(null).trigger('change');
-            $('#cari_barang_qr').val('');
-            if($('#is_use_scan').val()=='y'){
-                $('#cari_barang_qr').trigger("focus");
-            }
-            $('#panelsatu').loading('stop');
+            getdata(function () {
+                $('#harga_barang').val('');
+                $('#jumlah_barang').val('');
+                $('#total_harga_barang').val('');
+                $('#diskon_barang').val('');
+                $('#stok_barang').val('');
+                $('#barang').val(null).trigger('change');
+                $('#cari_barang_qr').val('');
+                $('#panelsatu').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+                is_processing_queue = false;
+                if (scanQueue.length > 0) {
+                    processScanQueue();
+                }
+            });
         }
     });
 }
@@ -179,7 +208,7 @@ function addcustomer() {
 //========================================================================================
 function clearcustomer() {
     $('#customer').val(null).trigger('change');
-    $('#print_customer').html('');
+    $('#print_customer').html('Umum');
     gantiharga();
 }
 
@@ -192,33 +221,38 @@ $('#customer').on('select2:select', function (e) {
 
 //========================================================================================
 function gantiharga() {
-    if ($('#customer').val() == '' || $('#customer').val() == null) {
-        var status = 'umum';
-    } else {
-        var status = 'customer';
-    }
+    var status = ($('#customer').val() == '' || $('#customer').val() == null) ? 'umum' : 'customer';
     $('#paneldua').loading('toggle');
     var kode = $('#kode').val();
     $('#tubuhnya').html('');
     $.ajax({
         type: 'GET',
         url: '/laravelpos/backend/data-penjualan/ganti-harga/' + kode + '/' + status,
-        // url: '/backend/data-penjualan/ganti-harga/' + kode + '/' + status,
         success: function (data) {
         }, complete: function () {
-            getdata();
-            $('#paneldua').loading('stop');
+            getdata(function () {
+                $('#paneldua').loading('stop');
+            });
         }
     });
 }
 
 //========================================================================================
 $('#simpancustomer').on('click', function (e) {
+    var namaCust = $('#nama_customer').val().trim();
+    if (namaCust === '') {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Nama customer tidak boleh kosong',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
     $('#paneldua').loading('toggle');
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/customer',
-        // url: '/backend/customer',
         data: {
             '_token': $('input[name=_token]').val(),
             'nama': $('#nama_customer').val(),
@@ -227,11 +261,16 @@ $('#simpancustomer').on('click', function (e) {
             'keterangan': $('#keterangan_customer').val(),
         },
         success: function () {
+            swalWithBootstrapButtons.fire(
+                'Sukses!',
+                'Data customer berhasil ditambahkan. Silakan cari customer pada kolom pencarian.',
+                'success'
+            );
         },
         error: function () {
             swalWithBootstrapButtons.fire(
                 'Oops!',
-                'Data gagal dihapus',
+                'Data customer gagal disimpan',
                 'error'
             );
         }, complete: function () {
@@ -250,23 +289,23 @@ $('#barang').on('select2:select', function (e) {
     $('#panelsatu').loading('toggle');
     var kode = $(this).val();
     var url = '/laravelpos/backend/data-barang/cari-detail/' + kode;
-    // var url = '/backend/data-barang/cari-detail/' + kode;
     $.ajax({
         type: 'GET',
         url: url,
         success: function (data) {
             $.each(data, function (key, value) {
+                var harga, diskon;
                 if ($('#customer').val() == '' || $('#customer').val() == null) {
-                    var harga = value.harga_jual;
-                    var diskon = value.diskon;
+                    harga = value.harga_jual;
+                    diskon = value.diskon;
                 } else {
-                    var harga = value.harga_jual_customer;
-                    var diskon = value.diskon_customer;
+                    harga = value.harga_jual_customer;
+                    diskon = value.diskon_customer;
                 }
                 $('#harga_barang').val(rupiah(harga));
                 $('#jumlah_barang').val('1');
-                $('#diskon_barang').val(diskon);
-                $('#stok_barang').val(value.stok);
+                $('#diskon_barang').val(diskon || 0);
+                $('#stok_barang').val(value.stok || 0);
                 $('#hitung_stok_barang').val(value.hitung_stok);
             });
         }, complete: function () {
@@ -279,48 +318,54 @@ $('#barang').on('select2:select', function (e) {
 
 //===============================================================================================
 function rupiah(bilangan) {
+    if (bilangan === undefined || bilangan === null || bilangan === '' || isNaN(bilangan)) {
+        return '0';
+    }
+    bilangan = parseInt(bilangan) || 0;
     if (bilangan < 0) {
         bilangan = bilangan * -1;
         var number_string = bilangan.toString(),
             sisa = number_string.length % 3,
-            rupiah = number_string.substr(0, sisa),
+            rupiahStr = number_string.substr(0, sisa),
             ribuan = number_string.substr(sisa).match(/\d{3}/gi);
 
         if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+            var separator = sisa ? '.' : '';
+            rupiahStr += separator + ribuan.join('.');
         }
-        return '-' + rupiah;
+        return '-' + rupiahStr;
     } else {
         var number_string = bilangan.toString(),
             sisa = number_string.length % 3,
-            rupiah = number_string.substr(0, sisa),
+            rupiahStr = number_string.substr(0, sisa),
             ribuan = number_string.substr(sisa).match(/\d{3}/gi);
 
         if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+            var separator = sisa ? '.' : '';
+            rupiahStr += separator + ribuan.join('.');
         }
-        return rupiah;
+        return rupiahStr || '0';
     }
-
 }
 
 //===============================================================================================
 function formatRupiah(angka) {
-    var number_string = angka.replace(/[^,\d]/g, "").toString(),
+    if (angka === undefined || angka === null || angka === '') {
+        return '0';
+    }
+    var number_string = angka.toString().replace(/[^,\d]/g, ""),
         split = number_string.split(","),
         sisa = split[0].length % 3,
-        rupiah = split[0].substr(0, sisa),
+        rupiahStr = split[0].substr(0, sisa),
         ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
     if (ribuan) {
-        separator = sisa ? "." : "";
-        rupiah += separator + ribuan.join(".");
+        var separator = sisa ? "." : "";
+        rupiahStr += separator + ribuan.join(".");
     }
 
-    rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
-    return rupiah;
+    rupiahStr = split[1] != undefined ? rupiahStr + "," + split[1] : rupiahStr;
+    return rupiahStr || '0';
 }
 
 //===============================================================================================
@@ -332,18 +377,18 @@ function hitungsubtotalbarang() {
 
     if ($('#harga_barang').val() != '') {
         let str = document.getElementById("harga_barang").value;
-        harga_barang = str.replace(/\./g, '');
+        harga_barang = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#jumlah_barang').val() != '') {
-        jumlah = document.getElementById("jumlah_barang").value;
+        jumlah = parseInt(document.getElementById("jumlah_barang").value.replace(/\./g, '')) || 0;
     }
 
     if ($('#diskon_barang').val() != '') {
-        diskon = document.getElementById("diskon_barang").value;
+        diskon = parseFloat(document.getElementById("diskon_barang").value) || 0;
     }
-    jumlahdiskon = harga_barang * diskon / 100;
-    subtotal = parseInt(harga_barang - jumlahdiskon) * parseInt(jumlah);
+    var jumlahdiskon = Math.round(harga_barang * diskon / 100);
+    subtotal = (harga_barang - jumlahdiskon) * jumlah;
     $('#total_harga_barang').val(rupiah(subtotal));
 }
 
@@ -389,10 +434,10 @@ $('#tambahbtn').on('click', function (e) {
 //===============================================================================================
 function simpan_detail(){
     $('#panelsatu').loading('toggle');
+    $('#tambahbtn').prop('disabled', true);
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/add-detail-penjualan',
-        // url: '/backend/data-penjualan/add-detail-penjualan',
         data: {
             '_token': $('input[name=_token]').val(),
             'kode': $('#kode').val(),
@@ -413,7 +458,6 @@ function simpan_detail(){
                 });
                 $('#jumlah_barang').val('');
             } else {
-                getdata();
                 $('#harga_barang').val('');
                 $('#jumlah_barang').val('');
                 $('#diskon_barang').val('');
@@ -422,36 +466,37 @@ function simpan_detail(){
                 $('#barang').val(null).trigger('change');
                 $('#cari_barang_qr').val('');
                 $('#hitung_stok_barang').val('');
-                if($('#is_use_scan').val()=='y'){
-                    $('#cari_barang_qr').trigger("focus");
-                }
             }
         }, complete: function () {
-            $('#panelsatu').loading('stop');
+            getdata(function () {
+                $('#tambahbtn').prop('disabled', false);
+                $('#panelsatu').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+            });
         }
     });
 }
 
 //===============================================================================================
-function getdata() {
+function getdata(callback) {
     $('#paneldua').loading('toggle');
     var kode = $('#kode').val();
     $('#tubuhnya').html('');
     $.ajax({
         type: 'GET',
         url: '/laravelpos/backend/data-penjualan/list-detail-penjualan/' + kode,
-        // url: '/backend/data-penjualan/list-detail-penjualan/' + kode,
         success: function (data) {
             var rows = '';
             var rows_print = '';
-            var no = 0;
             var subtotal = 0;
-            var total_diskon =0;
+            var total_diskon = 0;
             $.each(data, function (key, value) {
-                no += 1;
+                var nama = value.namabarang ? value.namabarang : '-';
                 rows = rows + '<tr>';
                 rows = rows + '<td class="text-center"><button type="button" onclick="editdetail(' + value.id + ')" class="btn btn-success btn-sm m-1"><i class="fas fa-edit"></i></button><button type="button" onclick="hapusdetail(' + value.id + ')" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></button></td>';
-                rows = rows + '<td>' + value.kode_barang + ' - ' + value.namabarang + '</td>';
+                rows = rows + '<td>' + value.kode_barang + ' - ' + nama + '</td>';
                 rows = rows + '<td class="text-center">' + value.diskon + ' %</td>';
                 rows = rows + '<td class="text-center">' + value.jumlah + ' Pcs</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.harga) + '</td>';
@@ -459,33 +504,33 @@ function getdata() {
                 rows = rows + '</tr>';
 
                 rows_print = rows_print + '<tr>';
-                rows_print = rows_print + '<td>' + value.namabarang + '</td>';
-                if( value.diskon==0){
+                rows_print = rows_print + '<td>' + nama + '</td>';
+                if (value.diskon == 0) {
                     rows_print = rows_print + '<td></td>';
-                }else{
+                } else {
                     rows_print = rows_print + '<td>' + value.diskon + ' %</td>';
                 }
                 rows_print = rows_print + '<td>' + value.jumlah + ' Pcs</td>';
                 rows_print = rows_print + '<td align="right"> Rp ' + rupiah(value.harga) + '</td>';
                 rows_print = rows_print + '<td align="right"> Rp ' + rupiah(value.total) + '</td>';
                 rows_print = rows_print + '</tr>';
-                subtotal += parseInt(value.total);
-                if ($('#customer').val() == '' || $('#customer').val() == null) {
-                    var harga = value.harga_jual;
-                } else {
-                    var harga = value.harga_jual_customer;
-                }
-                total_diskon +=value.diskon;
+                subtotal += parseInt(value.total) || 0;
+                total_diskon += parseFloat(value.diskon) || 0;
             });
             $('#tubuhnya').html(rows);
             $('#print_detail').html(rows_print);
             $('#subtotal').val(rupiah(subtotal));
-            if(total_diskon==0){
+            if (total_diskon == 0) {
                 $('.print_nota_diskon').hide();
+            } else {
+                $('.print_nota_diskon').show();
             }
         }, complete: function () {
             carikekurangan();
             $('#paneldua').loading('stop');
+            if (typeof callback === 'function') {
+                callback();
+            }
         }
     });
 }
@@ -500,61 +545,64 @@ function carikekurangan() {
 
     if ($('#subtotal').val() != '') {
         let str = document.getElementById("subtotal").value;
-        subtotal = str.replace(/\./g, '');
+        subtotal = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#dibayar').val() != '') {
         let str = document.getElementById("dibayar").value;
-        dibayar = str.replace(/\./g, '');
+        dibayar = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#potongan').val() != '') {
         let str = document.getElementById("potongan").value;
-        potongan = str.replace(/\./g, '');
+        potongan = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#biaya_tambahan').val() != '') {
         let str = document.getElementById("biaya_tambahan").value;
-        biaya_tambahan = str.replace(/\./g, '');
+        biaya_tambahan = parseInt(str.replace(/\./g, '')) || 0;
     }
 
-    $('#total').val(rupiah(parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)));
-    if(biaya_tambahan==0){
+    var totalNilai = subtotal + biaya_tambahan - potongan;
+    if (totalNilai < 0) totalNilai = 0;
+
+    $('#total').val(rupiah(totalNilai));
+    if (biaya_tambahan == 0) {
         $('#tr_print_biaya_tambahan').hide();
-    }else{
+    } else {
         $('#tr_print_biaya_tambahan').show();
     }
-    if(potongan==0){
+    if (potongan == 0) {
         $('#tr_print_potongan').hide();
-    }else{
+    } else {
         $('#tr_print_potongan').show();
     }
-    $('#print_biaya_tambahan').html('Rp. ' + rupiah(parseInt(biaya_tambahan)));
-    $('#print_potongan').html('Rp. ' + rupiah(parseInt(potongan)));
-    $('#print_dibayar').html('Rp. ' + rupiah(parseInt(dibayar)));
-    $('#print_total').html('Rp. ' + rupiah(parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)));
+    $('#print_biaya_tambahan').html('Rp. ' + rupiah(biaya_tambahan));
+    $('#print_potongan').html('Rp. ' + rupiah(potongan));
+    $('#print_dibayar').html('Rp. ' + rupiah(dibayar));
+    $('#print_total').html('Rp. ' + rupiah(totalNilai));
 
-    kekurangan = (parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)) - parseInt(dibayar);
-    var kembalian = parseInt(dibayar) - (parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan));
+    kekurangan = totalNilai - dibayar;
+    var kembalian = dibayar - totalNilai;
 
     if (kekurangan <= 0) {
-        $('#kekurangan').val(0);
+        $('#kekurangan').val('0');
         $('#print_kekurangan').html('Rp. 0');
         $('#tr_print_kekurangan').hide();
     } else {
         $('#tr_print_kekurangan').show();
         $('#kekurangan').val(rupiah(kekurangan));
-        $('#print_kekurangan').html('Rp. ' + rupiah(parseInt(kekurangan)));
+        $('#print_kekurangan').html('Rp. ' + rupiah(kekurangan));
     }
 
     if (kembalian <= 0) {
-        $('#kembalian').val(0);
+        $('#kembalian').val('0');
         $('#print_kembalian').html('Rp. 0');
         $('#tr_print_kembalian').hide();
     } else {
         $('#tr_print_kembalian').show();
         $('#kembalian').val(rupiah(kembalian));
-        $('#print_kembalian').html('Rp. ' + rupiah(parseInt(kembalian)));
+        $('#print_kembalian').html('Rp. ' + rupiah(kembalian));
     }
 }
 
@@ -564,18 +612,18 @@ function hapusdetail(id) {
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/hapus-detail-penjualan',
-        // url: '/backend/data-penjualan/hapus-detail-penjualan',
         data: {
             '_token': $('input[name=_token]').val(),
             'kode': id,
         },
         success: function () {
-            getdata();
         }, complete: function () {
-            if($('#is_use_scan').val()=='y'){
-                $('#cari_barang_qr').trigger("focus");
-            }
-            $('#paneldua').loading('stop');
+            getdata(function () {
+                $('#paneldua').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+            });
         }
     });
 }
@@ -589,7 +637,6 @@ function editdetail(id) {
     $('#edit_hitung_stok_barang').val('');
     $('#edit_id').val('');
     var url = '/laravelpos/backend/data-penjualan/detail-penjualan/' + id;
-    // var url = '/backend/data-penjualan/detail-penjualan/' + id;
     $.ajax({
         type: 'GET',
         url: url,
@@ -600,8 +647,8 @@ function editdetail(id) {
                 $('#edit_jumlah_barang').val(value.jumlah);
                 $('#edit_harga_barang').val(rupiah(value.harga));
                 $('#edit_id').val(value.id);
-                $('#edit_diskon_barang').val(value.diskon);
-                $('#edit_stok_barang').val(value.stok);
+                $('#edit_diskon_barang').val(value.diskon || 0);
+                $('#edit_stok_barang').val(value.stok || 0);
                 $('#edit_hitung_stok_barang').val(value.hitung_stok);
             });
             $('#editdetailmodal').modal('show');
@@ -610,6 +657,21 @@ function editdetail(id) {
         }
     });
 }
+
+$('#editdetailmodal').on('shown.bs.modal', function () {
+    $('#edit_jumlah_barang').trigger('focus').select();
+});
+
+$('#edit_jumlah_barang').on('keydown', function (e) {
+    if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
+        e.preventDefault();
+        $('#editjumlahdetail').trigger('click');
+    }
+});
+
+$('#edit_jumlah_barang').on('keyup', function (e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
 
 //===============================================================================================
 $('#editjumlahdetail').on('click', function (e) {
@@ -645,7 +707,6 @@ function edit_detail() {
     $.ajax({
         type: 'POST',
         url: '/laravelpos/backend/data-penjualan/edit-detail-penjualan',
-        // url: '/backend/data-penjualan/edit-detail-penjualan',
         data: {
             '_token': $('input[name=_token]').val(),
             'edit_id': $('#edit_id').val(),
@@ -663,19 +724,20 @@ function edit_detail() {
                 $('#edit_jumlah_barang').val('');
             } else {
                 $('#editdetailmodal').modal('hide');
-                getdata();
                 $('#edit_kode_barang').val('');
                 $('#edit_nama_barang').val('');
                 $('#edit_hitung_stok_barang').val('');
                 $('#edit_jumlah_barang').val('');
                 $('#edit_id').val('');
                 $('#cari_barang_qr').val('');
-                if($('#is_use_scan').val()=='y'){
-                    $('#cari_barang_qr').trigger("focus");
-                }
             }
         }, complete: function () {
-            $('#paneldua').loading('stop');
+            getdata(function () {
+                $('#paneldua').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+            });
         }
     });
 }
@@ -687,89 +749,157 @@ function dibayar_lunas() {
 }
 
 //===============================================================================================
+var is_saving_transaksi = false;
 $('#simpanbtn').on('click', function (e) {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: true
-    })
+    if (is_saving_transaksi) return;
+
+    // Pastikan nilai kosong pada biaya/potongan/dibayar diisi default '0'
+    if ($('#biaya_tambahan').val().trim() === '') $('#biaya_tambahan').val('0');
+    if ($('#potongan').val().trim() === '') $('#potongan').val('0');
+    if ($('#dibayar').val().trim() === '') $('#dibayar').val('0');
+
+    if ($('#kode').val() == "" || $('#tgl_order').val() == "") {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Kode transaksi atau tanggal order belum terisi',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    var subtotal = parseInt($('#subtotal').val().replace(/\./g, '')) || 0;
+    if (subtotal <= 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Keranjang penjualan masih kosong',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    var biaya_tambahan = parseInt($('#biaya_tambahan').val().replace(/\./g, '')) || 0;
+    var potongan = parseInt($('#potongan').val().replace(/\./g, '')) || 0;
+    var dibayar = parseInt($('#dibayar').val().replace(/\./g, '')) || 0;
+
+    if (potongan > (subtotal + biaya_tambahan)) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Potongan (diskon) tidak boleh melebihi subtotal + biaya tambahan',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    var totalNilai = subtotal + biaya_tambahan - potongan;
+    if (totalNilai < 0) totalNilai = 0;
+
+    var kekurangan = 0;
+    if ($('#kekurangan').val() != '') {
+        kekurangan = parseInt($('#kekurangan').val().replace(/\./g, '')) || 0;
+    }
+
+    var customerVal = $('#customer').val();
+    if ((!customerVal || customerVal === '') && kekurangan > 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Pelanggan umum (non customer) tidak dapat bertransaksi hutang/tempo. Pembayaran harus lunas.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
     swalWithBootstrapButtons.fire({
         title: 'Transaksi Selesai ?',
         text: "Yakin semua data telah benar ?",
         showCancelButton: true,
         confirmButtonText: 'Ya, Yakin!',
-        cancelButtonText: 'Tidak',
+        cancelButtonText: 'Batal',
         reverseButtons: true
     }).then((result) => {
         if (result.value) {
-            if ($('#kode').val() == "" || $('#tgl_order').val() == "" || $('#subtotal').val() == "" || $('#subtotal').val() == "0" || $('#dibayar').val() == "" || $('#potongan').val() == "" || $('#biaya_tambahan').val() == "") {
-                swalWithBootstrapButtons.fire({
-                    title: 'Oops',
-                    text: 'Data tidak boleh kosong',
-                    confirmButtonText: 'OK'
-                });
-            } else {
-                var kekurangan = 0;
-                if ($('#kekurangan').val() != '') {
-                    let str = document.getElementById("kekurangan").value;
-                    kekurangan = str.replace(/\./g, '');
-                }
-                if (parseInt(kekurangan) < 0) {
-                    swalWithBootstrapButtons.fire({
-                        title: 'Oops',
-                        text: 'Pembayaran melebihi kekurangan',
-                        confirmButtonText: 'OK'
-                    });
-                } else {
-                    if ($('#customer').val() == null && parseInt($('#kekurangan').val()) > 0) {
+            if (is_saving_transaksi) return;
+
+            // Kunci proses simpan agar tidak bisa diklik dua kali
+            is_saving_transaksi = true;
+            $('#simpanbtn').prop('disabled', true);
+            $('#panelsatu').loading('toggle');
+            $('#paneldua').loading('toggle');
+
+            $.ajax({
+                type: 'POST',
+                url: '/laravelpos/backend/penjualan',
+                data: {
+                    '_token': $('input[name=_token]').val(),
+                    'kode': $('#kode').val(),
+                    'customer': $('#customer').val(),
+                    'tgl_order': $('#tgl_order').val(),
+                    'subtotal': $('#subtotal').val(),
+                    'jenis_bayar': $('#jenis_bayar').val(),
+                    'biaya_tambahan': $('#biaya_tambahan').val(),
+                    'dibayar': $('#dibayar').val(),
+                    'potongan': $('#potongan').val(),
+                    'kekurangan': $('#kekurangan').val(),
+                    'kembalian': $('#kembalian').val(),
+                    'keterangan': $('#keterangan').val(),
+                },
+                success: function (res) {
+                    if (res && res.status === false) {
+                        is_saving_transaksi = false;
+                        $('#simpanbtn').prop('disabled', false);
+                        $('#panelsatu').loading('stop');
+                        $('#paneldua').loading('stop');
                         swalWithBootstrapButtons.fire({
-                            title: 'Oops',
-                            text: 'Tidak bisa hutang untuk non customer',
+                            title: 'Info',
+                            text: res.message || 'Transaksi gagal disimpan',
                             confirmButtonText: 'OK'
-                        });
-                    } else {
-                        $('#panelsatu').loading('toggle');
-                        $('#paneldua').loading('toggle');
-                        $.ajax({
-                            type: 'POST',
-                            url: '/laravelpos/backend/penjualan',
-                            // url: '/backend/penjualan',
-                            data: {
-                                '_token': $('input[name=_token]').val(),
-                                'kode': $('#kode').val(),
-                                'customer': $('#customer').val(),
-                                'tgl_order': $('#tgl_order').val(),
-                                'subtotal': $('#subtotal').val(),
-                                'jenis_bayar': $('#jenis_bayar').val(),
-                                'biaya_tambahan': $('#biaya_tambahan').val(),
-                                'dibayar': $('#dibayar').val(),
-                                'potongan': $('#potongan').val(),
-                                'kekurangan': $('#kekurangan').val(),
-                                'kembalian': $('#kembalian').val(),
-                                'keterangan': $('#keterangan').val(),
-                            },
-                            success: function () {
-                                $('#print_jenis_bayar').html($('#jenis_bayar').val());
-                                if($('#keterangan').val()!=''){
-                                    $('#print_keterangan').html('Ket. : '+$('#keterangan').val());
-                                    $('#print_keterangan').show();
-                                }else{
-                                    $('#print_keterangan').hide();
-                                }
-                                var divToPrint = document.getElementById('print_div');
-                                var newWin = window.open('', 'Print-Window');
-                                newWin.document.open();
-                                newWin.document.write('<html><body onload="window.print();window.close()">' + divToPrint.innerHTML + '</body></html>');
-                                newWin.document.close();
+                        }).then(() => {
+                            if (res.message && res.message.includes('sudah tersimpan')) {
                                 window.location.replace('/laravelpos/backend/penjualan');
                             }
                         });
+                        return;
                     }
+
+                    $('#print_jenis_bayar').html($('#jenis_bayar').val());
+                    if ($('#keterangan').val() != '') {
+                        $('#print_keterangan').html('Ket. : ' + $('#keterangan').val());
+                        $('#print_keterangan').show();
+                    } else {
+                        $('#print_keterangan').hide();
+                    }
+
+                    var divToPrint = document.getElementById('print_div');
+                    if (divToPrint) {
+                        try {
+                            var newWin = window.open('', 'Print-Window');
+                            if (newWin) {
+                                newWin.document.open();
+                                newWin.document.write('<html><head><title>Cetak Nota</title></head><body onload="window.print();window.close()">' + divToPrint.innerHTML + '</body></html>');
+                                newWin.document.close();
+                            }
+                        } catch (e) {
+                            console.error('Popup cetak diblokir', e);
+                        }
+                    }
+
+                    window.location.replace('/laravelpos/backend/penjualan');
+                },
+                error: function (xhr) {
+                    is_saving_transaksi = false;
+                    $('#simpanbtn').prop('disabled', false);
+                    $('#panelsatu').loading('stop');
+                    $('#paneldua').loading('stop');
+                    var errMsg = 'Terjadi kesalahan sistem saat menyimpan transaksi';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errMsg = xhr.responseJSON.message;
+                    }
+                    swalWithBootstrapButtons.fire({
+                        title: 'Oops',
+                        text: errMsg,
+                        confirmButtonText: 'OK'
+                    });
                 }
-            }
+            });
         }
     });
-
 });

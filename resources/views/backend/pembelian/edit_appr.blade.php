@@ -82,7 +82,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="3">Total</th>
+                                                <th colspan="3">Subtotal</th>
                                                 <th>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -197,6 +197,4 @@
 
 @push('customscripts')
 <script src="{{asset('customjs/backend/pembelian_edit_appr.js')}}"></script>
-<!-- <script src="{{asset('customjs/backend/
-    ')}}"></script> -->
 @endpush

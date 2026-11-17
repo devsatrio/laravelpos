@@ -49,7 +49,7 @@
                                 <h3 class="card-title">Cari Barang</h3>
                             </div>
                             <form method="POST" role="form" enctype="multipart/form-data"
-                                action="{{url('/peralatan')}}">
+                                action="{{url('/peralatan')}}" onsubmit="return false;">
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
@@ -157,7 +157,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Tgl. Order</label>
                                             <input type="text" class="form-control float-right" id="tgl_order"
-                                                name="tgl_order">
+                                                name="tgl_order" value="{{date('Y-m-d')}}">
                                         </div>
                                     </div>
                                     <div class="col-md-5">
@@ -199,7 +199,7 @@
                                                             <span class="input-group-text">Rp</span>
                                                         </div>
                                                         <input type="text" class="form-control text-right" id="subtotal"
-                                                            name="subtotal" required readonly>
+                                                            name="subtotal" value="0" required readonly>
                                                     </div>
                                                 </th>
                                             </tr>
@@ -279,7 +279,7 @@
                                                     <span class="input-group-text">Rp</span>
                                                 </div>
                                                 <input type="text" class="form-control text-right" name="kekurangan"
-                                                    id="kekurangan" readonly required>
+                                                    id="kekurangan" value="0" readonly required>
                                             </div>
                                         </div>
                                     </div>
@@ -291,7 +291,7 @@
                                                     <span class="input-group-text">Rp</span>
                                                 </div>
                                                 <input type="text" class="form-control text-right" name="kembalian"
-                                                    id="kembalian" readonly required>
+                                                    id="kembalian" value="0" readonly required>
                                             </div>
                                         </div>
                                     </div>

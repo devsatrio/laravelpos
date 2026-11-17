@@ -49,7 +49,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Cari Barang</h3>
                             </div>
-                            <form>
+                            <form onsubmit="return false;">
                                 <div class="card-body">
                                     <div class="row">
                                         <div @if($view_input_scan) class="col-md-12" @else class="col-md-12 d-none" @endif>
@@ -163,7 +163,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="4">Total</th>
+                                                <th colspan="4">Subtotal</th>
                                                 <th>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -320,6 +320,4 @@
 
 @push('customscripts')
 <script src="{{asset('customjs/backend/pembelian_edit.js')}}"></script>
-<!-- <script src="{{asset('customjs/backend/
-    ')}}"></script> -->
 @endpush

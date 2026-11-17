@@ -274,7 +274,10 @@
                                         <span class="input-group-text">Rp</span>
                                     </div>
                                     <input type="text" class="form-control text-right" name="edit_dibayar"
-                                        id="edit_dibayar" required>
+                                        id="edit_dibayar" placeholder="0" autocomplete="off" required>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-info" onclick="bayar_hutang_lunas()" title="Bayar Lunas">Lunas</button>
+                                    </div>
                                 </div>
 
                             </div>

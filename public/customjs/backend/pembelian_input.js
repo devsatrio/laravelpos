@@ -53,11 +53,24 @@ harga_barang.addEventListener("keyup", function (e) {
 });
 
 jumlah_barang.addEventListener("keyup", function (e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
     hitungsubtotalbarang();
+});
+
+jumlah_barang.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
+        e.preventDefault();
+        $('#tambahbtn').trigger('click');
+    }
 });
 
 potongan.addEventListener("keyup", function (e) {
     potongan.value = formatRupiah(this.value);
+    carikekurangan();
+});
+
+potongan.addEventListener("blur", function (e) {
+    if (this.value.trim() === '') this.value = '0';
     carikekurangan();
 });
 
@@ -66,27 +79,44 @@ dibayar.addEventListener("keyup", function (e) {
     carikekurangan();
 });
 
+dibayar.addEventListener("blur", function (e) {
+    if (this.value.trim() === '') this.value = '0';
+    carikekurangan();
+});
+
 biaya_tambahan.addEventListener("keyup", function (e) {
     biaya_tambahan.value = formatRupiah(this.value);
     carikekurangan();
 });
 
-var is_scanning = false;
+biaya_tambahan.addEventListener("blur", function (e) {
+    if (this.value.trim() === '') this.value = '0';
+    carikekurangan();
+});
+
+var scanQueue = [];
+var is_processing_queue = false;
+
 cari_barang_qr.addEventListener("keydown", function (e) {
     if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
         e.preventDefault();
         var textnya = this.value.trim();
-        if (textnya !== '' && !is_scanning) {
+        if (textnya !== '') {
             this.value = '';
-            tambahadetailbyqr(textnya);
+            scanQueue.push(textnya);
+            processScanQueue();
         }
     }
 });
 
 //========================================================================================
-function tambahadetailbyqr(kodebarang) {
-    if (is_scanning) return;
-    is_scanning = true;
+function processScanQueue() {
+    if (is_processing_queue || scanQueue.length === 0) {
+        return;
+    }
+    is_processing_queue = true;
+    var kodebarang = scanQueue.shift();
+
     $('#panelsatu').loading('toggle');
     $.ajax({
         type: 'POST',
@@ -97,18 +127,29 @@ function tambahadetailbyqr(kodebarang) {
             'kode_barang': kodebarang,
         },
         success: function (data) {
-            if(data!=false){
-                getdata();
+            if (data == false) {
+                swalWithBootstrapButtons.fire({
+                    title: 'Oops',
+                    text: 'Barang tidak ditemukan (' + kodebarang + ')',
+                    confirmButtonText: 'OK'
+                });
             }
         }, complete: function () {
-            is_scanning = false;
-            $('#harga_barang').val('');
-            $('#jumlah_barang').val('');
-            $('#total_harga_barang').val('');
-            $('#barang').val(null).trigger('change');
-            $('#cari_barang_qr').val('');
-            $('#cari_barang_qr').trigger("focus");
-            $('#panelsatu').loading('stop');
+            getdata(function () {
+                $('#harga_barang').val('');
+                $('#jumlah_barang').val('');
+                $('#total_harga_barang').val('');
+                $('#barang').val(null).trigger('change');
+                $('#cari_barang_qr').val('');
+                $('#panelsatu').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+                is_processing_queue = false;
+                if (scanQueue.length > 0) {
+                    processScanQueue();
+                }
+            });
         }
     });
 }
@@ -136,53 +177,58 @@ $('#barang').on('select2:select', function (e) {
 
 //===============================================================================================
 function rupiah(bilangan) {
+    if (bilangan === undefined || bilangan === null || bilangan === '' || isNaN(bilangan)) {
+        return '0';
+    }
+    bilangan = parseInt(bilangan) || 0;
     if (bilangan < 0) {
         bilangan = bilangan * -1;
         var number_string = bilangan.toString(),
             sisa = number_string.length % 3,
-            rupiah = number_string.substr(0, sisa),
+            rupiahStr = number_string.substr(0, sisa),
             ribuan = number_string.substr(sisa).match(/\d{3}/gi);
 
         if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+            var separator = sisa ? '.' : '';
+            rupiahStr += separator + ribuan.join('.');
         }
-        return '-' + rupiah;
+        return '-' + rupiahStr;
     } else {
         var number_string = bilangan.toString(),
             sisa = number_string.length % 3,
-            rupiah = number_string.substr(0, sisa),
+            rupiahStr = number_string.substr(0, sisa),
             ribuan = number_string.substr(sisa).match(/\d{3}/gi);
 
         if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+            var separator = sisa ? '.' : '';
+            rupiahStr += separator + ribuan.join('.');
         }
-        return rupiah;
+        return rupiahStr || '0';
     }
-
 }
 
 //===============================================================================================
 function formatRupiah(angka) {
-    var number_string = angka.replace(/[^,\d]/g, "").toString(),
+    if (angka === undefined || angka === null || angka === '') {
+        return '0';
+    }
+    var number_string = angka.toString().replace(/[^,\d]/g, ""),
         split = number_string.split(","),
         sisa = split[0].length % 3,
-        rupiah = split[0].substr(0, sisa),
+        rupiahStr = split[0].substr(0, sisa),
         ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
     if (ribuan) {
-        separator = sisa ? "." : "";
-        rupiah += separator + ribuan.join(".");
+        var separator = sisa ? "." : "";
+        rupiahStr += separator + ribuan.join(".");
     }
 
-    rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
-    return rupiah;
+    rupiahStr = split[1] != undefined ? rupiahStr + "," + split[1] : rupiahStr;
+    return rupiahStr || '0';
 }
 
-
 //===============================================================================================
-function getdata() {
+function getdata(callback) {
     $('#paneldua').loading('toggle');
     var kode = $('#kode').val();
     $('#tubuhnya').html('');
@@ -191,24 +237,26 @@ function getdata() {
         url: '/laravelpos/backend/data-pembelian/list-detail-pembelian/' + kode,
         success: function (data) {
             var rows = '';
-            var no = 0;
             var subtotal = 0;
             $.each(data, function (key, value) {
-                no += 1;
+                var nama = value.namabarang ? value.namabarang : '-';
                 rows = rows + '<tr>';
                 rows = rows + '<td class="text-center"><button type="button" onclick="editdetail(' + value.id + ')" class="btn btn-success btn-sm m-1"><i class="fas fa-edit"></i></button><button type="button" onclick="hapusdetail(' + value.id + ')" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></button></td>';
-                rows = rows + '<td>' + value.kode_barang + ' - ' + value.namabarang + '</td>';
+                rows = rows + '<td>' + value.kode_barang + ' - ' + nama + '</td>';
                 rows = rows + '<td class="text-center">' + value.jumlah + ' Pcs</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.harga) + '</td>';
                 rows = rows + '<td class="text-right"> Rp ' + rupiah(value.total) + '</td>';
                 rows = rows + '</tr>';
-                subtotal += parseInt(value.total);
+                subtotal += parseInt(value.total) || 0;
             });
             $('#tubuhnya').html(rows);
             $('#subtotal').val(rupiah(subtotal));
         }, complete: function () {
             carikekurangan();
             $('#paneldua').loading('stop');
+            if (typeof callback === 'function') {
+                callback();
+            }
         }
     });
 }
@@ -240,8 +288,33 @@ function editdetail(id) {
     });
 }
 
+$('#editdetailmodal').on('shown.bs.modal', function () {
+    $('#edit_jumlah_barang').trigger('focus').select();
+});
+
+$('#edit_jumlah_barang').on('keydown', function (e) {
+    if (e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
+        e.preventDefault();
+        $('#editjumlahdetail').trigger('click');
+    }
+});
+
+$('#edit_jumlah_barang').on('keyup', function (e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
 //===============================================================================================
 $('#editjumlahdetail').on('click', function (e) {
+    var editJumlah = parseInt($('#edit_jumlah_barang').val());
+    if (isNaN(editJumlah) || editJumlah <= 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Jumlah barang harus lebih dari 0',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
     $('#editdetailmodal').modal('hide');
     $('#paneldua').loading('toggle');
     $.ajax({
@@ -256,14 +329,17 @@ $('#editjumlahdetail').on('click', function (e) {
         },
         success: function () {
         }, complete: function () {
-            getdata();
+            getdata(function () {
+                $('#paneldua').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+            });
             $('#edit_kode_barang').val('');
             $('#edit_nama_barang').val('');
             $('#edit_jumlah_barang').val('');
             $('#edit_id').val('');
             $('#cari_barang_qr').val('');
-            $('#cari_barang_qr').trigger("focus");
-            $('#paneldua').loading('stop');
         }
     });
 });
@@ -276,51 +352,68 @@ function hitungsubtotalbarang() {
 
     if ($('#harga_barang').val() != '') {
         let str = document.getElementById("harga_barang").value;
-        harga_barang = str.replace(/\./g, '');
+        harga_barang = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#jumlah_barang').val() != '') {
-        jumlah = document.getElementById("jumlah_barang").value;
+        jumlah = parseInt(document.getElementById("jumlah_barang").value.replace(/\./g, '')) || 0;
     }
 
-    subtotal = parseInt(harga_barang) * parseInt(jumlah);
+    subtotal = harga_barang * jumlah;
     $('#total_harga_barang').val(rupiah(subtotal));
 }
 
 //===============================================================================================
 $('#tambahbtn').on('click', function (e) {
+    e.preventDefault();
     if ($('#barang').val() == "" || $('#harga_barang').val() == "" || $('#jumlah_barang').val() == "" || $('#total_harga_barang').val() == "") {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
             text: 'Data tidak boleh kosong',
             confirmButtonText: 'OK'
         });
-    } else {
-        $('#panelsatu').loading('toggle');
-        $.ajax({
-            type: 'POST',
-            url: '/laravelpos/backend/data-pembelian/add-detail-pembelian',
-            data: {
-                '_token': $('input[name=_token]').val(),
-                'kode': $('#kode').val(),
-                'kode_barang': $('#barang').val(),
-                'harga_barang': $('#harga_barang').val(),
-                'jumlah_barang': $('#jumlah_barang').val(),
-                'total_harga_barang': $('#total_harga_barang').val(),
-            },
-            success: function () {
-            }, complete: function () {
-                getdata();
-                $('#harga_barang').val('');
-                $('#jumlah_barang').val('');
-                $('#total_harga_barang').val('');
-                $('#barang').val(null).trigger('change');
-                $('#cari_barang_qr').val('');
-                $('#cari_barang_qr').trigger("focus");
-                $('#panelsatu').loading('stop');
-            }
-        });
+        return;
     }
+
+    var jumlah = parseInt($('#jumlah_barang').val());
+    if (isNaN(jumlah) || jumlah <= 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Jumlah barang harus lebih dari 0',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $('#panelsatu').loading('toggle');
+    $('#tambahbtn').prop('disabled', true);
+    $.ajax({
+        type: 'POST',
+        url: '/laravelpos/backend/data-pembelian/add-detail-pembelian',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'kode': $('#kode').val(),
+            'kode_barang': $('#barang').val(),
+            'harga_barang': $('#harga_barang').val(),
+            'jumlah_barang': $('#jumlah_barang').val(),
+            'total_harga_barang': $('#total_harga_barang').val(),
+        },
+        success: function () {
+            $('#harga_barang').val('');
+            $('#jumlah_barang').val('');
+            $('#total_harga_barang').val('');
+            $('#barang').val(null).trigger('change');
+            $('#cari_barang_qr').val('');
+        }, complete: function () {
+            getdata(function () {
+                $('#tambahbtn').prop('disabled', false);
+                $('#panelsatu').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+            });
+        }
+    });
 });
 
 //===============================================================================================
@@ -334,10 +427,13 @@ function hapusdetail(id) {
             'kode': id,
         },
         success: function () {
-            getdata();
         }, complete: function () {
-            $('#cari_barang_qr').trigger("focus");
-            $('#paneldua').loading('stop');
+            getdata(function () {
+                $('#paneldua').loading('stop');
+                if ($('#is_use_scan').val() == 'y') {
+                    $('#cari_barang_qr').trigger("focus");
+                }
+            });
         }
     });
 }
@@ -352,52 +448,105 @@ function carikekurangan() {
 
     if ($('#subtotal').val() != '') {
         let str = document.getElementById("subtotal").value;
-        subtotal = str.replace(/\./g, '');
+        subtotal = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#dibayar').val() != '') {
         let str = document.getElementById("dibayar").value;
-        dibayar = str.replace(/\./g, '');
+        dibayar = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#potongan').val() != '') {
         let str = document.getElementById("potongan").value;
-        potongan = str.replace(/\./g, '');
+        potongan = parseInt(str.replace(/\./g, '')) || 0;
     }
 
     if ($('#biaya_tambahan').val() != '') {
         let str = document.getElementById("biaya_tambahan").value;
-        biaya_tambahan = str.replace(/\./g, '');
+        biaya_tambahan = parseInt(str.replace(/\./g, '')) || 0;
     }
 
-    $('#total').val(rupiah(parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(potongan)));
-    kekurangan = parseInt(subtotal) + parseInt(biaya_tambahan) - parseInt(dibayar) - parseInt(potongan);
-    $('#kekurangan').val(rupiah(kekurangan));
+    var totalNilai = subtotal + biaya_tambahan - potongan;
+    if (totalNilai < 0) totalNilai = 0;
+    $('#total').val(rupiah(totalNilai));
+
+    kekurangan = totalNilai - dibayar;
+    if (kekurangan <= 0) {
+        $('#kekurangan').val('0');
+    } else {
+        $('#kekurangan').val(rupiah(kekurangan));
+    }
 }
 
 //===============================================================================================
+var is_saving_pembelian = false;
 $('#simpanbtn').on('click', function (e) {
-    if ($('#kode').val() == "" || $('#supplier').val() == "" || $('#tgl_order').val() == "" || $('#subtotal').val() == "" || $('#subtotal').val() == "0"|| $('#dibayar').val() == ""|| $('#potongan').val() == ""|| $('#biaya_tambahan').val() == "") {
+    if (is_saving_pembelian) return;
+
+    // Pastikan nilai kosong pada biaya/potongan/dibayar diisi default '0'
+    if ($('#biaya_tambahan').val().trim() === '') $('#biaya_tambahan').val('0');
+    if ($('#potongan').val().trim() === '') $('#potongan').val('0');
+    if ($('#dibayar').val().trim() === '') $('#dibayar').val('0');
+
+    if ($('#kode').val() == "" || $('#supplier').val() == "" || $('#tgl_order').val() == "") {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
-            text: 'Data tidak boleh kosong',
+            text: 'Data kode, supplier, atau tanggal order belum terisi',
             confirmButtonText: 'OK'
         });
-    } else {
-        var kekurangan = 0;
-        if ($('#kekurangan').val() != '') {
-            let str = document.getElementById("kekurangan").value;
-            kekurangan = str.replace(/\./g, '');
-        }
-        if (parseInt(kekurangan) < 0) {
-            swalWithBootstrapButtons.fire({
-                title: 'Oops',
-                text: 'Pembayaran melebihi kekurangan',
-                confirmButtonText: 'OK'
-            });
-        } else {
+        return;
+    }
+
+    var subtotal = parseInt($('#subtotal').val().replace(/\./g, '')) || 0;
+    if (subtotal <= 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Keranjang pembelian masih kosong',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    var biaya_tambahan = parseInt($('#biaya_tambahan').val().replace(/\./g, '')) || 0;
+    var potongan = parseInt($('#potongan').val().replace(/\./g, '')) || 0;
+    var dibayar = parseInt($('#dibayar').val().replace(/\./g, '')) || 0;
+
+    if (potongan > (subtotal + biaya_tambahan)) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Potongan (diskon) tidak boleh melebihi subtotal + biaya tambahan',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    var totalNilai = subtotal + biaya_tambahan - potongan;
+    if (totalNilai < 0) totalNilai = 0;
+
+    if (dibayar > totalNilai) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Pembayaran melebihi total tagihan pembelian',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    swalWithBootstrapButtons.fire({
+        title: 'Simpan Pembelian ?',
+        text: "Pastikan data pembelian telah benar",
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Simpan!',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.value) {
+            if (is_saving_pembelian) return;
+            is_saving_pembelian = true;
+            $('#simpanbtn').prop('disabled', true);
             $('#panelsatu').loading('toggle');
             $('#paneldua').loading('toggle');
+
             $.ajax({
                 type: 'POST',
                 url: '/laravelpos/backend/pembelian',
@@ -413,10 +562,41 @@ $('#simpanbtn').on('click', function (e) {
                     'kekurangan': $('#kekurangan').val(),
                     'keterangan': $('#keterangan').val(),
                 },
-                success: function () {
+                success: function (res) {
+                    if (res && res.status === false) {
+                        is_saving_pembelian = false;
+                        $('#simpanbtn').prop('disabled', false);
+                        $('#panelsatu').loading('stop');
+                        $('#paneldua').loading('stop');
+                        swalWithBootstrapButtons.fire({
+                            title: 'Info',
+                            text: res.message || 'Transaksi pembelian gagal disimpan',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            if (res.message && res.message.includes('sudah tersimpan')) {
+                                window.location.replace('/laravelpos/backend/pembelian');
+                            }
+                        });
+                        return;
+                    }
                     window.location.replace('/laravelpos/backend/pembelian');
+                },
+                error: function (xhr) {
+                    is_saving_pembelian = false;
+                    $('#simpanbtn').prop('disabled', false);
+                    $('#panelsatu').loading('stop');
+                    $('#paneldua').loading('stop');
+                    var errMsg = 'Terjadi kesalahan sistem saat menyimpan pembelian';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errMsg = xhr.responseJSON.message;
+                    }
+                    swalWithBootstrapButtons.fire({
+                        title: 'Oops',
+                        text: errMsg,
+                        confirmButtonText: 'OK'
+                    });
                 }
             });
         }
-    }
+    });
 });

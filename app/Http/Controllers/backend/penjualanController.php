@@ -103,13 +103,14 @@ class penjualanController extends Controller
     public function carikode()
     {
         $datenow = date('mY');
-        $carikode = DB::table('penjualan')->where('kode','like','%'.$datenow.'%')->max('kode');
-        if(!$carikode){
-            $finalkode = 'PNJ-'.$datenow.'-0001';
-        }else{
-            $newkode    = explode("-", $carikode);
-            $nomer      = sprintf("%04s",$newkode[2]+1);
-            $finalkode = 'PNJ-'.$datenow.'-'.$nomer;
+        $carikode = DB::table('penjualan')->where('kode', 'like', '%' . $datenow . '%')->max('kode');
+        if (!$carikode) {
+            $finalkode = 'PNJ-' . $datenow . '-0001';
+        } else {
+            $newkode = explode("-", $carikode);
+            $nomerUrut = isset($newkode[2]) ? (intval($newkode[2]) + 1) : 1;
+            $nomer = sprintf("%04s", $nomerUrut);
+            $finalkode = 'PNJ-' . $datenow . '-' . $nomer;
         }
         return $finalkode;
     }
@@ -117,55 +118,63 @@ class penjualanController extends Controller
     //=================================================================
     public function adddetailpenjualan(Request $request)
     {
-        $barang = DB::table('barang')->where('kode', $request->kode_barang)->first();
-        if (!$barang) {
-            return response()->json(false);
-        }
-
         $jumlah_input = intval(str_replace('.', '', $request->jumlah_barang));
         if ($jumlah_input <= 0) {
             return response()->json(false);
         }
 
+        $barang = DB::table('barang')->where('kode', $request->kode_barang)->first();
+        if (!$barang) {
+            return response()->json(false);
+        }
+
         $hitung_stok = $barang->hitung_stok;
         $stok = intval($barang->stok);
+        $harga = intval(str_replace('.', '', $request->harga_barang));
+        $diskon = floatval($request->diskon ?? 0);
+
+        $kode_penjualan = trim($request->kode);
+        $kode_barang = trim($request->kode_barang);
 
         $caribarangdetail = DB::table('penjualan_thumb_detail')
-            ->where([['kode_penjualan', $request->kode], ['kode_barang', $request->kode_barang], ['pembuat', Auth::user()->id]])
+            ->where([['kode_penjualan', $kode_penjualan], ['kode_barang', $kode_barang], ['pembuat', Auth::user()->id]])
             ->get();
 
-        if (count($caribarangdetail) > 0) {
-            foreach ($caribarangdetail as $row) {
-                $jumlah = $row->jumlah + $jumlah_input;
-                if ($hitung_stok == 'y' && $jumlah > $stok) {
-                    return response()->json(false);
-                }
-                $harga = str_replace('.', '', $request->harga_barang);
-                $jumlahdiskon = $harga * $request->diskon / 100;
-                $total = $jumlah * ($harga - $jumlahdiskon);
-
-                DB::table('penjualan_thumb_detail')
-                    ->where([['kode_penjualan', $request->kode], ['kode_barang', $request->kode_barang], ['pembuat', Auth::user()->id]])
-                    ->update([
-                        'harga' => $harga,
-                        'jumlah' => $jumlah,
-                        'total' => $total,
-                    ]);
+        if ($caribarangdetail->count() > 0) {
+            $total_jumlah = $caribarangdetail->sum('jumlah') + $jumlah_input;
+            if ($hitung_stok == 'y' && $total_jumlah > $stok) {
+                return response()->json(false);
             }
+            $jumlahdiskon = round($harga * $diskon / 100);
+            $total = intval($total_jumlah * ($harga - $jumlahdiskon));
+
+            $first_id = $caribarangdetail->first()->id;
+            DB::table('penjualan_thumb_detail')
+                ->where([['kode_penjualan', $kode_penjualan], ['kode_barang', $kode_barang], ['pembuat', Auth::user()->id]])
+                ->where('id', '!=', $first_id)
+                ->delete();
+
+            DB::table('penjualan_thumb_detail')
+                ->where('id', $first_id)
+                ->update([
+                    'harga' => $harga,
+                    'diskon' => $diskon,
+                    'jumlah' => $total_jumlah,
+                    'total' => $total,
+                ]);
         } else {
             if ($hitung_stok == 'y' && $jumlah_input > $stok) {
                 return response()->json(false);
             }
-            $harga = str_replace('.', '', $request->harga_barang);
-            $jumlahdiskon = $harga * $request->diskon / 100;
-            $total = $jumlah_input * ($harga - $jumlahdiskon);
+            $jumlahdiskon = round($harga * $diskon / 100);
+            $total = intval($jumlah_input * ($harga - $jumlahdiskon));
 
             DB::table('penjualan_thumb_detail')
                 ->insert([
-                    'kode_penjualan' => $request->kode,
-                    'kode_barang' => $request->kode_barang,
+                    'kode_penjualan' => $kode_penjualan,
+                    'kode_barang' => $kode_barang,
                     'jumlah' => $jumlah_input,
-                    'diskon' => $request->diskon,
+                    'diskon' => $diskon,
                     'harga' => $harga,
                     'total' => $total,
                     'pembuat' => Auth::user()->id,
@@ -199,7 +208,11 @@ class penjualanController extends Controller
     //=================================================================
     public function editdetailpembelian(Request $request)
     {
-        $detail = DB::table('penjualan_thumb_detail')->where('id', $request->edit_id)->first();
+        $detail = DB::table('penjualan_thumb_detail')
+            ->where('id', $request->edit_id)
+            ->where('pembuat', Auth::user()->id)
+            ->first();
+
         if (!$detail) {
             return response()->json(false);
         }
@@ -214,13 +227,18 @@ class penjualanController extends Controller
             return response()->json(false);
         }
 
-        $harga_barang = str_replace('.', '', $request->edit_harga_barang);
-        $total = $harga_barang * $jumlah;
+        $harga_barang = intval(str_replace('.', '', $request->edit_harga_barang));
+        $diskon = floatval($detail->diskon ?? 0);
+        $jumlahdiskon = round($harga_barang * $diskon / 100);
+        $total = intval($jumlah * ($harga_barang - $jumlahdiskon));
+
         DB::table('penjualan_thumb_detail')
             ->where('id', $request->edit_id)
+            ->where('pembuat', Auth::user()->id)
             ->update([
                 'jumlah' => $jumlah,
                 'harga' => $harga_barang,
+                'diskon' => $diskon,
                 'total' => $total,
             ]);
         return response()->json(true);
@@ -229,84 +247,106 @@ class penjualanController extends Controller
     //=================================================================
     public function store(Request $request)
     {
-        $detail = DB::table('penjualan_thumb_detail')
-        ->where('kode_penjualan',$request->kode)
-        ->get();
-        $data=[];
-        foreach ($detail as $row) {
-            $data[] = [
-                'kode_penjualan'=>$row->kode_penjualan,
-                'kode_barang'=>$row->kode_barang,
-                'jumlah'=>$row->jumlah,
-                'diskon'=>$row->diskon,
-                'harga'=>$row->harga,
-                'total'=>$row->total,
-            ]; 
+        $kode = trim($request->kode);
+        if (empty($kode)) {
+            return response()->json(['status' => false, 'message' => 'Kode penjualan tidak valid'], 400);
+        }
 
-            $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
-            foreach($caribarang as $row_caribarang){
-                if($row_caribarang->hitung_stok=='y'){
-                    $newstok = $row_caribarang->stok - $row->jumlah;
+        // Cek apakah transaksi dengan kode ini sudah pernah tersimpan (mencegah dobel transaksi)
+        if (DB::table('penjualan')->where('kode', $kode)->exists()) {
+            return response()->json(['status' => false, 'message' => 'Transaksi sudah tersimpan sebelumnya']);
+        }
+
+        $detail = DB::table('penjualan_thumb_detail')
+            ->where([['kode_penjualan', $kode], ['pembuat', Auth::user()->id]])
+            ->get();
+
+        if ($detail->count() === 0) {
+            return response()->json(['status' => false, 'message' => 'Tidak ada barang yang ditransaksikan'], 400);
+        }
+
+        DB::transaction(function () use ($request, $kode, $detail) {
+            $data = [];
+            foreach ($detail as $row) {
+                $data[] = [
+                    'kode_penjualan' => $kode,
+                    'kode_barang' => $row->kode_barang,
+                    'jumlah' => $row->jumlah,
+                    'diskon' => $row->diskon,
+                    'harga' => $row->harga,
+                    'total' => $row->total,
+                ];
+
+                $caribarang = DB::table('barang')->where('kode', $row->kode_barang)->first();
+                if ($caribarang && $caribarang->hitung_stok == 'y') {
                     DB::table('barang')
-                    ->where('kode',$row->kode_barang)
-                    ->update([
-                        'stok'=>$newstok
-                    ]);
+                        ->where('kode', $row->kode_barang)
+                        ->decrement('stok', intval($row->jumlah));
                 }
             }
-        }
 
-        DB::table('penjualan_detail')->insert($data);
-        if(intval(str_replace('.','',$request->kekurangan)) > 0){
-            $status = "Belum Lunas";
-            DB::table('pembayaran')
-            ->insert([
-                'kode_penjualan'=>$request->kode,
-                'jumlah'=>str_replace('.','',$request->dibayar),
-                'tgl_bayar'=>date('Y-m-d'),
-                'created_at'=>date('Y-m-d H:i:s'),
-                'created_by'=>Auth::user()->id,
-                'keterangan'=>'Pembayaran Pertama',
-                'customer'=>$request->customer,
-            ]);
-        }else{
-            $status = "Telah Lunas";
-            DB::table('pembayaran')
-            ->insert([
-                'kode_penjualan'=>$request->kode,
-                'jumlah'=>str_replace('.','',$request->dibayar),
-                'tgl_bayar'=>date('Y-m-d'),
-                'created_at'=>date('Y-m-d H:i:s'),
-                'created_by'=>Auth::user()->id,
-                'keterangan'=>'Pembayaran Pertama & Pelunasan',
-                'customer'=>$request->customer,
-            ]);
-        }
-        
-        $total = str_replace('.','',$request->subtotal)+str_replace('.','',$request->biaya_tambahan)-str_replace('.','',$request->potongan);
-        
-        DB::table('penjualan')
-        ->insert([
-            'kode'=>$request->kode,
-            'customer'=>$request->customer,
-            'subtotal'=>str_replace('.','',$request->subtotal),
-            'biaya_tambahan'=>str_replace('.','',$request->biaya_tambahan),
-            'potongan'=>str_replace('.','',$request->potongan),
-            'total'=>$total,
-            'terbayar'=>str_replace('.','',$request->dibayar),
-            'kekurangan'=>str_replace('.','',$request->kekurangan),
-            'kembalian'=>str_replace('.','',$request->kembalian),
-            'pembuat'=>Auth::user()->id,
-            'tgl_buat'=>$request->tgl_order,
-            'keterangan'=>$request->keterangan,
-            'status'=>$status,
-            'status_penjualan'=>'Draft',
-            'created_at'=>date('Y-m-d H:i:s'),
-            'created_by'=>Auth::user()->id,
-            'jenis_bayar'=>$request->jenis_bayar ?? 'Cash',
-        ]);
+            DB::table('penjualan_detail')->insert($data);
 
-        DB::table('penjualan_thumb_detail')->where('pembuat',Auth::user()->id)->delete();
+            // Perhitungan keuangan di sisi server dari item keranjang yang tersimpan
+            $subtotal = intval($detail->sum('total'));
+            $biaya_tambahan = max(0, intval(str_replace('.', '', $request->biaya_tambahan)));
+            $potongan = max(0, intval(str_replace('.', '', $request->potongan)));
+            $total = max(0, $subtotal + $biaya_tambahan - $potongan);
+            $dibayar = max(0, intval(str_replace('.', '', $request->dibayar)));
+
+            if ($dibayar >= $total) {
+                $terbayar = $total;
+                $kembalian = $dibayar - $total;
+                $kekurangan = 0;
+                $status = "Telah Lunas";
+                $ket_bayar = "Pembayaran Pertama & Pelunasan";
+            } else {
+                $terbayar = $dibayar;
+                $kekurangan = $total - $dibayar;
+                $kembalian = 0;
+                $status = "Belum Lunas";
+                $ket_bayar = "Pembayaran Pertama";
+            }
+
+            $tgl_order = !empty($request->tgl_order) ? $request->tgl_order : date('Y-m-d');
+            $jenis_bayar = in_array($request->jenis_bayar, ['Cash', 'QRIS', 'Transfer Bank']) ? $request->jenis_bayar : 'Cash';
+
+            DB::table('pembayaran')
+                ->insert([
+                    'kode_penjualan' => $kode,
+                    'jumlah' => $terbayar,
+                    'tgl_bayar' => $tgl_order,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'created_by' => Auth::user()->id,
+                    'keterangan' => $ket_bayar,
+                    'customer' => $request->customer,
+                ]);
+
+            DB::table('penjualan')
+                ->insert([
+                    'kode' => $kode,
+                    'customer' => $request->customer,
+                    'subtotal' => $subtotal,
+                    'biaya_tambahan' => $biaya_tambahan,
+                    'potongan' => $potongan,
+                    'total' => $total,
+                    'terbayar' => $terbayar,
+                    'kekurangan' => $kekurangan,
+                    'kembalian' => $kembalian,
+                    'pembuat' => Auth::user()->id,
+                    'tgl_buat' => $tgl_order,
+                    'keterangan' => $request->keterangan,
+                    'status' => $status,
+                    'status_penjualan' => 'Draft',
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'created_by' => Auth::user()->id,
+                    'jenis_bayar' => $jenis_bayar,
+                ]);
+
+            DB::table('penjualan_thumb_detail')->where('pembuat', Auth::user()->id)->delete();
+        });
+
+        return response()->json(['status' => true]);
     }
 
     //=================================================================
@@ -320,23 +360,24 @@ class penjualanController extends Controller
             foreach ($caribarangdetail as $row) {
                 $harga=0;
                 $diskon=0;
-                $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
-                foreach($caribarang as $row_caribarang){
+                $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->first();
+                if($caribarang){
                     if($status=='umum'){
-                        $harga = $row_caribarang->harga_jual;
-                        $diskon=$row_caribarang->diskon;
+                        $harga = intval($caribarang->harga_jual);
+                        $diskon = floatval($caribarang->diskon ?? 0);
                     }else{
-                        $harga = $row_caribarang->harga_jual_customer;
-                        $diskon=$row_caribarang->diskon_customer;
+                        $harga = intval($caribarang->harga_jual_customer);
+                        $diskon = floatval($caribarang->diskon_customer ?? 0);
                     }
                 }
                                 
-                $jumlah = $row->jumlah;
-                $jumlahdiskon = $harga*$diskon/100;
-                $total = $jumlah*($harga-$jumlahdiskon);
+                $jumlah = intval($row->jumlah);
+                $jumlahdiskon = round($harga * $diskon / 100);
+                $total = intval($jumlah * ($harga - $jumlahdiskon));
 
                 DB::table('penjualan_thumb_detail')
-                ->where([['kode_penjualan',$kode],['kode_barang',$row->kode_barang]])
+                ->where('id', $row->id)
+                ->where('pembuat', Auth::user()->id)
                 ->update([
                     'diskon'=>$diskon,
                     'harga'=>$harga,
@@ -345,14 +386,17 @@ class penjualanController extends Controller
                 ]);
             }
         }
+        return response()->json(true);
     }
 
     //=================================================================
     public function hapusdetailpenjualan(Request $request)
     {
-        $data = DB::table('penjualan_thumb_detail')
-        ->where('id',$request->kode)
-        ->delete();
+        DB::table('penjualan_thumb_detail')
+            ->where('id', $request->kode)
+            ->where('pembuat', Auth::user()->id)
+            ->delete();
+        return response()->json(true);
     }
 
     //=================================================================
@@ -362,45 +406,56 @@ class penjualanController extends Controller
         $statusbarang = true;
         $kode_barang = $request->kode_barang;
         $caribarang = DB::table('barang')
-            ->whereExists(function ($query) use ($kode_barang) {
-                $query->select(DB::raw(1))
-                    ->from('barang_barcode')
-                    ->whereColumn('barang_barcode.id_barang', 'barang.id')
-                    ->where('barang_barcode.kode_barcode', $kode_barang);
+            ->where(function ($query) use ($kode_barang) {
+                $query->whereExists(function ($sub) use ($kode_barang) {
+                    $sub->select(DB::raw(1))
+                        ->from('barang_barcode')
+                        ->whereColumn('barang_barcode.id_barang', 'barang.id')
+                        ->where('barang_barcode.kode_barcode', $kode_barang);
+                })
+                ->orWhere('barang.kode', $kode_barang)
+                ->orWhere('barang.kode_qr', $kode_barang);
             })
-            ->orWhere('barang.kode', $kode_barang)
             ->first();
 
         if ($caribarang) {
             $stok = intval($caribarang->stok);
             $hitung_stok = $caribarang->hitung_stok;
-            $kode_brg = $caribarang->kode;
+            $kode_penjualan = trim($request->kode);
+            $kode_brg = trim($caribarang->kode);
 
             if ($request->status == 'umum') {
-                $harga = $caribarang->harga_jual;
-                $diskon = $caribarang->diskon;
+                $harga = intval($caribarang->harga_jual);
+                $diskon = floatval($caribarang->diskon ?? 0);
             } else {
-                $harga = $caribarang->harga_jual_customer;
-                $diskon = $caribarang->diskon_customer;
+                $harga = intval($caribarang->harga_jual_customer);
+                $diskon = floatval($caribarang->diskon_customer ?? 0);
             }
 
             $caribarangdetail = DB::table('penjualan_thumb_detail')
-                ->where([['kode_penjualan', $request->kode], ['kode_barang', $kode_brg], ['pembuat', Auth::user()->id]])
-                ->first();
+                ->where([['kode_penjualan', $kode_penjualan], ['kode_barang', $kode_brg], ['pembuat', Auth::user()->id]])
+                ->get();
 
-            if ($caribarangdetail) {
-                $jumlah = $caribarangdetail->jumlah + 1;
-                if ($hitung_stok == 'y' && $jumlah > $stok) {
+            if ($caribarangdetail->count() > 0) {
+                $total_jumlah = $caribarangdetail->sum('jumlah') + 1;
+                if ($hitung_stok == 'y' && $total_jumlah > $stok) {
                     $status = false;
                 } else {
-                    $jumlahdiskon = $harga * $diskon / 100;
-                    $total = $jumlah * ($harga - $jumlahdiskon);
+                    $jumlahdiskon = round($harga * $diskon / 100);
+                    $total = intval($total_jumlah * ($harga - $jumlahdiskon));
+
+                    $first_id = $caribarangdetail->first()->id;
                     DB::table('penjualan_thumb_detail')
-                        ->where([['kode_penjualan', $request->kode], ['kode_barang', $kode_brg], ['pembuat', Auth::user()->id]])
+                        ->where([['kode_penjualan', $kode_penjualan], ['kode_barang', $kode_brg], ['pembuat', Auth::user()->id]])
+                        ->where('id', '!=', $first_id)
+                        ->delete();
+
+                    DB::table('penjualan_thumb_detail')
+                        ->where('id', $first_id)
                         ->update([
                             'diskon' => $diskon,
                             'harga' => $harga,
-                            'jumlah' => $jumlah,
+                            'jumlah' => $total_jumlah,
                             'total' => $total,
                         ]);
                     $status = true;
@@ -410,11 +465,11 @@ class penjualanController extends Controller
                 if ($hitung_stok == 'y' && $jumlah > $stok) {
                     $status = false;
                 } else {
-                    $jumlahdiskon = $harga * $diskon / 100;
-                    $total = $jumlah * ($harga - $jumlahdiskon);
+                    $jumlahdiskon = round($harga * $diskon / 100);
+                    $total = intval($jumlah * ($harga - $jumlahdiskon));
                     DB::table('penjualan_thumb_detail')
                         ->insert([
-                            'kode_penjualan' => $request->kode,
+                            'kode_penjualan' => $kode_penjualan,
                             'kode_barang' => $kode_brg,
                             'jumlah' => $jumlah,
                             'diskon' => $diskon,
@@ -474,26 +529,23 @@ class penjualanController extends Controller
     //=================================================================
     public function destroy($kode)
     {
-        $detail = DB::table('penjualan_detail')
-        ->where('kode_penjualan',$kode)
-        ->get();
-        foreach ($detail as $row) {
-            $caribarang = DB::table('barang')->where('kode',$row->kode_barang)->get();
-            foreach($caribarang as $row_caribarang){
-                if($row_caribarang->hitung_stok=='y'){
-                    $newstok = $row_caribarang->stok + $row->jumlah;
-                    DB::table('barang')
-                    ->where('kode',$row->kode_barang)
-                    ->update([
-                        'stok'=>$newstok
-                    ]);
-                }
+        DB::transaction(function () use ($kode) {
+            $detail = DB::table('penjualan_detail')
+                ->where('kode_penjualan', $kode)
+                ->get();
+            foreach ($detail as $row) {
+                DB::table('barang')
+                    ->where('kode', $row->kode_barang)
+                    ->where('hitung_stok', 'y')
+                    ->increment('stok', intval($row->jumlah));
             }
-        }
 
-        DB::table('penjualan_detail')->where('kode_penjualan',$kode)->delete();
-        DB::table('pembayaran')->where('kode_penjualan',$kode)->delete();
-        DB::table('penjualan')->where('kode',$kode)->delete();
+            DB::table('penjualan_detail')->where('kode_penjualan', $kode)->delete();
+            DB::table('pembayaran')->where('kode_penjualan', $kode)->delete();
+            DB::table('penjualan')->where('kode', $kode)->delete();
+        });
+
+        return response()->json(['status' => true]);
     }
 
     //=================================================================
@@ -549,35 +601,67 @@ class penjualanController extends Controller
     //=================================================================
     public function updatehutang(Request $request)
     {
-        $datapenjualan = DB::table('penjualan')
-        ->where('kode',$request->kode)
-        ->get();
-        foreach ($datapenjualan as $row_datapenjualan) {
-            $telah_dibayar = $row_datapenjualan->terbayar;
-            $terbayar = $telah_dibayar+str_replace('.','',$request->dibayar);
-            $kekurangan = str_replace('.','',$request->kekurangan);
-            if($kekurangan>0){
-                $status = "Belum Lunas";
-            }else{
-                $status = "Telah Lunas";
-            }
-            DB::table('penjualan')
-            ->where('kode',$request->kode)
-            ->update([
-                'status'=>$status,
-                'terbayar'=>$terbayar,
-                'kekurangan'=>$kekurangan
-            ]);
-            DB::table('pembayaran')
-            ->insert([
-                'kode_penjualan'=>$request->kode,
-                'jumlah'=>str_replace('.','',$request->dibayar),
-                'tgl_bayar'=>$request->tgl_bayar,
-                'created_at'=>date('Y-m-d H:i:s'),
-                'created_by'=>Auth::user()->id,
-                'keterangan'=>'Pembayaran Hutang',
-            ]);
+        $kode = trim($request->kode);
+        $dibayar_input = intval(str_replace('.', '', $request->dibayar));
+
+        if (empty($kode)) {
+            return response()->json(['status' => false, 'message' => 'Kode penjualan tidak valid'], 400);
         }
-        
+
+        if ($dibayar_input <= 0) {
+            return response()->json(['status' => false, 'message' => 'Nominal pembayaran harus lebih dari 0'], 400);
+        }
+
+        $penjualan = DB::table('penjualan')->where('kode', $kode)->first();
+        if (!$penjualan) {
+            return response()->json(['status' => false, 'message' => 'Data transaksi penjualan tidak ditemukan'], 404);
+        }
+
+        $sisa_kekurangan = intval($penjualan->kekurangan);
+        if ($sisa_kekurangan <= 0) {
+            return response()->json(['status' => false, 'message' => 'Transaksi ini sudah lunas'], 400);
+        }
+
+        if ($dibayar_input > $sisa_kekurangan) {
+            return response()->json(['status' => false, 'message' => 'Pembayaran melebihi sisa kekurangan hutang'], 400);
+        }
+
+        DB::transaction(function () use ($request, $kode, $penjualan, $dibayar_input, $sisa_kekurangan) {
+            $kekurangan_baru = max(0, $sisa_kekurangan - $dibayar_input);
+            $terbayar_baru = intval($penjualan->terbayar) + $dibayar_input;
+
+            if ($kekurangan_baru <= 0) {
+                $status = "Telah Lunas";
+                $keterangan_bayar = "Pembayaran Hutang & Pelunasan";
+            } else {
+                $status = "Belum Lunas";
+                $keterangan_bayar = "Pembayaran Hutang";
+            }
+
+            $tgl_bayar = !empty($request->tgl_bayar) ? $request->tgl_bayar : date('Y-m-d');
+
+            DB::table('penjualan')
+                ->where('kode', $kode)
+                ->update([
+                    'status' => $status,
+                    'terbayar' => $terbayar_baru,
+                    'kekurangan' => $kekurangan_baru,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                    'updated_by' => Auth::user()->id,
+                ]);
+
+            DB::table('pembayaran')
+                ->insert([
+                    'kode_penjualan' => $kode,
+                    'jumlah' => $dibayar_input,
+                    'tgl_bayar' => $tgl_bayar,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'created_by' => Auth::user()->id,
+                    'keterangan' => $keterangan_bayar,
+                    'customer' => $penjualan->customer,
+                ]);
+        });
+
+        return response()->json(['status' => true, 'message' => 'Pembayaran kekurangan/hutang berhasil disimpan']);
     }
 }

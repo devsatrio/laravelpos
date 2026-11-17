@@ -83,7 +83,8 @@ function hapusdata(kode) {
 
 //===============================================================================================
 function formatRupiah(angka) {
-    var number_string = angka.replace(/[^,\d]/g, "").toString(),
+    if (angka === null || angka === undefined) return '';
+    var number_string = angka.toString().replace(/[^,\d]/g, ""),
         split = number_string.split(","),
         sisa = split[0].length % 3,
         rupiah = split[0].substr(0, sisa),
@@ -100,7 +101,8 @@ function formatRupiah(angka) {
 
 //===============================================================================================
 function rupiah(bilangan) {
-    var number_string = bilangan.toString(),
+    if (bilangan === null || bilangan === undefined || isNaN(bilangan)) return '0';
+    var number_string = Math.round(Number(bilangan)).toString(),
         sisa = number_string.length % 3,
         rupiah = number_string.substr(0, sisa),
         ribuan = number_string.substr(sisa).match(/\d{3}/gi);
@@ -109,7 +111,7 @@ function rupiah(bilangan) {
         separator = sisa ? '.' : '';
         rupiah += separator + ribuan.join('.');
     }
-    return rupiah;
+    return rupiah || '0';
 }
 
 //===============================================================================================
@@ -207,111 +209,158 @@ function bayarhutang(kode) {
     $('#edit_hutang').val('');
     $('#edit_kekurangan').val('');
     $('#edit_dibayar').val('');
-    $('#bayarhutangmodal').modal('show');
     var url = '/laravelpos/backend/data-penjualan/cetak-ulang/' + kode;
     // var url = '/backend/data-penjualan/cetak-ulang/' + kode;
     $.ajax({
         type: 'GET',
         url: url,
         success: function (data) {
-            $.each(data.detail, function (key, value) {
+            if (data.detail && data.detail.length > 0) {
+                var value = data.detail[0];
                 $('#edit_kode').val(value.kode);
-                $('#edit_customer').val(value.customer + ' - ' + value.namacustomer);
-                $('#edit_hutang').val(rupiah(parseInt(value.kekurangan)));
-                $('#edit_kekurangan').val(rupiah(parseInt(value.kekurangan)));
-            });
-            $('#bayarhutangmodal').modal('show');
-        }, complete: function () {
+                var custName = (value.namacustomer && value.namacustomer !== '') ? value.namacustomer : (value.customer ? value.customer : 'Umum');
+                $('#edit_customer').val(value.customer ? (value.customer + ' - ' + custName) : custName);
+                var sisaHutang = parseInt(value.kekurangan) || 0;
+                $('#edit_hutang').val(rupiah(sisaHutang));
+                $('#edit_kekurangan').val(rupiah(sisaHutang));
+                $('#edit_dibayar').val('');
+                $('#bayarhutangmodal').modal('show');
+                setTimeout(function () {
+                    $('#edit_dibayar').focus();
+                }, 400);
+            } else {
+                Swal.fire('Oops!', 'Data transaksi tidak ditemukan', 'error');
+            }
+        },
+        error: function () {
+            Swal.fire('Oops!', 'Gagal mengambil data hutang', 'error');
+        },
+        complete: function () {
             $('#panelsatu').loading('stop');
         }
     });
 }
 
-
-//===============================================================================================
-edit_dibayar.addEventListener("keyup", function (e) {
-    edit_dibayar.value = formatRupiah(this.value);
+function bayar_hutang_lunas() {
+    var hutang = $('#edit_hutang').val();
+    $('#edit_dibayar').val(hutang);
     hitungkekurangan();
-});
-
-//===============================================================================================
-function hitungkekurangan() {
-    var kekurangan = 0;
-    var dibayar = 0;
-    var hutang = 0;
-
-    if ($('#edit_hutang').val() != '') {
-        let str = document.getElementById("edit_hutang").value;
-        hutang = str.replace(/\./g, '');
-    }
-
-    if ($('#edit_dibayar').val() != '') {
-        let str = document.getElementById("edit_dibayar").value;
-        dibayar = str.replace(/\./g, '');
-    }
-    if (parseInt(dibayar) > parseInt(hutang)) {
-        $('#edit_kekurangan').val('0');
-    } else {
-        kekurangan = parseInt(hutang) - parseInt(dibayar);
-        $('#edit_kekurangan').val(rupiah(kekurangan));
-    }
-
+    $('#edit_dibayar').focus();
 }
 
 //===============================================================================================
+if (edit_dibayar) {
+    edit_dibayar.addEventListener("keyup", function (e) {
+        edit_dibayar.value = formatRupiah(this.value);
+        hitungkekurangan();
+    });
+    edit_dibayar.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            $('#btnsimpanhutang').trigger('click');
+        }
+    });
+}
+
+//===============================================================================================
+function hitungkekurangan() {
+    var hutang = parseInt(String($('#edit_hutang').val() || '').replace(/\./g, '')) || 0;
+    var dibayar = parseInt(String($('#edit_dibayar').val() || '').replace(/\./g, '')) || 0;
+
+    if (dibayar > hutang) {
+        $('#edit_kekurangan').val('0');
+    } else {
+        var kekurangan = hutang - dibayar;
+        $('#edit_kekurangan').val(rupiah(kekurangan));
+    }
+}
+
+//===============================================================================================
+var is_saving_hutang = false;
 $('#btnsimpanhutang').on('click', function (e) {
+    if (is_saving_hutang) return;
+
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
             cancelButton: 'btn btn-danger'
         },
         buttonsStyling: true
-    })
-    let strsatu = document.getElementById("edit_hutang").value;
-    var edit_hutang = strsatu.replace(/\./g, '');
-    let strdua = document.getElementById("edit_dibayar").value;
-    var edit_dibayar = strdua.replace(/\./g, '');
+    });
 
-    if (parseInt(edit_hutang) < parseInt(edit_dibayar)) {
+    var edit_kode = $('#edit_kode').val();
+    var edit_hutang = parseInt(String($('#edit_hutang').val() || '').replace(/\./g, '')) || 0;
+    var edit_dibayar = parseInt(String($('#edit_dibayar').val() || '').replace(/\./g, '')) || 0;
+
+    if (!edit_kode) {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
-            text: 'Pembayaran melebihi kekurangan',
+            text: 'Kode penjualan tidak ditemukan',
+            icon: 'error',
             confirmButtonText: 'OK'
         });
-    } else {
-        $('#bayarhutangmodal').modal('hide');
-        $('#panelsatu').loading('toggle');
-        $.ajax({
-            type: 'POST',
-            url: '/laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
-            // url: '/backend/data-penjualan/bayar-hutang-penjualan',
-            data: {
-                '_token': $('input[name=_token]').val(),
-                'kode': $('#edit_kode').val(),
-                'hutang': $('#edit_hutang').val(),
-                'dibayar': $('#edit_dibayar').val(),
-                'kekurangan': $('#edit_kekurangan').val(),
-                'tgl_bayar': $('#tgl_bayar').val(),
-            },
-            success: function () {
-                swalWithBootstrapButtons.fire(
-                    'Info',
-                    'Data berhasil diperbarui',
-                    'success'
-                )
-                location.reload();
-            }, error: function () {
-                swalWithBootstrapButtons.fire(
-                    'Oops!',
-                    'Data gagal diperbarui',
-                    'error'
-                )
-                // $('#list-data').DataTable().ajax.reload();
-            }, complete: function () {
-                $('#panelsatu').loading('stop');
-                // $('#list-data').DataTable().ajax.reload();
-            }
-        });
+        return;
     }
+
+    if (edit_dibayar <= 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Nominal pembayaran harus lebih dari 0',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        $('#edit_dibayar').focus();
+        return;
+    }
+
+    if (edit_dibayar > edit_hutang) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Pembayaran melebihi sisa kekurangan hutang (Maks Rp ' + rupiah(edit_hutang) + ')',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    is_saving_hutang = true;
+    $('#btnsimpanhutang').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...');
+
+    $.ajax({
+        type: 'POST',
+        url: '/laravelpos/backend/data-penjualan/bayar-hutang-penjualan',
+        // url: '/backend/data-penjualan/bayar-hutang-penjualan',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'kode': edit_kode,
+            'hutang': $('#edit_hutang').val(),
+            'dibayar': $('#edit_dibayar').val(),
+            'kekurangan': $('#edit_kekurangan').val(),
+            'tgl_bayar': $('#tgl_bayar').val(),
+        },
+        success: function (res) {
+            $('#bayarhutangmodal').modal('hide');
+            swalWithBootstrapButtons.fire(
+                'Berhasil!',
+                (res && res.message) ? res.message : 'Pembayaran hutang berhasil disimpan',
+                'success'
+            ).then(function () {
+                location.reload();
+            });
+        },
+        error: function (xhr) {
+            var msg = 'Data gagal diperbarui';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            swalWithBootstrapButtons.fire(
+                'Oops!',
+                msg,
+                'error'
+            );
+            is_saving_hutang = false;
+            $('#btnsimpanhutang').prop('disabled', false).html('Simpan');
+        }
+    });
 });
 
