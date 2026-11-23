@@ -20,3 +20,17 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY ./docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
 COPY ./docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+WORKDIR /var/www
+
+# Vendor dipasang di dalam image supaya tidak dibaca lewat mount 9p yang lambat.
+COPY composer.json composer.lock ./
+# Dibutuhkan composer saat generate classmap (autoload).
+COPY database ./database
+RUN composer install --no-interaction --no-scripts --prefer-dist --optimize-autoloader
+
+COPY . .
+
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache \
+             storage/framework/testing bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache

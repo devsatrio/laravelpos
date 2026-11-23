@@ -6,7 +6,14 @@ services:
     container_name: laravelpos_app
     working_dir: /var/www
     volumes:
+      # Source aplikasi tetap di bind mount agar Perubahan kode langsung terbaca.
       - ./:/var/www
+      # Vendor, session, cache dan compiled view memakai named volume di overlay
+      # filesystem (jauh lebih cepat daripada mount 9p dari drive Windows).
+      - vendor:/var/www/vendor
+      - sessions:/var/www/storage/framework/sessions
+      - views:/var/www/storage/framework/views
+      - cache:/var/www/storage/framework/cache
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
       - ./docker/php/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
     extra_hosts:
@@ -20,10 +27,17 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./:/var/www
-      - ./docker/nginx:/etc/nginx/conf.d
+      # Nginx hanya butuh folder public (read-only), tidak seluruh project.
+      - ./public:/var/www/public:ro
+      - ./docker/nginx:/etc/nginx/conf.d:ro
     networks:
       - laravel
 
 networks:
   laravel:
+
+volumes:
+  vendor:
+  sessions:
+  views:
+  cache:
