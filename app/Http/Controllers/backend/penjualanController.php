@@ -44,7 +44,7 @@ class penjualanController extends Controller
         }
 
         $data = DB::table('penjualan')
-        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name'))
+        ->select(DB::raw('penjualan.*,master_customer.nama as namacustomer,users.name,penjualan.created_at as created_at'))
         ->leftjoin('master_customer','master_customer.kode','=','penjualan.customer')
         ->leftjoin('users','users.id','=','penjualan.pembuat');
 
@@ -293,15 +293,14 @@ class penjualanController extends Controller
             $potongan = max(0, intval(str_replace('.', '', $request->potongan)));
             $total = max(0, $subtotal + $biaya_tambahan - $potongan);
             $dibayar = max(0, intval(str_replace('.', '', $request->dibayar)));
+            $terbayar = $dibayar;
 
             if ($dibayar >= $total) {
-                $terbayar = $total;
                 $kembalian = $dibayar - $total;
                 $kekurangan = 0;
                 $status = "Telah Lunas";
                 $ket_bayar = "Pembayaran Pertama & Pelunasan";
             } else {
-                $terbayar = $dibayar;
                 $kekurangan = $total - $dibayar;
                 $kembalian = 0;
                 $status = "Belum Lunas";

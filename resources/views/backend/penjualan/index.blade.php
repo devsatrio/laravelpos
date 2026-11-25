@@ -163,7 +163,10 @@
                                                     <td>{{$i++}}</td>
                                                     <td>{{$row->kode}}</td>
                                                     <td>{{$row->namacustomer}}</td>
-                                                    <td>{{$row->name}}</td>
+                                                    <td>
+                                                        {{$row->name}}<br>
+                                                        <small class="text-muted">{{$row->created_at ?? '-'}}</small>
+                                                    </td>
                                                     <td>{{$row->tgl_buat}}</td>
                                                     <td><span class="badge badge-info">{{ $row->jenis_bayar ?? 'Cash' }}</span></td>
                                                     <td class="text-right">{{ 'Rp ' . number_format(round($row->total), 0, ',', '.') }}</td>
