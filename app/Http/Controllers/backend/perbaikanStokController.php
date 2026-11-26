@@ -89,27 +89,51 @@ class perbaikanStokController extends Controller
     //=================================================================
     public function adddetail(Request $request)
     {
-        $caridata = DB::table('detail_perbaikan_stok_thumb')->where([['kode_perbaikan_stok',$request->kode],['kode_barang',$request->kode_barang]])->get();
-        if(count($caridata)>0){
-            DB::table('detail_perbaikan_stok_thumb')
-            ->where([['kode_perbaikan_stok',$request->kode],['kode_barang',$request->kode_barang]])
-            ->update([
-                'stok_lama'=>$request->stok,
-                'stok_baru'=>$request->stok_baru,
-                'keterangan'=>$request->keterangan_barang,
-            ]);
-        }else{
-            DB::table('detail_perbaikan_stok_thumb')
-            ->insert([
-                'kode_perbaikan_stok'=>$request->kode,
-                'kode_barang'=>$request->kode_barang,
-                'stok_lama'=>$request->stok,
-                'stok_baru'=>$request->stok_baru,
-                'keterangan'=>$request->keterangan_barang,
-                'pembuat'=>Auth::user()->id,
-            ]);
+        $kode = trim($request->kode);
+        $kode_barang = trim($request->kode_barang);
+        $stok_lama = intval($request->stok);
+        $stok_baru = $request->stok_baru;
+
+        if (empty($kode_barang)) {
+            return response()->json(['status' => false, 'message' => 'Pilih barang terlebih dahulu'], 400);
         }
-        
+
+        if ($stok_baru === null || $stok_baru === '' || !is_numeric($stok_baru)) {
+            return response()->json(['status' => false, 'message' => 'Stok baru tidak boleh kosong'], 400);
+        }
+
+        $stok_baru_int = intval($stok_baru);
+
+        if ($stok_baru_int < 0) {
+            return response()->json(['status' => false, 'message' => 'Stok baru tidak boleh kurang dari 0'], 400);
+        }
+
+        if ($stok_lama === $stok_baru_int) {
+            return response()->json(['status' => false, 'message' => 'Stok baru tidak boleh sama dengan stok sekarang'], 400);
+        }
+
+        $caridata = DB::table('detail_perbaikan_stok_thumb')->where([['kode_perbaikan_stok', $kode], ['kode_barang', $kode_barang], ['pembuat', Auth::user()->id]])->get();
+        if (count($caridata) > 0) {
+            DB::table('detail_perbaikan_stok_thumb')
+                ->where([['kode_perbaikan_stok', $kode], ['kode_barang', $kode_barang], ['pembuat', Auth::user()->id]])
+                ->update([
+                    'stok_lama' => $stok_lama,
+                    'stok_baru' => $stok_baru_int,
+                    'keterangan' => $request->keterangan_barang,
+                ]);
+        } else {
+            DB::table('detail_perbaikan_stok_thumb')
+                ->insert([
+                    'kode_perbaikan_stok' => $kode,
+                    'kode_barang' => $kode_barang,
+                    'stok_lama' => $stok_lama,
+                    'stok_baru' => $stok_baru_int,
+                    'keterangan' => $request->keterangan_barang,
+                    'pembuat' => Auth::user()->id,
+                ]);
+        }
+
+        return response()->json(['status' => true]);
     }
 
     //=================================================================
@@ -146,6 +170,11 @@ class perbaikanStokController extends Controller
         $detail = DB::table('detail_perbaikan_stok_thumb')
         ->where('kode_perbaikan_stok',$request->kode)
         ->get();
+
+        if ($detail->count() == 0) {
+            return response()->json(['status' => false, 'message' => 'Detail perbaikan stok belum ada barang yang ditambahkan'], 400);
+        }
+
         $data=[];
         foreach ($detail as $row) {
             $data[] = [
@@ -167,6 +196,7 @@ class perbaikanStokController extends Controller
         ]);
 
         DB::table('detail_perbaikan_stok_thumb')->where('pembuat',Auth::user()->id)->delete();
+        return response()->json(['status' => true]);
     }
 
     //=================================================================

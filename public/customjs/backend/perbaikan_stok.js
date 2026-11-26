@@ -1,3 +1,4 @@
+console.log("perbaikan_stok.js v2 loaded");
 const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
         confirmButton: 'btn btn-success',
@@ -48,7 +49,7 @@ $('#barang').on('select2:select', function (e) {
         success: function (data) {
             $.each(data, function (key, value) {
                 $('#stok_barang').val(value.stok);
-                $('#stok_baru_barang').val('0');
+                $('#stok_baru_barang').val('');
             });
         }, complete: function () {
             document.getElementById("stok_baru_barang").focus();
@@ -60,35 +61,98 @@ $('#barang').on('select2:select', function (e) {
 
 //===============================================================================================
 $('#tambahbtn').on('click', function (e) {
-    if ($('#stok_baru_barang').val() == "" || $('#stok_baru_barang').val() == "0") {
+    var barang = $('#barang').val();
+    var stok_baru_raw = String($('#stok_baru_barang').val() || '').trim();
+
+    if (!barang) {
         swalWithBootstrapButtons.fire({
             title: 'Oops',
-            text: 'Stok Barang tidak boleh kosong',
+            text: 'Pilih barang terlebih dahulu',
             confirmButtonText: 'OK'
         });
-    } else {
-        $('#panelsatu').loading('toggle');
-        $.ajax({
-            type: 'POST',
-            url: '/laravelpos/backend/perbaikan-stok/aksi/add-detail-perbaikan',
-            data: {
-                '_token': $('input[name=_token]').val(),
-                'kode': $('#kode').val(),
-                'kode_barang': $('#barang').val(),
-                'stok': $('#stok_barang').val(),
-                'stok_baru': $('#stok_baru_barang').val(),
-                'keterangan_barang': $('#keterangan_barang').val(),
-            },
-            success: function (data) {
-            }, complete: function () {
-                getdata();
-                $('#barang').val(null).trigger('change');
-                $('#stok_barang').val('');
-                $('#keterangan_barang').val('');
-                $('#stok_baru_barang').val('');
-                $('#panelsatu').loading('stop');
-            }
+        return;
+    }
+
+    if (stok_baru_raw === '') {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Stok baru tidak boleh kosong',
+            confirmButtonText: 'OK'
         });
+        return;
+    }
+
+    var clean_stok_baru = stok_baru_raw.replace(/\./g, '');
+    if (isNaN(clean_stok_baru)) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Stok baru harus berupa angka',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    var stok_sekarang = parseInt(String($('#stok_barang').val() || '0').replace(/\./g, '')) || 0;
+    var stok_baru = parseInt(clean_stok_baru);
+
+    if (stok_baru < 0) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Stok baru tidak boleh kurang dari 0',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    if (stok_sekarang === stok_baru) {
+        swalWithBootstrapButtons.fire({
+            title: 'Oops',
+            text: 'Stok baru tidak boleh sama dengan stok sekarang',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $('#panelsatu').loading('toggle');
+    $.ajax({
+        type: 'POST',
+        url: '/laravelpos/backend/perbaikan-stok/aksi/add-detail-perbaikan',
+        data: {
+            '_token': $('input[name=_token]').val(),
+            'kode': $('#kode').val(),
+            'kode_barang': barang,
+            'stok': stok_sekarang,
+            'stok_baru': stok_baru,
+            'keterangan_barang': $('#keterangan_barang').val(),
+        },
+        success: function (data) {
+            getdata();
+            $('#barang').val(null).trigger('change');
+            $('#stok_barang').val('');
+            $('#keterangan_barang').val('');
+            $('#stok_baru_barang').val('');
+        },
+        error: function (xhr) {
+            var msg = 'Gagal menambahkan detail perbaikan stok';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            swalWithBootstrapButtons.fire({
+                title: 'Oops',
+                text: msg,
+                confirmButtonText: 'OK'
+            });
+        },
+        complete: function () {
+            $('#panelsatu').loading('stop');
+        }
+    });
+});
+
+$('#stok_baru_barang, #keterangan_barang').on('keypress', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+        $('#tambahbtn').trigger('click');
     }
 });
 

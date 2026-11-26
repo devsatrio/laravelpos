@@ -63,7 +63,7 @@
                                             <label for="exampleInputEmail1">Stok Baru</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control" name="stok_baru_barang"
-                                                    id="stok_baru_barang" required>
+                                                    id="stok_baru_barang" autocomplete="off" required>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Pcs</span>
                                                 </div>
@@ -165,5 +165,5 @@
 @endpush
 
 @push('customscripts')
-<script src="{{asset('customjs/backend/perbaikan_stok.js')}}"></script>
+<script src="{{asset('customjs/backend/perbaikan_stok.js')}}?v={{time()}}"></script>
 @endpush
